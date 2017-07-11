@@ -12,6 +12,7 @@ import RadialChart  from '../components/RadialChart';
 import FSReactToastr from '../components/FSReactToastr';
 import {toastOpt} from '../utils/Constants';
 import TopologyREST from '../rest/TopologyREST';
+import CommonNotification from '../components/CommonNotification';
 
 export default class SupervisorSummary extends Component{
   constructor(props){

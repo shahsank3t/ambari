@@ -4,6 +4,7 @@ import FSReactToastr from '../components/FSReactToastr';
 import {toastOpt} from '../utils/Constants';
 import TopologyREST from '../rest/TopologyREST';
 import NimbusSummary from './NimbusSummary';
+import CommonNotification from '../components/CommonNotification';
 
 export default class ClusterSummary extends Component{
   constructor(props){

@@ -583,3 +583,6 @@ ul.legends li.legend{
 .topology-table a:hover{
   cursor: pointer;
 }
+.anim{
+  transition: all 0.3s ease;
+}
