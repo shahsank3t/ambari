@@ -1,0 +1,8 @@
+*:focus {
+    outline: none !important;
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  color: #4b4b4b;
+}
