@@ -7,7 +7,10 @@ const toastOpt = {
   preventDuplicates:true
 };
 
+const pageSize = 25;
+
 export {
   baseUrl,
-  toastOpt
+  toastOpt,
+  pageSize
 };

@@ -9,10 +9,12 @@ import {
   unsafe
 } from 'reactable';
 import FSReactToastr from '../components/FSReactToastr';
-import {toastOpt} from '../utils/Constants';
+import {toastOpt,pageSize} from '../utils/Constants';
 import TopologyREST from '../rest/TopologyREST';
 import CommonNotification from '../components/CommonNotification';
 import Utils from '../utils/Utils';
+import CommonPagination from '../components/CommonPagination';
+import {Accordion,Panel} from 'react-bootstrap';
 
 export default class NimbusConfigSummary extends Component{
   constructor(props){
@@ -21,7 +23,8 @@ export default class NimbusConfigSummary extends Component{
     this.state = {
       entity : [],
       filterValue: '',
-      collapse : true
+      collapse : true,
+      activePage : 1
     };
   }
 
@@ -44,25 +47,31 @@ export default class NimbusConfigSummary extends Component{
     this.setState({collapse : !this.state.collapse});
   }
 
+  callBackFunction = (eventKey) => {
+    this.setState({activePage : eventKey});
+  }
+
   render(){
-    const {entity,collapse,filterValue} = this.state;
+    const {entity,collapse,filterValue,activePage} = this.state;
     const filteredEntities = Utils.filterByKey(_.keys(entity), filterValue);
+    const paginationObj = {
+      activePage,
+      pageSize,
+      filteredEntities
+    };
+
+    const panelHeader = <div>
+                          <h4 style={{marginTop:0,marginBottom:0}}>Nimbus Configuration
+                            <div className="box-control pull-right">
+                              <a href="javascript:void(0);" className="primary"><i className="fa fa-expand" id="collapseTable"></i></a>
+                            </div>
+                          </h4>
+                        </div>;
+
     return(
-      <div className="box node-accordian">
-        <div className={`box-header ${collapse ? 'collapsed' : ''}`}  data-toggle="collapse" data-target="#collapseBody"  aria-controls="collapseBody" onClick={this.handleCollapseClick.bind(this)}>
-          <h4>Nimbus Configuration</h4>
-          <div className="box-control">
-            <a href="javascript:void(0);" className="primary"><i className="fa fa-expand" id="collapseTable"></i></a>
-          </div>
-        </div>
-        <div className={`box-body collapse ${collapse ? '' : 'in'}`} id="collapseBody">
-          <div className="input-group col-sm-4">
-            <input type="text"  onKeyUp={this.handleFilter.bind(this)}  className="form-control" placeholder="Search By Key" />
-            <span className="input-group-btn">
-              <button className="btn btn-primary" type="button"><i className="fa fa-search"></i></button>
-            </span>
-          </div>
-          <Table className="table no-margin"  noDataText="No nimbus configuration found !"  currentPage={0}>
+      <Accordion>
+        <Panel header={panelHeader} eventKey="1">
+          <Table className="table no-margin"  noDataText="No nimbus configuration found !"  currentPage={activePage-1} itemsPerPage={pageSize}>
             <Thead>
               <Th column="Key">Key</Th>
               <Th column="value">Value</Th>
@@ -78,8 +87,9 @@ export default class NimbusConfigSummary extends Component{
               })
             }
           </Table>
-        </div>
-      </div>
+          <CommonPagination  {...paginationObj} callBackFunction={this.callBackFunction.bind(this)}/>
+        </Panel>
+      </Accordion>
     );
   }
 }
