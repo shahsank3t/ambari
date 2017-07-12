@@ -4,6 +4,7 @@ import Dashboard from '../containers/Dashboard';
 import TopologyListing from '../containers/TopologyListing';
 import SupervisorSummary from '../containers/SupervisorSummary';
 import NimbusSummary from '../containers/NimbusSummary';
+import TopologyDetailView from '../containers/TopologyDetailView';
 
 const onEnter = (nextState, replace, callback) => {
   callback();
@@ -12,8 +13,11 @@ const onEnter = (nextState, replace, callback) => {
 export default(
   <Route path="/" component={null} name="Home" onEnter={onEnter}>
     <IndexRoute name="" component={Dashboard} onEnter={onEnter}/>
-    <Route path="!/topology" name="TopologyListing" component={TopologyListing} onEnter={onEnter}/>
-    <Route path="!/supervisor" name="SupervisorSummary" component={SupervisorSummary} onEnter={onEnter}/>
-    <Route path="!/nimbus" name="NimbusSummary" component={NimbusSummary} onEnter={onEnter}/>
+    <Route path="topology" name="TopologyListing" component={null} onEnter={onEnter}>
+      <IndexRoute name="TopologyListing" component={TopologyListing} onEnter={onEnter}/>
+      <Route path=":id" name="TopologyDetailView" component={TopologyDetailView} onEnter={onEnter}/>
+    </Route>
+    <Route path="supervisor" name="SupervisorSummary" component={SupervisorSummary} onEnter={onEnter}/>
+    <Route path="nimbus" name="NimbusSummary" component={NimbusSummary} onEnter={onEnter}/>
   </Route>
 );
