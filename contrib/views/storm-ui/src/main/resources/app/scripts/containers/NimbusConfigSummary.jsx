@@ -87,7 +87,11 @@ export default class NimbusConfigSummary extends Component{
               })
             }
           </Table>
-          <CommonPagination  {...paginationObj} callBackFunction={this.callBackFunction.bind(this)}/>
+          {
+            filteredEntities.length !== 0
+            ? <CommonPagination  {...paginationObj} callBackFunction={this.callBackFunction.bind(this)}/>
+            : ''
+          }
         </Panel>
       </Accordion>
     );

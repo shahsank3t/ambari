@@ -12,6 +12,7 @@ import FSReactToastr from '../components/FSReactToastr';
 import {toastOpt} from '../utils/Constants';
 import TopologyREST from '../rest/TopologyREST';
 import CommonNotification from '../components/CommonNotification';
+import {Link} from 'react-router';
 
 export default class TopologyListing extends Component{
   constructor(props){
@@ -76,7 +77,7 @@ export default class TopologyListing extends Component{
             <div className="box-header">
                 <h4>Topology Listing</h4>
                 <div className="box-control">
-                    <a className="primary" href="#!/topology"><i className="fa fa-external-link"></i></a>
+                    <a className="primary" href="topology"><i className="fa fa-external-link"></i></a>
                 </div>
             </div>
             <div className="box-body paddless">
@@ -101,7 +102,7 @@ export default class TopologyListing extends Component{
                   _.map(entities, (entity, i) => {
                     return (
                       <Tr key={i}>
-                        <Td column="topologyName"><a href={"#!/topology/"+entity.id}>{entity.name}</a></Td>
+                        <Td column="topologyName"><Link to={"topology/"+entity.id}>{entity.name}</Link></Td>
                         <Td column="status"><span className={this.activeClass(entity.status)}>{entity.status}</span></Td>
                         {
                           !fromDashboard

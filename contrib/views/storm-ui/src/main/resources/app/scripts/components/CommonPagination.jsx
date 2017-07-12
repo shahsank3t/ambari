@@ -8,7 +8,7 @@ export default class CommonPagination extends Component{
   }
 
   handleSelect = (eventKey) => {
-    this.props.callBackFunction(eventKey);
+    this.props.callBackFunction(eventKey,this.props.tableName);
   }
 
   render(){

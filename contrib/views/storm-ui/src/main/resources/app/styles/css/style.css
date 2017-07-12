@@ -599,8 +599,15 @@ ul.legends li.legend{
   margin : 0 !important;
 }
 .panel-title > a {
+  display: block;
   text-decoration: none;
 }
 .reactable-pagination{
   display: none;
+}
+.panel-default > .panel-heading{
+  background-color: #f3f6f9;
+  /*padding: 0 10px;*/
+  border-bottom: 1px #bcbcbc solid;
+  border-radius: 4px 4px 0px 0px;
 }

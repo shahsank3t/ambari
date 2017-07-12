@@ -16,7 +16,15 @@ const TopologyREST = {
   getClusterConfig(options) {
     options = options || {};
     options.method = options.method || 'GET';
-    return fetch(baseUrl+'/cluster/configuration', options)
+    return fetch(baseUrl+'cluster/configuration', options)
+      .then((response) => {
+        return response.json();
+      });
+  },
+  getTopologyGraphData(id,options) {
+    options = options || {};
+    options.method = options.method || 'GET';
+    return fetch(baseUrl+'topology/'+id+'/visualization', options)
       .then((response) => {
         return response.json();
       });
@@ -24,7 +32,7 @@ const TopologyREST = {
   getTopologyDetails(id, options){
     options = options || {};
     options.method = options.method || 'GET';
-    return fetch(baseUrl+'/topology/'+id, options)
+    return fetch(baseUrl+'topology/'+id, options)
       .then((response) => {
         return response.json();
       });
