@@ -158,7 +158,7 @@ define(['react',
 			} else {
 				var headerELem = (
 					<div className="box-header">
-		                <h4>Topology Listing</h4>		                
+		                <h4>Topology Listing</h4>
 		            </div>);
 		        var bodyElem = (
 		        	<div className="box-body">

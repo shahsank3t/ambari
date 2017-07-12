@@ -42,7 +42,7 @@ export default class SupervisorSummary extends Component{
             <div className="box-header">
                 <h4>Supervisor Summary</h4>
                 <div className="box-control">
-                    <a className="primary" href="#!/topology"><i className="fa fa-external-link"></i></a>
+                    <a className="primary" href="#!/supervisor"><i className="fa fa-external-link"></i></a>
                 </div>
             </div>
             <div className="box-body paddless">

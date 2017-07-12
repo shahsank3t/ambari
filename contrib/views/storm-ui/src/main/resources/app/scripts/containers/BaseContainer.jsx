@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import Footer from '../components/Footer';
 
 export default class BaseContainer extends Component {
 
@@ -10,6 +11,7 @@ export default class BaseContainer extends Component {
     return (
       <div className="container-fluid">
         {this.props.children}
+        <Footer />
       </div>
     );
   }

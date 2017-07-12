@@ -55,7 +55,7 @@ export default class NimbusSummary extends Component{
             <div className="box-header">
                 <h4>Nimbus Summary</h4>
                 <div className="box-control">
-                    <a className="primary" href="#!/topology"><i className="fa fa-external-link"></i></a>
+                    <a className="primary" href="#!/nimbus"><i className="fa fa-external-link"></i></a>
                 </div>
             </div>
             <div className="box-body paddless">

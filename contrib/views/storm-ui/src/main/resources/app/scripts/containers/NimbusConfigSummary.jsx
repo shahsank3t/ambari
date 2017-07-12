@@ -12,6 +12,7 @@ import FSReactToastr from '../components/FSReactToastr';
 import {toastOpt} from '../utils/Constants';
 import TopologyREST from '../rest/TopologyREST';
 import CommonNotification from '../components/CommonNotification';
+import Utils from '../utils/Utils';
 
 export default class NimbusConfigSummary extends Component{
   constructor(props){
@@ -19,6 +20,7 @@ export default class NimbusConfigSummary extends Component{
     this.fetchData();
     this.state = {
       entity : [],
+      filterValue: '',
       collapse : true
     };
   }
@@ -34,8 +36,8 @@ export default class NimbusConfigSummary extends Component{
     });
   }
 
-  handleFilter = () => {
-    console.log('handleFilter');
+  handleFilter = (e) => {
+    this.setState({filterValue: e.target.value.trim()});
   }
 
   handleCollapseClick = (e) => {
@@ -43,16 +45,17 @@ export default class NimbusConfigSummary extends Component{
   }
 
   render(){
-    const {entity,collapse} = this.state;
+    const {entity,collapse,filterValue} = this.state;
+    const filteredEntities = Utils.filterByKey(_.keys(entity), filterValue);
     return(
       <div className="box node-accordian">
-        <div className={`box-header ${collapse ? 'collapsed' : ''}`}  data-toggle="collapse" data-target="#collapseBody" aria-expanded={`${collapse ? false : true}`} aria-controls="collapseBody" onClick={this.handleCollapseClick.bind(this)}>
+        <div className={`box-header ${collapse ? 'collapsed' : ''}`}  data-toggle="collapse" data-target="#collapseBody"  aria-controls="collapseBody" onClick={this.handleCollapseClick.bind(this)}>
           <h4>Nimbus Configuration</h4>
           <div className="box-control">
             <a href="javascript:void(0);" className="primary"><i className="fa fa-expand" id="collapseTable"></i></a>
           </div>
         </div>
-        <div className={`box-body collapse ${collapse ? '' : 'in'}`} aria-expanded={`${collapse ? false : true}`}>
+        <div className={`box-body collapse ${collapse ? '' : 'in'}`} id="collapseBody">
           <div className="input-group col-sm-4">
             <input type="text"  onKeyUp={this.handleFilter.bind(this)}  className="form-control" placeholder="Search By Key" />
             <span className="input-group-btn">
@@ -65,7 +68,7 @@ export default class NimbusConfigSummary extends Component{
               <Th column="value">Value</Th>
             </Thead>
             {
-              _.map(_.keys(entity), (k,i) => {
+              _.map(filteredEntities, (k,i) => {
                 return(
                   <Tr key={i}>
                     <Td column="Key">{k}</Td>

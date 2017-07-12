@@ -28,7 +28,19 @@ export default class TopologyListing extends Component{
         FSReactToastr.error(
           <CommonNotification flag="error" content={results.responseMessage}/>, '', toastOpt);
       } else {
-        this.setState({entities : results.topologies});
+        let stateObj={};
+        stateObj.entities = results.topologies;
+        if(!this.props.fromDashboard){
+          var additionalColumns = [
+            {name: 'assignedTotalMem', title: 'Memory Assigned (MB)', tooltip:'Assigned Total Memory by Scheduler.'},
+            {name: 'workersTotal', title: 'Workers', tooltip:'The number of Workers (processes).'},
+            {name: 'executorsTotal', title: 'Executors', tooltip:'Executors are threads in a Worker process.'},
+            {name: 'tasksTotal', title: 'Tasks', tooltip:'A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors.'},
+            {name: 'owner', title: 'Owner', tooltip:'The user that submitted the Topology, if authentication is enabled.'}
+          ];
+          Array.prototype.push.apply(stateObj.entities, additionalColumns);
+        }
+        this.setState({entities : stateObj.entities});
       }
     });
   }
@@ -57,6 +69,7 @@ export default class TopologyListing extends Component{
 
   render(){
     const {entities} = this.state;
+    const {fromDashboard} = this.props;
     return(
       <div>
         <div className="box">
@@ -71,7 +84,18 @@ export default class TopologyListing extends Component{
                 <Thead>
                   <Th column="topologyName"  title="The name given to the topology by when it was submitted. Click the name to view the Topology's information.">Topology Name</Th>
                   <Th column="status" title="The status can be one of ACTIVE, INACTIVE, KILLED, or REBALANCING.">Status</Th>
-                  <Th column="uptime" title="The time since the Topology was submitted.">Uptime</Th>
+                  {
+                    !fromDashboard
+                    ? [
+                      <Th key={3} column="assignedTotalMem" title="Assigned Total Memory by Scheduler.">Memory Assigned (MB)</Th>,
+                      <Th key={4} column="workersTotal" title="The number of Workers (processes).">Workers</Th>,
+                      <Th key={5} column="executorsTotal" title="Executors are threads in a Worker process.">Executors</Th>,
+                      <Th key={6} column="tasksTotal" title="A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors.">Tasks</Th>,
+                      <Th key={7} column="owner" title="The user that submitted the Topology, if authentication is enabled.">Owner</Th>,
+                      <Th key={8} column="uptime" title="The time since the Topology was submitted.">Uptime</Th>
+                    ]
+                    : <Th column="uptime" title="The time since the Topology was submitted.">Uptime</Th>
+                  }
                 </Thead>
                 {
                   _.map(entities, (entity, i) => {
@@ -79,6 +103,17 @@ export default class TopologyListing extends Component{
                       <Tr key={i}>
                         <Td column="topologyName"><a href={"#!/topology/"+entity.id}>{entity.name}</a></Td>
                         <Td column="status"><span className={this.activeClass(entity.status)}>{entity.status}</span></Td>
+                        {
+                          !fromDashboard
+                          ? [
+                            <Td key={i+'assignedTotalMem'} column="assignedTotalMem">{entity.assignedTotalMem}</Td>,
+                            <Td key={i+'workersTotal'} column="workersTotal">{entity.workersTotal}</Td>,
+                            <Td key={i+'executorsTotal'} column="executorsTotal">{entity.executorsTotal}</Td>,
+                            <Td key={i+'tasksTotal'} column="tasksTotal">{entity.tasksTotal}</Td>,
+                            <Td key={i+'owner'} column="owner">{entity.owner}</Td>
+                          ]
+                          : ''
+                        }
                         <Td column="uptime"><small>{entity.uptime}</small></Td>
                       </Tr>
                     );
