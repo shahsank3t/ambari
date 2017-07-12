@@ -21,6 +21,7 @@ import BaseContainer from './BaseContainer';
 import SearchLogs from '../components/SearchLogs';
 import TopologyREST from '../rest/TopologyREST';
 import {Accordion, Panel} from 'react-bootstrap';
+import TopologyGraph from '../components/TopologyGraph';
 
 export default class TopologyDetailView extends Component {
   constructor(props){
@@ -189,9 +190,13 @@ export default class TopologyDetailView extends Component {
           </div>
         </div>*/}
       </div>
-      <Accordion>
+      <Accordion defaultActiveKey="1">
         <Panel header={details.name} eventKey="1">
-          Graph
+          <div className="graph-bg">
+            <TopologyGraph
+              data={JSON.parse('{"25-KAFKA":{":type":"spout",":capacity":0,":latency":null,":transferred":0,":stats":[{":host":"sanket-selenium-3.openstacklocal",":port":6700,":uptime_secs":3473854,":transferred":{"600":{"s__system1771886016":0},"10800":{"s__system1771886016":0},"86400":{"s__system1771886016":0},":all-time":{"s__system1771886016":0}}}],":link":"/component.html?id=25-KAFKA&topology_id=streamline-29-app1-2-1496379412",":inputs":[{":component":"__acker",":stream":"__ack_ack",":sani-stream":"s__ack_ack643800921",":grouping":"direct"},{":component":"__acker",":stream":"__ack_fail",":sani-stream":"s__ack_fail1900808674",":grouping":"direct"},{":component":"__acker",":stream":"__ack_reset_timeout",":sani-stream":"s__ack_reset_timeout929063677",":grouping":"direct"}]},"26-RULE":{":type":"bolt",":capacity":0,":latency":null,":transferred":null,":stats":[{":host":"sanket-selenium-3.openstacklocal",":port":6700,":uptime_secs":3473854,":transferred":{}}],":link":"/component.html?id=26-RULE&topology_id=streamline-29-app1-2-1496379412",":inputs":[{":component":"25-KAFKA",":stream":"kafka_stream_25",":sani-stream":"kafka_stream___2027926772",":grouping":"local-or-shuffle"}]},"__system":{":type":"spout",":capacity":0,":latency":null,":transferred":null,":stats":[],":link":"/component.html?id=__system&topology_id=streamline-29-app1-2-1496379412",":inputs":[]},"__metricsorg.apache.hadoop.metrics2.sink.storm.StormTimelineMetricsSink":{":type":"spout",":capacity":0,":latency":null,":transferred":null,":stats":[],":link":"/component.html?id=__metricsorg.apache.hadoop.metrics2.sink.storm.StormTimelineMetricsSink&topology_id=streamline-29-app1-2-1496379412",":inputs":[{":component":"__system",":stream":"__metrics_aggregate",":sani-stream":"s__metrics_aggregate1124229964",":grouping":"shuffle"}]},"__acker":{":type":"spout",":capacity":0,":latency":null,":transferred":null,":stats":[],":link":"/component.html?id=__acker&topology_id=streamline-29-app1-2-1496379412",":inputs":[{":component":"25-KAFKA",":stream":"__ack_init",":sani-stream":"s__ack_init2096470730",":grouping":"fields"},{":component":"26-RULE",":stream":"__ack_fail",":sani-stream":"s__ack_fail1900808674",":grouping":"fields"},{":component":"26-RULE",":stream":"__ack_reset_timeout",":sani-stream":"s__ack_reset_timeout929063677",":grouping":"fields"},{":component":"26-RULE",":stream":"__ack_ack",":sani-stream":"s__ack_ack643800921",":grouping":"fields"}]}}')}
+            />
+          </div>
         </Panel>
         <Panel header="Spouts" eventKey="2">
           Spouts
