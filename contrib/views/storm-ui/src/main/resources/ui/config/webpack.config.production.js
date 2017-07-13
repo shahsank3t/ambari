@@ -37,6 +37,9 @@ module.exports = merge(config, {
     new CopyWebpackPlugin([{
       from: path.join(__dirname, '../app/styles/img'),
       to: 'styles/img'
+    },{
+      from: path.join(__dirname, '../index.html'),
+      to: 'index.html'
     }]),
     // Avoid publishing files when compilation fails
     new webpack.NoErrorsPlugin(),
@@ -68,25 +71,25 @@ module.exports = merge(config, {
       {
         test: /\.scss$/,
         include: [
-          /src\/client\/assets\/javascripts/,
-          /src\/client\/assets\/styles/,
+          /src\/client\/javascripts/,
+          /src\/client\/styles/,
           /src\/client\/scripts/
         ],
         loader: ExtractTextPlugin.extract({
           fallbackLoader: 'style',
           loader: [{
-              loader: 'css',
-              query: {
-                sourceMap: true
-              }
-            },
-            'postcss',
-            {
-              loader: 'sass',
-              query: {
-                outputStyle: 'compressed'
-              }
+            loader: 'css',
+            query: {
+              sourceMap: true
             }
+          },
+            'postcss',
+          {
+            loader: 'sass',
+            query: {
+              outputStyle: 'compressed'
+            }
+          }
           ]
         })
       },
@@ -120,5 +123,5 @@ module.exports = merge(config, {
         })
       }
     ]
-  },
+  }
 });

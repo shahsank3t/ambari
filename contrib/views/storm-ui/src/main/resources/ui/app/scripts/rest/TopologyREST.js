@@ -8,31 +8,30 @@ const TopologyREST = {
   getSummary(entity,options) {
     options = options || {};
     options.method = options.method || 'GET';
-    return fetch(baseUrl+entity+'/summary', options)
-      .then((response) => {
-        return response.json();
-      });
+    return this.requestCall(baseUrl+entity+'/summary', options);
   },
   getClusterConfig(options) {
     options = options || {};
     options.method = options.method || 'GET';
-    return fetch(baseUrl+'cluster/configuration', options)
-      .then((response) => {
-        return response.json();
-      });
+    return this.requestCall(baseUrl+'cluster/configuration', options);
   },
   getTopologyGraphData(id,options) {
     options = options || {};
     options.method = options.method || 'GET';
-    return fetch(baseUrl+'topology/'+id+'/visualization', options)
-      .then((response) => {
-        return response.json();
-      });
+    return this.requestCall(baseUrl+'topology/'+id+'/visualization', options);
   },
   getTopologyDetails(id, options){
     options = options || {};
     options.method = options.method || 'GET';
-    return fetch(baseUrl+'topology/'+id, options)
+    return this.requestCall(baseUrl+'topology/'+id, options);
+  },
+  requestCall(url, options){
+    let urlPart = url.split('url=')[0];
+    let stormUrlPart = url.split('url=')[1];
+    urlPart += 'url=' + encodeURIComponent(stormUrlPart);
+    url = urlPart;
+    options.credentials = 'same-origin';
+    return fetch(url, options)
       .then((response) => {
         return response.json();
       });
