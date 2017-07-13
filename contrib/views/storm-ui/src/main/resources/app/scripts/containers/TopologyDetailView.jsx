@@ -36,6 +36,7 @@ import {toastOpt,pageSize} from '../utils/Constants';
 import Utils from '../utils/Utils';
 import FSReactToastr from '../components/FSReactToastr';
 import CommonNotification from '../components/CommonNotification';
+import Breadcrumbs from '../components/Breadcrumbs';
 
 export default class TopologyDetailView extends Component {
   constructor(props){
@@ -124,6 +125,16 @@ export default class TopologyDetailView extends Component {
     };
   }
 
+  getLinks(){
+    const {details} = this.state;
+    var links = [
+      {link: '#/', title: 'Dashboard'},
+      {link: '#/topology', title: 'Topology Listing'},
+      {link: 'javascript:void(0);', title: details.name? details.name : ""}
+    ];
+    return links;
+  }
+
   render() {
     const {details,spotActivePage,boltsActivePage,topologyActivePage,spotFilterValue,blotFilterValue,topologyFilterValue,graphData} = this.state;
     const spoutfilteredEntities = Utils.filterByKey(details.spouts || [], spotFilterValue,'spoutId');
@@ -147,6 +158,7 @@ export default class TopologyDetailView extends Component {
     const graphDataObj = _.isEmpty(graphData) && graphData === undefined ? {} : graphData;
     return (
     <BaseContainer>
+      <Breadcrumbs links={this.getLinks()} />
       <SearchLogs
         id={this.props.params.id}
       />
