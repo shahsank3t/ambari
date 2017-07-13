@@ -25,6 +25,11 @@ const TopologyREST = {
     options.method = options.method || 'GET';
     return this.requestCall(baseUrl+'topology/'+id, options);
   },
+  getTopologyComponentDetail(TopId, CompName, options){
+    options = options || {};
+    options.method = options.method || 'GET';
+    return this.requestCall(baseUrl+'topology/'+TopId+'/component/'+CompName, options)
+  },
   requestCall(url, options){
     let urlPart = url.split('url=')[0];
     let stormUrlPart = url.split('url=')[1];
