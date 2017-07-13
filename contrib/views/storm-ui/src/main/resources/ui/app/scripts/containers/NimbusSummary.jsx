@@ -55,7 +55,7 @@ export default class NimbusSummary extends Component{
             <div className="box-header">
                 <h4>Nimbus Summary</h4>
                 <div className="box-control">
-                    <a className="primary" href="nimbus"><i className="fa fa-external-link"></i></a>
+                    <a className="primary" href="#/nimbus"><i className="fa fa-external-link"></i></a>
                 </div>
             </div>
             <div className="box-body paddless">
@@ -69,7 +69,7 @@ export default class NimbusSummary extends Component{
                   _.map(entities, (entity, i) => {
                     return (
                       <Tr key={i}>
-                        <Td column="host:Port"><a href={entity.nimbusLogLink}>{entity.host+':'+entity.port}</a></Td>
+                        <Td column="host:Port"><a href={entity.nimbusLogLink} target="_blank">{entity.host+':'+entity.port}</a></Td>
                         <Td column="status"><span className={this.activeClass(entity.status)}>{entity.status}</span></Td>
                         <Td column="uptime"><small>{entity.nimbusUpTime}</small></Td>
                       </Tr>

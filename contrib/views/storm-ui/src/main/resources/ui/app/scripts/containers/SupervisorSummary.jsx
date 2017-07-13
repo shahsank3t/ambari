@@ -42,7 +42,7 @@ export default class SupervisorSummary extends Component{
             <div className="box-header">
                 <h4>Supervisor Summary</h4>
                 <div className="box-control">
-                    <a className="primary" href="supervisor"><i className="fa fa-external-link"></i></a>
+                    <a className="primary" href="#/supervisor"><i className="fa fa-external-link"></i></a>
                 </div>
             </div>
             <div className="box-body paddless">
@@ -58,7 +58,7 @@ export default class SupervisorSummary extends Component{
                   _.map(entities, (entity, i) => {
                     return (
                       <Tr key={i}>
-                        <Td column="host"><a href={"supervisor/"+entity.logLink}>{entity.host}</a></Td>
+                        <Td column="host"><a href={entity.logLink} target="_blank">{entity.host}</a></Td>
                         <Td column="slots">
                           <RadialChart
                             data={[entity.slotsUsed,entity.slotsTotal]}
