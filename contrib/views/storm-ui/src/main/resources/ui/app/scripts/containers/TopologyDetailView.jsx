@@ -1,21 +1,3 @@
-/**
- Licensed to the Apache Software Foundation (ASF) under one
- or more contributor license agreements.  See the NOTICE file
- distributed with this work for additional information
- regarding copyright ownership.  The ASF licenses this file
- to you under the Apache License, Version 2.0 (the
- "License"); you may not use this file except in compliance
- with the License.  You may obtain a copy of the License at
-*
-     http://www.apache.org/licenses/LICENSE-2.0
-*
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-*/
-
 import React, {Component} from 'react';
 import BaseContainer from './BaseContainer';
 import SearchLogs from '../components/SearchLogs';
@@ -37,6 +19,9 @@ import Utils from '../utils/Utils';
 import FSReactToastr from '../components/FSReactToastr';
 import CommonNotification from '../components/CommonNotification';
 import Breadcrumbs from '../components/Breadcrumbs';
+import Modal from '../components/FSModel';
+import CommonWindowPanel from '../components/CommonWindowPanel';
+import RebalanceTopology from '../components/RebalanceTopology';
 
 export default class TopologyDetailView extends Component {
   constructor(props){
@@ -48,14 +33,18 @@ export default class TopologyDetailView extends Component {
       topologyActivePage : 1,
       spotFilterValue : '',
       blotFilterValue : '',
-      topologyFilterValue : ''
+      topologyFilterValue : '',
+      selectedWindowKey : {label : 'All time' , value : ':all-time'},
+      windowOptions : [],
+      systemFlag : false
     };
     this.fetchDetails();
   }
   fetchDetails(){
+    const {selectedWindowKey,systemFlag} = this.state;
     let promiseArr=[
-      TopologyREST.getTopologyDetails(this.props.params.id),
-      TopologyREST.getTopologyGraphData(this.props.params.id)
+      TopologyREST.getTopologyDetails(this.props.params.id,selectedWindowKey.value,systemFlag),
+      TopologyREST.getTopologyGraphData(this.props.params.id,selectedWindowKey.value)
     ];
 
     Promise.all(promiseArr).then((results) => {
@@ -68,18 +57,31 @@ export default class TopologyDetailView extends Component {
 
       let stateObj = {};
       stateObj.details = results[0];
+      stateObj.windowOptions = this.populateWindowsOptions(stateObj.details.topologyStats);
+      stateObj.debugSimplePCT = stateObj.details.samplingPct;
+      stateObj.selectedWindowKey = {label : stateObj.details.windowHint, value : stateObj.details.window};
       stateObj.graphData = results[1];
       this.setState(stateObj);
     });
   }
-  renderWindowOptions(){
-    /*if(this.state.model.has('topologyStats')){
-      return this.state.model.get('topologyStats').map(function(object, i){
-        return ( <option key={i} value={object.window}>{object.windowPretty}</option> );
+
+  populateWindowsOptions(optionsArr){
+    let options=[];
+    _.map(optionsArr, (opt) => {
+      options.push({
+        label : opt.windowPretty,
+        value : opt.window
       });
-    } else {
-      return null;
-    }*/
+    });
+    return options;
+  }
+
+  handleWindowChange = (obj) => {
+    if(!_.isEmpty(obj)){
+      this.setState({selectedWindowKey : obj}, () => {
+        this.fetchDetails();
+      });
+    }
   }
 
   getWorkerData = () => {
@@ -135,8 +137,100 @@ export default class TopologyDetailView extends Component {
     return links;
   }
 
+  toggleSystem = (toggleStatus) => {
+    let stateObj = _.cloneDeep(this.state);
+    stateObj[toggleStatus] = !stateObj[toggleStatus];
+    this.setState(stateObj,() => {
+      if(toggleStatus === 'debugFlag'){
+        !stateObj.debugFlag ? this.debugEnableConfirmBox(stateObj.debugFlag,'debugModelRef') : this.refs.debugModelRef.show();
+      } else {
+        this.fetchDetails();
+      }
+    });
+  }
+
+  handleModelAction = (modalType,action) => {
+    if(action === 'save'){
+      switch(modalType){
+      case 'debugModelRef' : this.handleDebugSave(modalType,'enable');;
+        break;
+      case 'rebalanceModelRef' : console.log('handleModelAction','rebalanceModelRef');
+        break;
+      default :
+        break;
+      }
+    } else{
+      switch(modalType){
+      case 'debugModelRef' : Utils.hideFSModal.call(this,modalType,'callBack').then((res) => {
+        this.setState({debugFlag : !this.state.debugFlag});
+      });
+        break;
+      default : Utils.hideFSModal.call(this,modalType);
+        break;
+      }
+    }
+  }
+
+  debugInputTextChange = (e) => {
+    this.setState({debugSimplePCT : e.target.value});
+  }
+
+  debugEnableConfirmBox = (confirm,modalType) => {
+    if(!confirm){
+      this.refs.BaseContainer.refs.Confirm.show({title: 'Do you really want to stop debugging this topology ?"'}).then((confirmBox) => {
+        this.setState({debugSimplePCT : 0}, () => {
+          this.handleDebugSave(modalType,'disable');
+          confirmBox.cancel();
+        });
+      }, () => {
+        this.setState({debugFlag : true});
+      });
+    }
+  }
+
+  handleDebugSave = (modal,toEnableFlag) => {
+    const {debugSimplePCT,details} = this.state;
+    Utils.hideFSModal.call(this,modal);
+    TopologyREST.postDebugTopology(details.id,toEnableFlag,debugSimplePCT).then((result) => {
+      if(result.responseMessage !== undefined){
+        this.setState({debugSimplePCT : details.samplingPct});
+        FSReactToastr.error(
+          <CommonNotification flag="error" content={result.responseMessage}/>, '', toastOpt);
+      } else {
+        FSReactToastr.success(<strong>Debugging enabled successfully.</strong>);
+      }
+    });
+  }
+
+  handleTopologyAction = (action) => {
+    if(action === 'activate' || action === 'deactivate'){
+      this.handleTopologyActiveAndDeactive(action);
+    } else if(action === 'rebalance'){
+      this.refs.rebalanceModelRef.show();
+    }
+  }
+
+  handleTopologyActiveAndDeactive = (action) => {
+    this.refs.BaseContainer.refs.Confirm.show({title: "Do you really want to "+action+" this topology ?"}).then((confirmBox) => {
+      const {details} = this.state;
+      TopologyREST.postActionOnTopology(details.id,action).then((result) => {
+        if(result.responseMessage !== undefined){
+          FSReactToastr.error(
+            <CommonNotification flag="error" content={result.responseMessage}/>, '', toastOpt);
+        } else {
+          FSReactToastr.success(<strong>"Topology "+action+" successfully."</strong>);
+        }
+      });
+      confirmBox.cancel();
+    }, () => {});
+  }
+
+  handleLogLevel = () => {
+
+  }
+
   render() {
-    const {details,spotActivePage,boltsActivePage,topologyActivePage,spotFilterValue,blotFilterValue,topologyFilterValue,graphData} = this.state;
+    const {details,spotActivePage,boltsActivePage,topologyActivePage,spotFilterValue,blotFilterValue,topologyFilterValue,graphData,selectedWindowKey,windowOptions,systemFlag,debugFlag,debugSimplePCT} = this.state;
     const spoutfilteredEntities = Utils.filterByKey(details.spouts || [], spotFilterValue,'spoutId');
     const blotfilteredEntities = Utils.filterByKey(details.bolts || [], blotFilterValue,'boltId');
     const topologyfilteredEntities = Utils.filterByKey(_.keys(details.configuration) || [], topologyFilterValue);
@@ -156,8 +250,9 @@ export default class TopologyDetailView extends Component {
       filteredEntities : topologyfilteredEntities
     };
     const graphDataObj = _.isEmpty(graphData) && graphData === undefined ? {} : graphData;
+    const topologyStatus = details !== undefined ? details.status : '';
     return (
-    <BaseContainer>
+    <BaseContainer ref="BaseContainer">
       <Breadcrumbs links={this.getLinks()} />
       <SearchLogs
         id={this.props.params.id}
@@ -166,41 +261,7 @@ export default class TopologyDetailView extends Component {
         <div className="col-sm-12">
           <div className="box filter">
             <div className="box-body form-horizontal">
-              <div className="form-group no-margin">
-                <label className="col-sm-1 control-label">Window</label>
-                <div className="col-sm-2">
-                  <select className="form-control" onChange={this.handleWindowChange} value={this.windowSize}>
-                    {this.renderWindowOptions()}
-                  </select>
-                </div>
-                <label className="col-sm-2 control-label">System Summary</label>
-                <div className="col-sm-2">
-                  <input className="boot-switch systemSum" type="checkbox" />
-                </div>
-                <label className="col-sm-1 control-label">Debug</label>
-                <div className="col-sm-1">
-                  <input className="boot-switch debug" type="checkbox"/>
-                </div>
-                <div className="col-sm-3 text-right">
-                  <div className="btn-group" role="group">
-                    <button type="button" className="btn btn-primary" onClick={this.handleTopologyActivation} title="Activate" data-rel="tooltip" disabled={status === 'ACTIVE' ? "disabled" : null}>
-                      <i className="fa fa-play"></i>
-                    </button>
-                    <button type="button" className="btn btn-primary" onClick={this.handleTopologyDeactivation} title="Deactivate" data-rel="tooltip" disabled={status === 'INACTIVE' ? "disabled" : null}>
-                      <i className="fa fa-stop"></i>
-                    </button>
-                    <button type="button" className="btn btn-primary" onClick={this.handleTopologyRebalancing} title="Rebalance" data-rel="tooltip" disabled={status === 'REBALANCING' ? "disabled" : null}>
-                      <i className="fa fa-balance-scale"></i>
-                    </button>
-                    <button type="button" className="btn btn-primary" onClick={this.handleTopologyKilling} title="Kill" data-rel="tooltip" disabled={status === 'KILLED' ? "disabled" : null}>
-                      <i className="fa fa-ban"></i>
-                    </button>
-                    <button type="button" className="btn btn-primary" onClick={this.toggleSlide} title="Change Log Level" data-rel="tooltip">
-                      <i className="fa fa-file-o"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <CommonWindowPanel selectedWindowKey={selectedWindowKey} windowOptions={windowOptions} status={topologyStatus} systemFlag={systemFlag} debugFlag={debugFlag} handleWindowChange={this.handleWindowChange.bind(this)} toggleSystem={this.toggleSystem.bind(this)} handleTopologyAction={this.handleTopologyAction.bind(this)} handleLogLevel={this.handleLogLevel.bind(this)}/>
               {/*<div className="row" id="slideContent">
                 <div className="col-sm-12">
                   <hr/>
@@ -446,6 +507,16 @@ export default class TopologyDetailView extends Component {
           }
         </Panel>
       </Accordion>
+
+      {/*Model start here*/}
+      <Modal ref={"debugModelRef"} data-title="Do you really want to debug this topology ? If yes, please, specify sampling percentage."  data-resolve={this.handleModelAction.bind(this,'debugModelRef','save')} data-reject={this.handleModelAction.bind(this,'debugModelRef','hide')}>
+        <input className="form-control" type="number" min={0} max={Number.MAX_SAFE_INTEGER} value={debugSimplePCT} onChange={this.debugInputTextChange.bind(this)}/>
+      </Modal>
+
+      <Modal ref={"rebalanceModelRef"} data-title="Rebalance Topology"  data-resolve={this.handleModelAction.bind(this,'rebalanceModelRef','save')} data-reject={this.handleModelAction.bind(this,'rebalanceModelRef','hide')}>
+        <RebalanceTopology topologyId={details.id} spoutArr={details.spouts} boltArr={details.bolts} topologyExecutors={details.workersTotal}/>
+      </Modal>
+
     </BaseContainer>);
   }
 }

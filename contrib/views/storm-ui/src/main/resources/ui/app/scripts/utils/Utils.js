@@ -6,6 +6,16 @@ const filterByKey = function(entities, filterValue,entity) {
   return entities.filter(filteredList => !filterValue || _.isEmpty(entity) ? matchFilter.test(filteredList) : matchFilter.test(filteredList[entity]));
 };
 
+const hideFSModal = function(modal,callback){
+  this.refs[modal].hide();
+  if(!!callback){
+    return  new Promise((resolve,reject) => {
+      return resolve(callback);
+    });
+  }
+};
+
 export default{
-  filterByKey
+  filterByKey,
+  hideFSModal
 };

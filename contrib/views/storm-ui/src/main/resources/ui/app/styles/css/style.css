@@ -611,3 +611,61 @@ ul.legends li.legend{
   border-bottom: 1px #bcbcbc solid;
   border-radius: 4px 4px 0px 0px;
 }
+/*------------------------------------------------*/
+/* Switch SECTION START*/
+/*------------------------------------------------*/
+.switchWrapper{
+  width: 90px;
+  height: 30px;
+  line-height: 30px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+.switchSlider{
+  width: 135px;
+  height: auto;
+  position: absolute;
+  top:0;
+  left:-46px;
+  cursor: pointer;
+}
+.switchItemOn{
+  width: 45px;
+  height: 30px;
+  color: #ffffff;
+  background-color: #337ab7;
+  float: left;
+}
+.switchItemMid{
+  width: 44px;
+  height: 30px;
+  background-color: #ffffff;
+  float: left;
+}
+.switchItemOff{
+  width: 45px;
+  height: 30px;
+  color: #000000;
+  background-color: #eeeeee;
+  float: left;
+  clear: right;
+}
+
+.switchSlider.onSlider{
+  left : 0 !important;
+  transition: all 0.5s ease;
+}
+.switchSlider.offSlider{
+  left : -46px !important;
+  transition: all 0.5s ease;
+}
+.sliderText{
+  text-align: center;
+  font-size: 12px;
+  line-height: 29px;
+}
+/*------------------------------------------------*/
+/* Switch SECTION END*/
+/*------------------------------------------------*/

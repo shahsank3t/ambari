@@ -5,8 +5,10 @@ import 'babel-polyfill';
 import App from './app';
 import {AppContainer} from 'react-hot-loader';
 
+import '../styles/css/toastr.min.css';
 import '../styles/css/font-awesome.min.css';
 import '../styles/css/bootstrap.css';
+import 'react-select/dist/react-select.css';
 import '../styles/css/style.css';
 
 render(
