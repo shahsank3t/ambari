@@ -669,3 +669,10 @@ ul.legends li.legend{
 /*------------------------------------------------*/
 /* Switch SECTION END*/
 /*------------------------------------------------*/
+
+.panel-default {
+  margin-bottom: 15px;
+  border: 1px #bcbcbc solid;
+  border-bottom-width: 3px;
+  border-radius: 5px;
+}
