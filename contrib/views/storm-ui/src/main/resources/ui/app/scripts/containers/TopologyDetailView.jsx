@@ -369,144 +369,142 @@ export default class TopologyDetailView extends Component {
           </div>
         </div>
       </div>
-      <Accordion defaultActiveKey="1">
-        <Panel header={details.name} eventKey="1">
-          <div className="graph-bg">
-            <TopologyGraph
-              data={graphDataObj}
-            />
-          </div>
-        </Panel>
-        <Panel header="Spouts" eventKey="2">
-          <div className="input-group col-sm-4">
-            <input type="text"  onKeyUp={this.handleFilter.bind(this,'spout')} className="form-control" placeholder="Search By Key" />
-            <span className="input-group-btn">
-            <button className="btn btn-primary" type="button"><i className="fa fa-search"></i></button>
-            </span>
-          </div>
-          <Table className="table no-margin"  noDataText="No nimbus configuration found !"  currentPage={spotActivePage-1} itemsPerPage={pageSize}>
-            <Thead>
-              <Th column="spoutId" title="The ID assigned to a the Component by the Topology. Click on the name to view the Component's page.">Id</Th>
-              <Th column="executors" title="Executors are threads in a Worker process.">Executors</Th>
-              <Th column="tasks" title="A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors.">Tasks</Th>
-              <Th column="emitted" title="The number of Tuples emitted.">Emitted</Th>
-              <Th column="transferred" title="The number of Tuples emitted that sent to one or more bolts.">Transferred</Th>
-              <Th column="completeLatency" title="The average time a Tuple tree takes to be completely processed by the Topology. A value of 0 is expected if no acking is done.">Complete Latency (ms)</Th>
-              <Th column="acked" title="The number of Tuple trees successfully processed. A value of 0 is expected if no acking is done.">Acked</Th>
-              <Th column="failed" title="The number of Tuple trees that were explicitly failed or timed out before acking was completed. A value of 0 is expected if no acking is done.">Failed</Th>
-              <Th column="errorHost" >Error Host:Port</Th>
-              <Th column="lastError" >Last Error</Th>
-              <Th column="errorTime" >Error Time</Th>
-            </Thead>
-            {
-              _.map(spoutfilteredEntities, (s,i) => {
-                return(
-                  <Tr key={i}>
-                    <Td column="spoutId"><Link to={`/topology/${details.id}/component/${s.spoutId}`}>{s.spoutId}</Link></Td>
-                    <Td column="executors">{s.executors}</Td>
-                    <Td column="tasks">{s.tasks}</Td>
-                    <Td column="emitted">{s.emitted}</Td>
-                    <Td column="transferred">{s.transferred}</Td>
-                    <Td column="completeLatency">{s.completeLatency}</Td>
-                    <Td column="acked">{s.acked}</Td>
-                    <Td column="failed">{s.failed}</Td>
-                    <Td column="errorHost">{s.errorHost !== '' ? s.errorHost+s.errorPort : '' }</Td>
-                    <Td column="lastError">{s.lastError}</Td>
-                    <Td column="errorTime">{s.errorTime !== null && s.errorTime !== 0 ? this.getDateFormat(s.errorTime) : '' }</Td>
-                  </Tr>
-                );
-              })
-            }
-          </Table>
+      <Panel defaultExpanded collapsible header={details.name} eventKey="1">
+        <div className="graph-bg">
+          <TopologyGraph
+            data={graphDataObj}
+          />
+        </div>
+      </Panel>
+      <Panel defaultExpanded collapsible header="Spouts" eventKey="2">
+        <div className="input-group col-sm-4">
+          <input type="text"  onKeyUp={this.handleFilter.bind(this,'spout')} className="form-control" placeholder="Search By Key" />
+          <span className="input-group-btn">
+          <button className="btn btn-primary" type="button"><i className="fa fa-search"></i></button>
+          </span>
+        </div>
+        <Table className="table no-margin"  noDataText="No nimbus configuration found !"  currentPage={spotActivePage-1} itemsPerPage={pageSize}>
+          <Thead>
+            <Th column="spoutId" title="The ID assigned to a the Component by the Topology. Click on the name to view the Component's page.">Id</Th>
+            <Th column="executors" title="Executors are threads in a Worker process.">Executors</Th>
+            <Th column="tasks" title="A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors.">Tasks</Th>
+            <Th column="emitted" title="The number of Tuples emitted.">Emitted</Th>
+            <Th column="transferred" title="The number of Tuples emitted that sent to one or more bolts.">Transferred</Th>
+            <Th column="completeLatency" title="The average time a Tuple tree takes to be completely processed by the Topology. A value of 0 is expected if no acking is done.">Complete Latency (ms)</Th>
+            <Th column="acked" title="The number of Tuple trees successfully processed. A value of 0 is expected if no acking is done.">Acked</Th>
+            <Th column="failed" title="The number of Tuple trees that were explicitly failed or timed out before acking was completed. A value of 0 is expected if no acking is done.">Failed</Th>
+            <Th column="errorHost" >Error Host:Port</Th>
+            <Th column="lastError" >Last Error</Th>
+            <Th column="errorTime" >Error Time</Th>
+          </Thead>
           {
-            spoutfilteredEntities.length !== 0
-            ? <CommonPagination  {...spotPaginationObj} callBackFunction={this.callBackFunction.bind(this)} tableName="spout"/>
-            : ''
+            _.map(spoutfilteredEntities, (s,i) => {
+              return(
+                <Tr key={i}>
+                  <Td column="spoutId"><Link to={`/topology/${details.id}/component/${s.spoutId}`}>{s.spoutId}</Link></Td>
+                  <Td column="executors">{s.executors}</Td>
+                  <Td column="tasks">{s.tasks}</Td>
+                  <Td column="emitted">{s.emitted}</Td>
+                  <Td column="transferred">{s.transferred}</Td>
+                  <Td column="completeLatency">{s.completeLatency}</Td>
+                  <Td column="acked">{s.acked}</Td>
+                  <Td column="failed">{s.failed}</Td>
+                  <Td column="errorHost">{s.errorHost !== '' ? s.errorHost+s.errorPort : '' }</Td>
+                  <Td column="lastError">{s.lastError}</Td>
+                  <Td column="errorTime">{s.errorTime !== null && s.errorTime !== 0 ? this.getDateFormat(s.errorTime) : '' }</Td>
+                </Tr>
+              );
+            })
           }
-        </Panel>
-        <Panel header="Bolts" eventKey="3">
-          <div className="input-group col-sm-4">
-            <input type="text"  onKeyUp={this.handleFilter.bind(this,'bolt')} className="form-control" placeholder="Search By Key" />
-            <span className="input-group-btn">
-            <button className="btn btn-primary" type="button"><i className="fa fa-search"></i></button>
-            </span>
-          </div>
-          <Table className="table no-margin"  noDataText="No nimbus configuration found !"  currentPage={boltsActivePage-1} itemsPerPage={pageSize}>
-            <Thead>
-              <Th column="boltId" title="The ID assigned to a the Component by the Topology. Click on the name to view the Component's page.">Id</Th>
-              <Th column="executors" title="Executors are threads in a Worker process.">Executors</Th>
-              <Th column="tasks" title="A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors.">Tasks</Th>
-              <Th column="emitted" title="The number of Tuples emitted.">Emitted</Th>
-              <Th column="transferred" title="The number of Tuples emitted that sent to one or more bolts.">Transferred</Th>
-              <Th column="capacity" title="If this is around 1.0, the corresponding Bolt is running as fast as it can, so you may want to increase the Bolt's parallelism. This is (number executed * average execute latency) / measurement time.">Capacity (last 10m)</Th>
-              <Th column="executeLatency" title="The average time a Tuple spends in the execute method. The execute method may complete without sending an Ack for the tuple.">Execute Latency (ms)</Th>
-              <Th column="executed" title="The number of incoming Tuples processed.">Executed</Th>
-              <Th column="processLatency" title="The average time it takes to Ack a Tuple after it is first received.  Bolts that join, aggregate or batch may not Ack a tuple until a number of other Tuples have been received.">Process Latency (ms)</Th>
-              <Th column="acked" title="The number of Tuples acknowledged by this Bolt.">Acked</Th>
-              <Th column="failed" title="The number of tuples Failed by this Bolt.">Failed</Th>
-              <Th column="errorHost" >Error Host:Port</Th>
-              <Th column="lastError" >Last Error</Th>
-              <Th column="errorTime" >Error Time</Th>
-            </Thead>
-            {
-              _.map(blotfilteredEntities, (b,k) => {
-                return(
-                  <Tr key={k}>
-                    <Td column="boltId"><Link to={`/topology/${details.id}/component/${b.boltId}`}>{b.boltId}</Link></Td>
-                    <Td column="executors">{b.executors}</Td>
-                    <Td column="tasks">{b.tasks}</Td>
-                    <Td column="emitted">{b.emitted}</Td>
-                    <Td column="transferred">{b.transferred}</Td>
-                    <Td column="capacity">{b.capacity}</Td>
-                    <Td column="executeLatency">{b.executeLatency}</Td>
-                    <Td column="executed">{b.executed}</Td>
-                    <Td column="processLatency">{b.processLatency}</Td>
-                    <Td column="acked">{b.acked}</Td>
-                    <Td column="failed">{b.failed}</Td>
-                    <Td column="errorHost">{b.errorHost !== '' ? b.errorHost+b.errorPort : '' }</Td>
-                    <Td column="lastError">{b.lastError}</Td>
-                    <Td column="errorTime">{b.errorTime !== null && b.errorTime !== 0 ? this.getDateFormat(b.errorTime) : '' }</Td>
-                  </Tr>
-                );
-              })
-            }
-          </Table>
+        </Table>
+        {
+          spoutfilteredEntities.length !== 0
+          ? <CommonPagination  {...spotPaginationObj} callBackFunction={this.callBackFunction.bind(this)} tableName="spout"/>
+          : ''
+        }
+      </Panel>
+      <Panel defaultExpanded collapsible header="Bolts" eventKey="3">
+        <div className="input-group col-sm-4">
+          <input type="text"  onKeyUp={this.handleFilter.bind(this,'bolt')} className="form-control" placeholder="Search By Key" />
+          <span className="input-group-btn">
+          <button className="btn btn-primary" type="button"><i className="fa fa-search"></i></button>
+          </span>
+        </div>
+        <Table className="table no-margin"  noDataText="No nimbus configuration found !"  currentPage={boltsActivePage-1} itemsPerPage={pageSize}>
+          <Thead>
+            <Th column="boltId" title="The ID assigned to a the Component by the Topology. Click on the name to view the Component's page.">Id</Th>
+            <Th column="executors" title="Executors are threads in a Worker process.">Executors</Th>
+            <Th column="tasks" title="A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors.">Tasks</Th>
+            <Th column="emitted" title="The number of Tuples emitted.">Emitted</Th>
+            <Th column="transferred" title="The number of Tuples emitted that sent to one or more bolts.">Transferred</Th>
+            <Th column="capacity" title="If this is around 1.0, the corresponding Bolt is running as fast as it can, so you may want to increase the Bolt's parallelism. This is (number executed * average execute latency) / measurement time.">Capacity (last 10m)</Th>
+            <Th column="executeLatency" title="The average time a Tuple spends in the execute method. The execute method may complete without sending an Ack for the tuple.">Execute Latency (ms)</Th>
+            <Th column="executed" title="The number of incoming Tuples processed.">Executed</Th>
+            <Th column="processLatency" title="The average time it takes to Ack a Tuple after it is first received.  Bolts that join, aggregate or batch may not Ack a tuple until a number of other Tuples have been received.">Process Latency (ms)</Th>
+            <Th column="acked" title="The number of Tuples acknowledged by this Bolt.">Acked</Th>
+            <Th column="failed" title="The number of tuples Failed by this Bolt.">Failed</Th>
+            <Th column="errorHost" >Error Host:Port</Th>
+            <Th column="lastError" >Last Error</Th>
+            <Th column="errorTime" >Error Time</Th>
+          </Thead>
           {
-            blotfilteredEntities.length !== 0
-            ? <CommonPagination  {...boltPaginationObj} callBackFunction={this.callBackFunction.bind(this)} tableName="bolt"/>
-            : ''
+            _.map(blotfilteredEntities, (b,k) => {
+              return(
+                <Tr key={k}>
+                  <Td column="boltId"><Link to={`/topology/${details.id}/component/${b.boltId}`}>{b.boltId}</Link></Td>
+                  <Td column="executors">{b.executors}</Td>
+                  <Td column="tasks">{b.tasks}</Td>
+                  <Td column="emitted">{b.emitted}</Td>
+                  <Td column="transferred">{b.transferred}</Td>
+                  <Td column="capacity">{b.capacity}</Td>
+                  <Td column="executeLatency">{b.executeLatency}</Td>
+                  <Td column="executed">{b.executed}</Td>
+                  <Td column="processLatency">{b.processLatency}</Td>
+                  <Td column="acked">{b.acked}</Td>
+                  <Td column="failed">{b.failed}</Td>
+                  <Td column="errorHost">{b.errorHost !== '' ? b.errorHost+b.errorPort : '' }</Td>
+                  <Td column="lastError">{b.lastError}</Td>
+                  <Td column="errorTime">{b.errorTime !== null && b.errorTime !== 0 ? this.getDateFormat(b.errorTime) : '' }</Td>
+                </Tr>
+              );
+            })
           }
-        </Panel>
-        <Panel header="Topology Configuration" eventKey="4">
-          <div className="input-group col-sm-4">
-            <input type="text"  onKeyUp={this.handleFilter.bind(this,'topologyConfig')} className="form-control" placeholder="Search By Key" />
-            <span className="input-group-btn">
-            <button className="btn btn-primary" type="button"><i className="fa fa-search"></i></button>
-            </span>
-          </div>
-          <Table className="table no-margin"  noDataText="No nimbus configuration found !"  currentPage={topologyActivePage-1} itemsPerPage={pageSize}>
-            <Thead>
-              <Th column="Key">Key</Th>
-              <Th column="value">Value</Th>
-            </Thead>
-            {
-              _.map(topologyfilteredEntities, (k,t) => {
-                return(
-                  <Tr key={t}>
-                    <Td column="Key">{k}</Td>
-                    <Td column="value">{details.configuration[k]}</Td>
-                  </Tr>
-                );
-              })
-            }
-          </Table>
+        </Table>
+        {
+          blotfilteredEntities.length !== 0
+          ? <CommonPagination  {...boltPaginationObj} callBackFunction={this.callBackFunction.bind(this)} tableName="bolt"/>
+          : ''
+        }
+      </Panel>
+      <Panel defaultExpanded collapsible header="Topology Configuration" eventKey="4">
+        <div className="input-group col-sm-4">
+          <input type="text"  onKeyUp={this.handleFilter.bind(this,'topologyConfig')} className="form-control" placeholder="Search By Key" />
+          <span className="input-group-btn">
+          <button className="btn btn-primary" type="button"><i className="fa fa-search"></i></button>
+          </span>
+        </div>
+        <Table className="table no-margin"  noDataText="No nimbus configuration found !"  currentPage={topologyActivePage-1} itemsPerPage={pageSize}>
+          <Thead>
+            <Th column="Key">Key</Th>
+            <Th column="value">Value</Th>
+          </Thead>
           {
-            topologyfilteredEntities.length !== 0
-            ? <CommonPagination  {...topologyPaginationObj} callBackFunction={this.callBackFunction.bind(this)} tableName="topologyConfig"/>
-            : ''
+            _.map(topologyfilteredEntities, (k,t) => {
+              return(
+                <Tr key={t}>
+                  <Td column="Key">{k}</Td>
+                  <Td column="value">{details.configuration[k]}</Td>
+                </Tr>
+              );
+            })
           }
-        </Panel>
-      </Accordion>
+        </Table>
+        {
+          topologyfilteredEntities.length !== 0
+          ? <CommonPagination  {...topologyPaginationObj} callBackFunction={this.callBackFunction.bind(this)} tableName="topologyConfig"/>
+          : ''
+        }
+      </Panel>
 
       {/*Model start here*/}
       <Modal ref={"debugModelRef"} data-title="Do you really want to debug this topology ? If yes, please, specify sampling percentage."  data-resolve={this.handleModelAction.bind(this,'debugModelRef','save')} data-reject={this.handleModelAction.bind(this,'debugModelRef','hide')}>

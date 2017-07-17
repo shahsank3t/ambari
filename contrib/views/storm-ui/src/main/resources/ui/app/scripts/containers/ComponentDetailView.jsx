@@ -356,40 +356,38 @@ export default class ComponentDetailView extends Component {
           </div>
         </div>
       </div>
-      <Accordion defaultActiveKey="1">
-        {componentDetail.inputStats
-          ?
-          <Panel header={"Input Stats ("+ componentDetail.windowHint +")"} eventKey="1">
-            {this.getContent('inputStats', 'No input stats found!')}
-          </Panel>
-          :
-          null
-        }
-        {componentDetail.outputStats
-          ?
-          <Panel header={"Output Stats ("+ componentDetail.windowHint +")"} eventKey="2">
-            {this.getContent('outputStats', 'No output stats found!')}
-          </Panel>
-          :
-          null
-        }
-        {componentDetail.executorStats
-          ?
-          <Panel header={"Executor Stats ("+ componentDetail.windowHint +")"} eventKey="3">
-            {this.getContent('executorStats', 'No executor stats found!')}
-          </Panel>
-          :
-          null
-        }
-        {componentDetail.componentErrors
-          ?
-          <Panel header={"Error Stats ("+ componentDetail.windowHint +")"} eventKey="4">
-            {this.getContent('componentErrors', 'No errors found!')}
-          </Panel>
-          :
-          null
-        }
-      </Accordion>
+      {componentDetail.inputStats
+        ?
+        <Panel header={"Input Stats ("+ componentDetail.windowHint +")"} eventKey="1">
+          {this.getContent('inputStats', 'No input stats found!')}
+        </Panel>
+        :
+        null
+      }
+      {componentDetail.outputStats
+        ?
+        <Panel defaultExpanded collapsible header={"Output Stats ("+ componentDetail.windowHint +")"} eventKey="2">
+          {this.getContent('outputStats', 'No output stats found!')}
+        </Panel>
+        :
+        null
+      }
+      {componentDetail.executorStats
+        ?
+        <Panel defaultExpanded collapsible header={"Executor Stats ("+ componentDetail.windowHint +")"} eventKey="3">
+          {this.getContent('executorStats', 'No executor stats found!')}
+        </Panel>
+        :
+        null
+      }
+      {componentDetail.componentErrors
+        ?
+        <Panel defaultExpanded collapsible header={"Error Stats ("+ componentDetail.windowHint +")"} eventKey="4">
+          {this.getContent('componentErrors', 'No errors found!')}
+        </Panel>
+        :
+        null
+      }
     </BaseContainer>
     );
   }
