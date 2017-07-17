@@ -22,6 +22,7 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import Modal from '../components/FSModel';
 import CommonWindowPanel from '../components/CommonWindowPanel';
 import RebalanceTopology from '../components/RebalanceTopology';
+import LogLevelComponent  from '../components/LogLevelComponent';
 
 export default class TopologyDetailView extends Component {
   constructor(props){
@@ -36,7 +37,9 @@ export default class TopologyDetailView extends Component {
       topologyFilterValue : '',
       selectedWindowKey : {label : 'All time' , value : ':all-time'},
       windowOptions : [],
-      systemFlag : false
+      systemFlag : false,
+      killWaitTime : 30,
+      showLogLevel : false
     };
     this.fetchDetails();
   }
@@ -154,7 +157,9 @@ export default class TopologyDetailView extends Component {
       switch(modalType){
       case 'debugModelRef' : this.handleDebugSave(modalType,'enable');;
         break;
-      case 'rebalanceModelRef' : console.log('handleModelAction','rebalanceModelRef');
+      case 'rebalanceModelRef' : this.handleRebalanceModalSave(modalType);
+        break;
+      case 'killModelRef' : this.handleTopologyKilled(modalType);
         break;
       default :
         break;
@@ -171,8 +176,10 @@ export default class TopologyDetailView extends Component {
     }
   }
 
-  debugInputTextChange = (e) => {
-    this.setState({debugSimplePCT : e.target.value});
+  inputTextChange = (type,e) => {
+    let stateObj = _.cloneDeep(this.state);
+    stateObj[type] = e.target.value;
+    this.setState(stateObj);
   }
 
   debugEnableConfirmBox = (confirm,modalType) => {
@@ -202,12 +209,47 @@ export default class TopologyDetailView extends Component {
     });
   }
 
+  handleRebalanceModalSave = (modalType) => {
+    if(this.refs.rebalanceModal.validateData()){
+      Utils.hideFSModal.call(this,modalType);
+      this.refs.rebalanceModal.handleSave().then((result) => {
+        if(result.responseMessage !== undefined){
+          FSReactToastr.error(
+            <CommonNotification flag="error" content={result.responseMessage}/>, '', toastOpt);
+        } else {
+          this.fetchDetails();
+          clearTimeout(this.clearTimeOut);
+          this.clearTimeOut =  setTimeout(function () {
+            FSReactToastr.success(<strong>Topology rebalanced successfully.</strong>);
+          },300);
+        }
+      });
+    }
+  }
+
   handleTopologyAction = (action) => {
     if(action === 'activate' || action === 'deactivate'){
       this.handleTopologyActiveAndDeactive(action);
     } else if(action === 'rebalance'){
       this.refs.rebalanceModelRef.show();
+    } else if (action === "kill"){
+      this.refs.killModelRef.show();
     }
+  }
+
+  handleTopologyKilled = (modalType) => {
+    const {killWaitTime,details} = this.state;
+    TopologyREST.postActionOnTopology(details.id,'kill',killWaitTime).then((result) => {
+      if(result.responseMessage !== undefined){
+        FSReactToastr.error(
+          <CommonNotification flag="error" content={result.responseMessage}/>, '', toastOpt);
+      } else {
+        clearTimeout(this.clearTimeOutKill);
+        this.clearTimeOutKill =  setTimeout(function () {
+          FSReactToastr.success(<strong>"Topology killed successfully."</strong>);
+        },300);
+      }
+    });
   }
 
   handleTopologyActiveAndDeactive = (action) => {
@@ -226,11 +268,11 @@ export default class TopologyDetailView extends Component {
   }
 
   handleLogLevel = () => {
-
+    this.setState({showLogLevel : !this.state.showLogLevel});
   }
 
   render() {
-    const {details,spotActivePage,boltsActivePage,topologyActivePage,spotFilterValue,blotFilterValue,topologyFilterValue,graphData,selectedWindowKey,windowOptions,systemFlag,debugFlag,debugSimplePCT} = this.state;
+    const {details,spotActivePage,boltsActivePage,topologyActivePage,spotFilterValue,blotFilterValue,topologyFilterValue,graphData,selectedWindowKey,windowOptions,systemFlag,debugFlag,debugSimplePCT,killWaitTime,showLogLevel} = this.state;
     const spoutfilteredEntities = Utils.filterByKey(details.spouts || [], spotFilterValue,'spoutId');
     const blotfilteredEntities = Utils.filterByKey(details.bolts || [], blotFilterValue,'boltId');
     const topologyfilteredEntities = Utils.filterByKey(_.keys(details.configuration) || [], topologyFilterValue);
@@ -261,15 +303,12 @@ export default class TopologyDetailView extends Component {
         <div className="col-sm-12">
           <div className="box filter">
             <div className="box-body form-horizontal">
-              <CommonWindowPanel selectedWindowKey={selectedWindowKey} windowOptions={windowOptions} status={topologyStatus} systemFlag={systemFlag} debugFlag={debugFlag} handleWindowChange={this.handleWindowChange.bind(this)} toggleSystem={this.toggleSystem.bind(this)} handleTopologyAction={this.handleTopologyAction.bind(this)} handleLogLevel={this.handleLogLevel.bind(this)}/>
-              {/*<div className="row" id="slideContent">
-                <div className="col-sm-12">
-                  <hr/>
-                  <h4 className="col-sm-offset-5">Change Log Level</h4>
-                  <p>Modify the logger levels for topology. Note that applying a setting restarts the timer in the workers. To configure the root logger, use the name ROOT.</p>
-                  <Table className="table no-margin" collection={this.collection} columns={this.getColumns()}/>
-                </div>
-              </div>*/}
+              <CommonWindowPanel selectedWindowKey={selectedWindowKey} windowOptions={windowOptions} status={topologyStatus} systemFlag={systemFlag} debugFlag={debugFlag} handleWindowChange={this.handleWindowChange.bind(this)} toggleSystem={this.toggleSystem.bind(this)} handleTopologyAction={this.handleTopologyAction.bind(this)} handleLogLevel={this.handleLogLevel.bind(this)} topologyStatus={topologyStatus}/>
+              {
+                showLogLevel
+                ? <LogLevelComponent topologyId={details.id}/>
+                : ''
+              }
             </div>
           </div>
         </div>
@@ -508,11 +547,15 @@ export default class TopologyDetailView extends Component {
 
       {/*Model start here*/}
       <Modal ref={"debugModelRef"} data-title="Do you really want to debug this topology ? If yes, please, specify sampling percentage."  data-resolve={this.handleModelAction.bind(this,'debugModelRef','save')} data-reject={this.handleModelAction.bind(this,'debugModelRef','hide')}>
-        <input className="form-control" type="number" min={0} max={Number.MAX_SAFE_INTEGER} value={debugSimplePCT} onChange={this.debugInputTextChange.bind(this)}/>
+        <input className="form-control" type="number" min={0} max={Number.MAX_SAFE_INTEGER} value={debugSimplePCT} onChange={this.inputTextChange.bind(this,'debugSimplePCT')}/>
+      </Modal>
+
+      <Modal ref={"killModelRef"} data-title="Are you sure you want to kill this topology ? If yes, please, specify wait time in seconds."  data-resolve={this.handleModelAction.bind(this,'killModelRef','save')} data-reject={this.handleModelAction.bind(this,'killModelRef','hide')}>
+        <input className="form-control" type="number" min={0} max={Number.MAX_SAFE_INTEGER} value={killWaitTime} onChange={this.inputTextChange.bind(this,'killWaitTime')}/>
       </Modal>
 
       <Modal ref={"rebalanceModelRef"} data-title="Rebalance Topology"  data-resolve={this.handleModelAction.bind(this,'rebalanceModelRef','save')} data-reject={this.handleModelAction.bind(this,'rebalanceModelRef','hide')}>
-        <RebalanceTopology topologyId={details.id} spoutArr={details.spouts} boltArr={details.bolts} topologyExecutors={details.workersTotal}/>
+        <RebalanceTopology ref={"rebalanceModal"} topologyId={details.id} spoutArr={details.spouts} boltArr={details.bolts} topologyExecutors={details.workersTotal}/>
       </Modal>
 
     </BaseContainer>);

@@ -1,4 +1,4 @@
-// import fetch from 'isomorphic-fetch';
+import fetch from 'isomorphic-fetch';
 import {baseUrl} from '../utils/Constants';
 
 const topology = 'topology';
@@ -33,6 +33,20 @@ const TopologyREST = {
     options = options || {};
     options.method = options.method || 'GET';
     return this.requestCall(baseUrl+'topology/'+TopId+'/component/'+CompName, options);
+  },
+  getLogConfig(id,options) {
+    options = options || {};
+    options.method = options.method || 'GET';
+    return this.requestCall(baseUrl+'topology/'+id+'/logconfig', options);
+  },
+  postLogConfig(id,options){
+    options = options || {};
+    options.method = options.method || 'POST';
+    options.headers = options.headers || {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    };
+    return this.requestCall(baseUrl+'topology/'+id+'/logconfig', options);
   },
   postDebugTopology(id,type,percent,options){
     options = options || {};
