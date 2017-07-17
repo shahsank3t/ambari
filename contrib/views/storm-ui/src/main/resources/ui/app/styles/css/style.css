@@ -140,7 +140,8 @@ body {
 }
 
 /* Boxes */
-.box {
+.box,
+.panel.panel-default {
     position: relative;
     margin-bottom: 15px;
     border: 1px #bcbcbc solid;
@@ -170,7 +171,7 @@ body {
     letter-spacing: 1px;
 }
 .box .box-header .box-control {
-    float: right;
+  float: right;
 }
 .box .box-header .box-control .bootstrap-switch {
   margin: 9px 2px;
@@ -288,7 +289,7 @@ body {
 .tile.warning > .tile-header {
     background-color: #ED940E;
 }
-.tile.success {
+.tile.success, .label-success {
     background: #1bbb60;
 }
 .tile.success > .tile-header {
@@ -611,6 +612,13 @@ ul.legends li.legend{
   border-bottom: 1px #bcbcbc solid;
   border-radius: 4px 4px 0px 0px;
 }
+
+.panel-default > .panel-heading h4 {
+  margin: 0px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
 /*------------------------------------------------*/
 /* Switch SECTION START*/
 /*------------------------------------------------*/
@@ -669,10 +677,3 @@ ul.legends li.legend{
 /*------------------------------------------------*/
 /* Switch SECTION END*/
 /*------------------------------------------------*/
-
-.panel-default {
-  margin-bottom: 15px;
-  border: 1px #bcbcbc solid;
-  border-bottom-width: 3px;
-  border-radius: 5px;
-}

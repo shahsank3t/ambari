@@ -5,6 +5,7 @@ import {toastOpt} from '../utils/Constants';
 import TopologyREST from '../rest/TopologyREST';
 import NimbusSummary from './NimbusSummary';
 import CommonNotification from '../components/CommonNotification';
+import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 
 export default class ClusterSummary extends Component{
   constructor(props){
@@ -31,27 +32,32 @@ export default class ClusterSummary extends Component{
       <div>
         <div className="row">
           <div className="col-sm-6">
-              <div className="tile primary" title="Executors are threads in a Worker process." data-rel="tooltip1">
+            <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Executors are threads in a Worker process.</Tooltip>}>
+              <div className="tile primary">
                   <div className="tile-header">Executor</div>
                   <div className="tile-body">
                       <i className="fa fa-play-circle-o"></i>
                       <span className="count">{entity.executorsTotal}</span>
                   </div>
               </div>
+            </OverlayTrigger>
           </div>
           <div className="col-sm-6">
-              <div className="tile warning" title="A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors." data-rel="tooltip1">
+            <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors.</Tooltip>}>
+              <div className="tile warning">
                   <div className="tile-header">Tasks</div>
                   <div className="tile-body">
                       <i className="fa fa-tasks"></i>
                       <span className="count">{entity.tasksTotal}</span>
                   </div>
               </div>
+            </OverlayTrigger>
           </div>
       </div>
       <div className="row">
             <div className="col-sm-6">
-                <div className="tile success" title="The number of nodes in the cluster currently." data-rel="tooltip1">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of nodes in the cluster currently.</Tooltip>}>
+                <div className="tile success">
                     <div className="tile-header" style={{textAlign:"center"}}>Supervisor</div>
                     <div className="tile-body" style={{textAlign:"center"}}>
                         <div id="supervisorCount">
@@ -67,9 +73,11 @@ export default class ClusterSummary extends Component{
                         </div>
                     </div>
                 </div>
+              </OverlayTrigger>
             </div>
             <div className="col-sm-6">
-                <div className="tile danger" title="Slots are Workers (processes)." data-rel="tooltip1">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Slots are Workers (processes).</Tooltip>}>
+                <div className="tile danger">
                     <div className="tile-header" style={{textAlign:"center"}}>Slots</div>
                     <div className="tile-body" style={{textAlign:"center"}}>
                         <div id="slotsCount">
@@ -85,11 +93,12 @@ export default class ClusterSummary extends Component{
                         </div>
                     </div>
                 </div>
+              </OverlayTrigger>
             </div>
         </div>
         <div className="row">
           <div className="col-sm-12">
-            <NimbusSummary />
+            <NimbusSummary fromDashboard={true}/>
           </div>
         </div>
       </div>

@@ -16,10 +16,17 @@ import React, {Component, PropTypes} from 'react';
 import routes from './routers/routes';
 import {render} from 'react-dom';
 import {Router, browserHistory, hashHistory} from 'react-router';
+import {getStormVersion} from './utils/Constants';
 
 class App extends Component {
   constructor() {
     super();
+    this.fetchVersion();
+  }
+  fetchVersion(){
+    getStormVersion().then((res) => {
+      this.forceUpdate();
+    });
   }
   render() {
     return (<Router ref="router" history={hashHistory} routes={routes}/>);

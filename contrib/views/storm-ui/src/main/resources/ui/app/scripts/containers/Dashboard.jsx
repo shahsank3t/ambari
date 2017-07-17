@@ -20,12 +20,12 @@ export default class Dashboard extends Component {
           </div>
           <div className="col-sm-7">
             <TopologyListing fromDashboard={true} />
-            <SupervisorSummary />
+            <SupervisorSummary fromDashboard={true} />
           </div>
         </div>
         <div className="row">
             <div className="col-sm-12">
-              <NimbusConfigSummary />
+              <NimbusConfigSummary fromDashboard={true} />
             </div>
         </div>
       </BaseContainer>

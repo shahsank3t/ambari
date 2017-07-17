@@ -1,3 +1,4 @@
+import TopologyREST from '../rest/TopologyREST';
 const baseUrl = '/api/v1/';
 // const baseUrl = location.pathname+'proxy?url=/api/v1/';
 const toastOpt = {
@@ -10,8 +11,17 @@ const toastOpt = {
 
 const pageSize = 25;
 
+let stormVersion = '';
+function getStormVersion(){
+  return TopologyREST.getSummary('cluster').then((res) => {
+    stormVersion = res.stormVersion;
+  });
+}
+
 export {
   baseUrl,
   toastOpt,
-  pageSize
+  pageSize,
+  getStormVersion,
+  stormVersion
 };

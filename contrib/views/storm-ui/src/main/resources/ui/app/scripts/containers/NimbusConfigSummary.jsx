@@ -14,7 +14,7 @@ import TopologyREST from '../rest/TopologyREST';
 import CommonNotification from '../components/CommonNotification';
 import Utils from '../utils/Utils';
 import CommonPagination from '../components/CommonPagination';
-import {Accordion,Panel} from 'react-bootstrap';
+import {Accordion, Panel} from 'react-bootstrap';
 
 export default class NimbusConfigSummary extends Component{
   constructor(props){
@@ -71,6 +71,12 @@ export default class NimbusConfigSummary extends Component{
     return(
       <Accordion>
         <Panel header={panelHeader} eventKey="1">
+          <div className="input-group col-sm-4">
+            <input type="text" onKeyUp={this.handleFilter} className="form-control" placeholder="Search By Key" />
+            <span className="input-group-btn">
+            <button className="btn btn-primary" type="button"><i className="fa fa-search"></i></button>
+            </span>
+          </div>
           <Table className="table no-margin"  noDataText="No nimbus configuration found !"  currentPage={activePage-1} itemsPerPage={pageSize}>
             <Thead>
               <Th column="Key">Key</Th>

@@ -13,6 +13,8 @@ import {toastOpt} from '../utils/Constants';
 import TopologyREST from '../rest/TopologyREST';
 import CommonNotification from '../components/CommonNotification';
 import {Link} from 'react-router';
+import {OverlayTrigger, Tooltip} from 'react-bootstrap';
+import Breadcrumbs from '../components/Breadcrumbs';
 
 export default class TopologyListing extends Component{
   constructor(props){
@@ -46,6 +48,14 @@ export default class TopologyListing extends Component{
     });
   }
 
+  getLinks(){
+    var links = [
+      {link: '#/', title: 'Dashboard'},
+      {link: '#/topology', title: 'Topology Listing'}
+    ];
+    return links;
+  }
+
   activeClass = (status) => {
     let classname="label ";
     switch(status){
@@ -72,19 +82,22 @@ export default class TopologyListing extends Component{
     const {entities} = this.state;
     const {fromDashboard} = this.props;
     return(
-      <div>
+      <div className={fromDashboard ? "" : "container-fluid"}>
+        {!fromDashboard ? <Breadcrumbs links={this.getLinks()} /> : ''}
         <div className="box">
             <div className="box-header">
                 <h4>Topology Listing</h4>
+                {fromDashboard ?
                 <div className="box-control">
                     <a className="primary" href="#/topology"><i className="fa fa-external-link"></i></a>
                 </div>
+                : ''}
             </div>
             <div className="box-body paddless">
               <Table className="table topology-table" noDataText="No records found." currentPage={0} >
                 <Thead>
-                  <Th column="topologyName"  title="The name given to the topology by when it was submitted. Click the name to view the Topology's information.">Topology Name</Th>
-                  <Th column="status" title="The status can be one of ACTIVE, INACTIVE, KILLED, or REBALANCING.">Status</Th>
+                  <Th column="topologyName"><OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The name given to the topology by when it was submitted. Click the name to view the Topology's information.</Tooltip>}><span>Topology Name</span></OverlayTrigger></Th>
+                  <Th column="status"><OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The status can be one of ACTIVE, INACTIVE, KILLED, or REBALANCING.</Tooltip>}><span>Status</span></OverlayTrigger></Th>
                   {
                     !fromDashboard
                     ? [
@@ -95,7 +108,7 @@ export default class TopologyListing extends Component{
                       <Th key={7} column="owner" title="The user that submitted the Topology, if authentication is enabled.">Owner</Th>,
                       <Th key={8} column="uptime" title="The time since the Topology was submitted.">Uptime</Th>
                     ]
-                    : <Th column="uptime" title="The time since the Topology was submitted.">Uptime</Th>
+                    : <Th column="uptime"><OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The time since the Topology was submitted.</Tooltip>}><span>Uptime</span></OverlayTrigger></Th>
                   }
                 </Thead>
                 {

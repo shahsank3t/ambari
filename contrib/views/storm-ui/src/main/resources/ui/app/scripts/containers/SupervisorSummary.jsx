@@ -13,6 +13,8 @@ import FSReactToastr from '../components/FSReactToastr';
 import {toastOpt} from '../utils/Constants';
 import TopologyREST from '../rest/TopologyREST';
 import CommonNotification from '../components/CommonNotification';
+import Breadcrumbs from '../components/Breadcrumbs';
+import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 
 export default class SupervisorSummary extends Component{
   constructor(props){
@@ -34,25 +36,37 @@ export default class SupervisorSummary extends Component{
     });
   }
 
+  getLinks(){
+    var links = [
+      {link: '#/', title: 'Dashboard'},
+      {link: '#/supervisor', title: 'Supervisor Summary'}
+    ];
+    return links;
+  }
+
   render(){
     const {entities} = this.state;
+    const {fromDashboard} = this.props;
     return(
-      <div>
+      <div className={fromDashboard ? "" : "container-fluid"}>
+        {!fromDashboard ? <Breadcrumbs links={this.getLinks()} /> : ''}
         <div className="box">
             <div className="box-header">
                 <h4>Supervisor Summary</h4>
+                {fromDashboard ?
                 <div className="box-control">
                     <a className="primary" href="#/supervisor"><i className="fa fa-external-link"></i></a>
                 </div>
+                : ''}
             </div>
             <div className="box-body paddless">
               <Table className="table no-margin supervisor-table" noDataText="No records found." currentPage={0} >
                 <Thead>
-                  <Th column="host"  title="The hostname reported by the remote host. (Note that this hostname is not the result of a reverse lookup at the Nimbus node.)">Host</Th>
-                  <Th column="slots" title="Slots are Workers (processes).">Slots</Th>
-                  <Th column="cpu" title="CPU that has been allocated.">CPU</Th>
-                  <Th column="memory" title="Memory that has been allocated.">Memory</Th>
-                  <Th column="uptime" title="The length of time a Supervisor has been registered to the cluster.">Uptime</Th>
+                  <Th column="host"><OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The hostname reported by the remote host. (Note that this hostname is not the result of a reverse lookup at the Nimbus node.)</Tooltip>}><span>Host</span></OverlayTrigger></Th>
+                  <Th column="slots"><OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Slots are Workers (processes).</Tooltip>}><span>Slots</span></OverlayTrigger></Th>
+                  <Th column="cpu"><OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">CPU that has been allocated.</Tooltip>}><span>CPU</span></OverlayTrigger></Th>
+                  <Th column="memory"><OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Memory that has been allocated.</Tooltip>}><span>Memory</span></OverlayTrigger></Th>
+                  <Th column="uptime"><OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The length of time a Supervisor has been registered to the cluster.</Tooltip>}><span>Uptime</span></OverlayTrigger></Th>
                 </Thead>
                 {
                   _.map(entities, (entity, i) => {

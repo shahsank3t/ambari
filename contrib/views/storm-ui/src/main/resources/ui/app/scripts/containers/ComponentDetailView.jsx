@@ -358,7 +358,7 @@ export default class ComponentDetailView extends Component {
       </div>
       {componentDetail.inputStats
         ?
-        <Panel header={"Input Stats ("+ componentDetail.windowHint +")"} eventKey="1">
+        <Panel defaultExpanded collapsible header={"Input Stats ("+ componentDetail.windowHint +")"} eventKey="1">
           {this.getContent('inputStats', 'No input stats found!')}
         </Panel>
         :
