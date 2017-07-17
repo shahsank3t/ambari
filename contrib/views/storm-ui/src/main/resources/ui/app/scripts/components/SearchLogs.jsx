@@ -19,6 +19,7 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import {baseUrl} from '../utils/Constants';
+import {DropdownButton, FormGroup, Checkbox} from 'react-bootstrap';
 
 export default class SearchLogs extends Component{
   render() {
@@ -29,19 +30,14 @@ export default class SearchLogs extends Component{
           <div className="input-group-btn">
             <div className="btn-group" role="group">
               <div className="dropdown dropdown-lg">
-                <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  <span className="caret"></span>
-                </button>
-                <div className="dropdown-menu dropdown-menu-right" role="menu">
-                  <form>
-                    <div>
-                      <label><input type="checkbox" id="searchArchivedLogs"/> Search archived logs</label>
-                    </div>
-                    <div>
-                      <label><input type="checkbox" id="deepSearch"/> Deep Search</label>
-                    </div>
-                  </form>
-                </div>
+                <DropdownButton title="" pullRight id="bg-nested-dropdown">
+                  <FormGroup>
+                    <Checkbox id="searchArchivedLogs">Search archived logs</Checkbox>
+                  </FormGroup>
+                  <FormGroup>
+                    <Checkbox id="deepSearch">Deep search</Checkbox>
+                  </FormGroup>
+                </DropdownButton>                
               </div>
               <button type="button" className="btn btn-default" onClick={this.handleSearch.bind(this)}>
                 <i className="fa fa-search"></i>
