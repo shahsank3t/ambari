@@ -81,6 +81,7 @@ export default class TopologyListing extends Component{
   render(){
     const {entities} = this.state;
     const {fromDashboard} = this.props;
+    const topologies = _.filter(entities, (e)=>{return e.id !== undefined;});
     return(
       <div className={fromDashboard ? "" : "container-fluid"}>
         {!fromDashboard ? <Breadcrumbs links={this.getLinks()} /> : ''}
@@ -112,7 +113,7 @@ export default class TopologyListing extends Component{
                   }
                 </Thead>
                 {
-                  _.map(entities, (entity, i) => {
+                  _.map(topologies, (entity, i) => {
                     return (
                       <Tr key={i}>
                         <Td column="topologyName"><Link to={"topology/"+entity.id}>{entity.name}</Link></Td>

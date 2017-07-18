@@ -108,10 +108,10 @@ export default class LogLevelComponent extends Component{
     obj.namedLoggerLevels[type].reset_level = 'INFO';
     delete obj.namedLoggerLevels[type].timeout_epoch;
 
-    this.callLogConfigAPI(obj,null);
+    this.callLogConfigAPI(obj,null,action);
   }
 
-  callLogConfigAPI = (obj,addRow) => {
+  callLogConfigAPI = (obj,addRow,action) => {
     const {topologyId,logConfig} =  this.props;
     const {logLevelObj} = this.state;
     TopologyREST.postLogConfig(topologyId, {body : JSON.stringify(obj)}).then((result) => {
@@ -120,7 +120,7 @@ export default class LogLevelComponent extends Component{
         FSReactToastr.error(
           <CommonNotification flag="error" content={result.responseMessage}/>, '', toastOpt);
       } else {
-        let msg = !!addRow ? "Log configuration added successfully" : "Log configuration applied successfully.";
+        let msg = !!addRow ? "Log configuration added successfully" : (action === 'save' ? "Log configuration applied successfully." : "Log configuration cleared successfully.");
         FSReactToastr.success(<strong>{msg}</strong>);
         this.fetchData();
       }
