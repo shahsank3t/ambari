@@ -9,7 +9,32 @@ import ComponentDetailView from '../containers/ComponentDetailView';
 
 const onEnter = (nextState, replace, callback) => {
   callback();
+  shareUrl();
 };
+
+const shareUrl = () => {
+  if(window != window.parent){
+    var parentWindow = window.parent;
+    var parentHash = parentWindow.location.hash.split("?")[0];
+    var newurl = parentWindow.location.protocol + "//" + parentWindow.location.host + parentHash + '?viewpath='+encodeURIComponent(location.hash);
+    parentWindow.history.replaceState({path:newurl},'',newurl);
+  }
+};
+
+const getParameterByName = (name) => {
+  name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+  var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+    results = regex.exec(location.search);
+  return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+};
+
+function getInitialRoute(){
+  if(window != window.parent){
+    var viewPath = getParameterByName("viewpath");
+    location.hash = viewPath ? viewPath : '';
+  }
+}
+getInitialRoute();
 
 export default(
   <Route path="/" component={null} name="Home" onEnter={onEnter}>
