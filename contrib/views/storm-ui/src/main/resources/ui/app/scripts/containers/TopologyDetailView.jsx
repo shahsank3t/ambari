@@ -417,12 +417,13 @@ export default class TopologyDetailView extends Component {
       </Panel>
       <Panel defaultExpanded collapsible header="Spouts" eventKey="2">
         <div className="input-group col-sm-4">
-          <input type="text"  onKeyUp={this.handleFilter.bind(this,'spout')} className="form-control" placeholder="Search By Key" />
+          <input type="text"  onKeyUp={this.handleFilter.bind(this,'spout')} className="form-control" placeholder="Search By Id" />
           <span className="input-group-btn">
           <button className="btn btn-primary" type="button"><i className="fa fa-search"></i></button>
           </span>
         </div>
-        <Table className="table no-margin"  noDataText="No nimbus configuration found !"  currentPage={spotActivePage-1} itemsPerPage={pageSize}>
+        <div className="table-responsive">
+        <Table className="table no-margin"  noDataText="No spouts found !"  currentPage={spotActivePage-1} itemsPerPage={pageSize}>
           <Thead>
             <Th column="spoutId" title="The ID assigned to a the Component by the Topology. Click on the name to view the Component's page.">Id</Th>
             <Th column="executors" title="Executors are threads in a Worker process.">Executors</Th>
@@ -456,6 +457,7 @@ export default class TopologyDetailView extends Component {
             })
           }
         </Table>
+        </div>
         {
           spoutfilteredEntities.length !== 0
           ? <CommonPagination  {...spotPaginationObj} callBackFunction={this.callBackFunction.bind(this)} tableName="spout"/>
@@ -464,12 +466,13 @@ export default class TopologyDetailView extends Component {
       </Panel>
       <Panel defaultExpanded collapsible header="Bolts" eventKey="3">
         <div className="input-group col-sm-4">
-          <input type="text"  onKeyUp={this.handleFilter.bind(this,'bolt')} className="form-control" placeholder="Search By Key" />
+          <input type="text"  onKeyUp={this.handleFilter.bind(this,'bolt')} className="form-control" placeholder="Search By Id" />
           <span className="input-group-btn">
           <button className="btn btn-primary" type="button"><i className="fa fa-search"></i></button>
           </span>
         </div>
-        <Table className="table no-margin"  noDataText="No nimbus configuration found !"  currentPage={boltsActivePage-1} itemsPerPage={pageSize}>
+        <div className="table-responsive">
+        <Table className="table no-margin"  noDataText="No bolts found !"  currentPage={boltsActivePage-1} itemsPerPage={pageSize}>
           <Thead>
             <Th column="boltId" title="The ID assigned to a the Component by the Topology. Click on the name to view the Component's page.">Id</Th>
             <Th column="executors" title="Executors are threads in a Worker process.">Executors</Th>
@@ -509,6 +512,7 @@ export default class TopologyDetailView extends Component {
             })
           }
         </Table>
+        </div>
         {
           blotfilteredEntities.length !== 0
           ? <CommonPagination  {...boltPaginationObj} callBackFunction={this.callBackFunction.bind(this)} tableName="bolt"/>
@@ -522,7 +526,7 @@ export default class TopologyDetailView extends Component {
           <button className="btn btn-primary" type="button"><i className="fa fa-search"></i></button>
           </span>
         </div>
-        <Table className="table no-margin"  noDataText="No nimbus configuration found !"  currentPage={topologyActivePage-1} itemsPerPage={pageSize}>
+        <Table className="table no-margin"  noDataText="No topology configuration found !"  currentPage={topologyActivePage-1} itemsPerPage={pageSize}>
           <Thead>
             <Th column="Key">Key</Th>
             <Th column="value">Value</Th>

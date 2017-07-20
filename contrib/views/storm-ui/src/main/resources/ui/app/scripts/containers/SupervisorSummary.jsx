@@ -10,18 +10,22 @@ import {
 } from 'reactable';
 import RadialChart  from '../components/RadialChart';
 import FSReactToastr from '../components/FSReactToastr';
-import {toastOpt} from '../utils/Constants';
+import {toastOpt, pageSize} from '../utils/Constants';
 import TopologyREST from '../rest/TopologyREST';
 import CommonNotification from '../components/CommonNotification';
 import Breadcrumbs from '../components/Breadcrumbs';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
+import CommonPagination from '../components/CommonPagination';
+import Utils from '../utils/Utils';
 
 export default class SupervisorSummary extends Component{
   constructor(props){
     super(props);
     this.fetchData();
     this.state = {
-      entities : []
+      entities : [],
+      filterValue: '',
+      activePage: 1
     };
   }
 
@@ -44,9 +48,23 @@ export default class SupervisorSummary extends Component{
     return links;
   }
 
+  handleFilter = (e) => {
+    this.setState({filterValue: e.target.value.trim()});
+  }
+
+  callBackFunction = (eventKey) => {
+    this.setState({activePage : eventKey});
+  }
+
   render(){
-    const {entities} = this.state;
+    const {entities, filterValue, activePage} = this.state;
     const {fromDashboard} = this.props;
+    const filteredEntities = Utils.filterByKey(entities, filterValue, 'host');
+    const paginationObj = {
+      activePage,
+      pageSize,
+      filteredEntities
+    };
     return(
       <div className={fromDashboard ? "" : "container-fluid"}>
         {!fromDashboard ? <Breadcrumbs links={this.getLinks()} /> : ''}
@@ -59,7 +77,15 @@ export default class SupervisorSummary extends Component{
                 </div>
                 : ''}
             </div>
-            <div className="box-body paddless">
+            <div className={fromDashboard ? "box-body paddless" : "box-body"}>
+              {!fromDashboard ?
+              <div className="input-group col-sm-4">
+                <input type="text" onKeyUp={this.handleFilter} className="form-control" placeholder="Search By Host" />
+                <span className="input-group-btn">
+                <button className="btn btn-primary" type="button"><i className="fa fa-search"></i></button>
+                </span>
+              </div>
+              : ''}
               <Table className="table no-margin supervisor-table" noDataText="No records found." currentPage={0} >
                 <Thead>
                   <Th column="host"><OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The hostname reported by the remote host. (Note that this hostname is not the result of a reverse lookup at the Nimbus node.)</Tooltip>}><span>Host</span></OverlayTrigger></Th>
@@ -69,7 +95,7 @@ export default class SupervisorSummary extends Component{
                   <Th column="uptime"><OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The length of time a Supervisor has been registered to the cluster.</Tooltip>}><span>Uptime</span></OverlayTrigger></Th>
                 </Thead>
                 {
-                  _.map(entities, (entity, i) => {
+                  _.map(filteredEntities, (entity, i) => {
                     return (
                       <Tr key={i}>
                         <Td column="host"><a href={entity.logLink} target="_blank">{entity.host}</a></Td>
@@ -106,6 +132,11 @@ export default class SupervisorSummary extends Component{
                   })
                 }
               </Table>
+              {
+                !fromDashboard && filteredEntities.length !== 0
+                ? <CommonPagination  {...paginationObj} callBackFunction={this.callBackFunction.bind(this)}/>
+                : ''
+              }
             </div>
         </div>
       </div>

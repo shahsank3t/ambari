@@ -9,18 +9,22 @@ import {
   unsafe
 } from 'reactable';
 import FSReactToastr from '../components/FSReactToastr';
-import {toastOpt} from '../utils/Constants';
+import {toastOpt, pageSize} from '../utils/Constants';
 import TopologyREST from '../rest/TopologyREST';
 import CommonNotification from '../components/CommonNotification';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import Breadcrumbs from '../components/Breadcrumbs';
+import CommonPagination from '../components/CommonPagination';
+import Utils from '../utils/Utils';
 
 export default class NimbusSummary extends Component{
   constructor(props){
     super(props);
     this.fetchData();
     this.state = {
-      entities : []
+      entities : [],
+      filterValue: '',
+      activePage: 1
     };
   }
 
@@ -57,9 +61,23 @@ export default class NimbusSummary extends Component{
     return classname;
   }
 
+  handleFilter = (e) => {
+    this.setState({filterValue: e.target.value.trim()});
+  }
+
+  callBackFunction = (eventKey) => {
+    this.setState({activePage : eventKey});
+  }
+
   render(){
-    const {entities} = this.state;
+    const {entities, filterValue, activePage} = this.state;
     const {fromDashboard} = this.props;
+    const filteredEntities = Utils.filterByKey(entities, filterValue, 'host');
+    const paginationObj = {
+      activePage,
+      pageSize,
+      filteredEntities
+    };
     return(
       <div className={fromDashboard ? "" : "container-fluid"}>
         {!fromDashboard ? <Breadcrumbs links={this.getLinks()} /> : ''}
@@ -72,7 +90,15 @@ export default class NimbusSummary extends Component{
                 </div>
                 : ''}
             </div>
-            <div className="box-body paddless">
+            <div className={fromDashboard ? "box-body paddless" : "box-body"}>
+              {!fromDashboard ?
+              <div className="input-group col-sm-4">
+                <input type="text" onKeyUp={this.handleFilter} className="form-control" placeholder="Search By Host" />
+                <span className="input-group-btn">
+                <button className="btn btn-primary" type="button"><i className="fa fa-search"></i></button>
+                </span>
+              </div>
+              : ''}
               <Table className="table topology-table" noDataText="No records found." currentPage={0} >
                 <Thead>
                   <Th column="host:Port"><OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Nimbus hostname and port number</Tooltip>}><span>Host:Port</span></OverlayTrigger></Th>
@@ -80,7 +106,7 @@ export default class NimbusSummary extends Component{
                   <Th column="uptime"><OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Time since this nimbus host has been running.</Tooltip>}><span>Uptime</span></OverlayTrigger></Th>
                 </Thead>
                 {
-                  _.map(entities, (entity, i) => {
+                  _.map(filteredEntities, (entity, i) => {
                     return (
                       <Tr key={i}>
                         <Td column="host:Port"><a href={entity.nimbusLogLink} target="_blank">{entity.host+':'+entity.port}</a></Td>
@@ -91,6 +117,11 @@ export default class NimbusSummary extends Component{
                   })
                 }
               </Table>
+              {
+                !fromDashboard && filteredEntities.length !== 0
+                ? <CommonPagination  {...paginationObj} callBackFunction={this.callBackFunction.bind(this)}/>
+                : ''
+              }
             </div>
         </div>
       </div>
