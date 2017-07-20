@@ -686,3 +686,28 @@ ul.legends li.legend{
 .toast-message {
   display: none;
 }
+.switchWrapper.lagSwitchSetting{
+  margin-top: -7px;
+}
+.box .box-header .box-control span,.box-control span {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+    margin: 10px 2px;
+    border-radius: 50%;
+    background-color: #4b4b4b;
+    color: rgba(255,255,255,0.75);
+}
+.box-control span {
+  margin: 0 2px;
+}
+/*.box .box-header .box-control a i {
+    visibility: hidden;
+}
+.box .box-header .box-control:hover a i {
+    visibility: visible;
+}*/
+.box .box-header .box-control span.primary, .box-control span.primary {background-color: #1b75bb;}

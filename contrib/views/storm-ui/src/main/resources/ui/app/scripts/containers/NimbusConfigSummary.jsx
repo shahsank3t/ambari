@@ -15,6 +15,7 @@ import CommonNotification from '../components/CommonNotification';
 import Utils from '../utils/Utils';
 import CommonPagination from '../components/CommonPagination';
 import {Accordion, Panel} from 'react-bootstrap';
+import CommonExpanded from '../components/CommonExpanded';
 
 export default class NimbusConfigSummary extends Component{
   constructor(props){
@@ -24,7 +25,8 @@ export default class NimbusConfigSummary extends Component{
       entity : [],
       filterValue: '',
       collapse : true,
-      activePage : 1
+      activePage : 1,
+      expandPanel : false
     };
   }
 
@@ -51,8 +53,14 @@ export default class NimbusConfigSummary extends Component{
     this.setState({activePage : eventKey});
   }
 
+  onSelectFunction = (type) => {
+    let tempState = _.cloneDeep(this.state);
+    tempState[type] = !tempState[type];
+    this.setState(tempState);
+  }
+
   render(){
-    const {entity,collapse,filterValue,activePage} = this.state;
+    const {entity,collapse,filterValue,activePage,expandPanel} = this.state;
     const filteredEntities = Utils.filterByKey(_.keys(entity), filterValue);
     const paginationObj = {
       activePage,
@@ -60,17 +68,12 @@ export default class NimbusConfigSummary extends Component{
       filteredEntities
     };
 
-    const panelHeader = <div>
-                          <h4 style={{marginTop:0,marginBottom:0}}>Nimbus Configuration
-                            <div className="box-control pull-right">
-                              <a href="javascript:void(0);" className="primary"><i className="fa fa-expand" id="collapseTable"></i></a>
-                            </div>
-                          </h4>
-                        </div>;
+    const panelHeader = <h4>Nimbus Configuration
+                        <CommonExpanded  expandFlag={expandPanel}/></h4>;
 
     return(
       <Accordion>
-        <Panel header={panelHeader} eventKey="1">
+        <Panel header={panelHeader} eventKey="1" expanded={expandPanel} onSelect={this.onSelectFunction.bind(this,'expandPanel')}>
           <div className="input-group col-sm-4">
             <input type="text" onKeyUp={this.handleFilter} className="form-control" placeholder="Search By Key" />
             <span className="input-group-btn">

@@ -15,7 +15,19 @@ const hideFSModal = function(modal,callback){
   }
 };
 
+const populateWindowsOptions = function(optionsArr){
+  let options=[];
+  _.map(optionsArr, (opt) => {
+    options.push({
+      label : opt.windowPretty,
+      value : opt.window
+    });
+  });
+  return options;
+};
+
 export default{
   filterByKey,
-  hideFSModal
+  hideFSModal,
+  populateWindowsOptions
 };

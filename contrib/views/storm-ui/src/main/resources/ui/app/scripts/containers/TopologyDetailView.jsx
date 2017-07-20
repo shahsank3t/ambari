@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
 import BaseContainer from './BaseContainer';
 import SearchLogs from '../components/SearchLogs';
 import TopologyREST from '../rest/TopologyREST';
@@ -23,6 +24,9 @@ import Modal from '../components/FSModel';
 import CommonWindowPanel from '../components/CommonWindowPanel';
 import RebalanceTopology from '../components/RebalanceTopology';
 import LogLevelComponent  from '../components/LogLevelComponent';
+import CommonSwitchComponent from '../components/CommonSwitchComponent';
+import BarChart from '../components/BarChart';
+import CommonExpanded from '../components/CommonExpanded';
 
 export default class TopologyDetailView extends Component {
   constructor(props){
@@ -39,7 +43,14 @@ export default class TopologyDetailView extends Component {
       windowOptions : [],
       systemFlag : false,
       killWaitTime : 30,
-      showLogLevel : false
+      showLogLevel : false,
+      topologyLagFlag : false,
+      topologyLagPage : 1,
+      toggleGraphAndTable: true,
+      expandGraph : true,
+      expandSpout : true,
+      expandBolt : true,
+      expandConfig : false
     };
     this.fetchDetails();
   }
@@ -47,7 +58,8 @@ export default class TopologyDetailView extends Component {
     const {selectedWindowKey,systemFlag} = this.state;
     let promiseArr=[
       TopologyREST.getTopologyDetails(this.props.params.id,selectedWindowKey.value,systemFlag),
-      TopologyREST.getTopologyGraphData(this.props.params.id,selectedWindowKey.value)
+      TopologyREST.getTopologyGraphData(this.props.params.id,selectedWindowKey.value),
+      TopologyREST.getTopologyLag(this.props.params.id)
     ];
 
     Promise.all(promiseArr).then((results) => {
@@ -60,23 +72,19 @@ export default class TopologyDetailView extends Component {
 
       let stateObj = {};
       stateObj.details = results[0];
-      stateObj.windowOptions = this.populateWindowsOptions(stateObj.details.topologyStats);
+      stateObj.windowOptions = Utils.populateWindowsOptions(stateObj.details.topologyStats);
       stateObj.debugSimplePCT = stateObj.details.samplingPct;
       stateObj.selectedWindowKey = {label : stateObj.details.windowHint, value : stateObj.details.window};
       stateObj.graphData = results[1];
+      stateObj.topologyLag = results[2];
       this.setState(stateObj);
     });
   }
 
-  populateWindowsOptions(optionsArr){
-    let options=[];
-    _.map(optionsArr, (opt) => {
-      options.push({
-        label : opt.windowPretty,
-        value : opt.window
-      });
-    });
-    return options;
+  componentDidUpdate(){
+    if(this.refs.barChart){
+      ReactDOM.findDOMNode(document.getElementById('lag-graph')).appendChild(this.refs.barChart.legendsEl);
+    }
   }
 
   handleWindowChange = (obj) => {
@@ -124,6 +132,8 @@ export default class TopologyDetailView extends Component {
     case 'bolt' : this.setState({boltsActivePage : eventKey});
       break;
     case 'topologyConfig' : this.setState({topologyActivePage : eventKey});
+      break;
+    case 'topologyLag' : this.setState({topologyLagPage : eventKey});
       break;
     default :
       break;
@@ -271,8 +281,25 @@ export default class TopologyDetailView extends Component {
     this.setState({showLogLevel : !this.state.showLogLevel});
   }
 
+  toggleKafkaLag = (action,event) => {
+    event.stopPropagation();
+    this.setState({toggleGraphAndTable : !this.state.toggleGraphAndTable});
+  }
+
+  lagAccodianClick = () => {
+    this.setState({topologyLagFlag : !this.state.topologyLagFlag});
+  }
+
+  commonOnSelectFunction = (type) => {
+    let tempState = _.cloneDeep(this.state);
+    tempState[type] = !tempState[type];
+    this.setState(tempState);
+  }
+
   render() {
-    const {details,spotActivePage,boltsActivePage,topologyActivePage,spotFilterValue,blotFilterValue,topologyFilterValue,graphData,selectedWindowKey,windowOptions,systemFlag,debugFlag,debugSimplePCT,killWaitTime,showLogLevel} = this.state;
+    const {details,spotActivePage,boltsActivePage,topologyActivePage,spotFilterValue,blotFilterValue,topologyFilterValue,
+      graphData,selectedWindowKey,windowOptions,systemFlag,debugFlag,debugSimplePCT,killWaitTime,showLogLevel,
+      topologyLagFlag,topologyLagPage,topologyLag,toggleGraphAndTable,expandGraph,expandSpout,expandBolt,expandConfig} = this.state;
     const spoutfilteredEntities = Utils.filterByKey(details.spouts || [], spotFilterValue,'spoutId');
     const blotfilteredEntities = Utils.filterByKey(details.bolts || [], blotFilterValue,'boltId');
     const topologyfilteredEntities = Utils.filterByKey(_.keys(details.configuration) || [], topologyFilterValue);
@@ -293,6 +320,26 @@ export default class TopologyDetailView extends Component {
     };
     const graphDataObj = _.isEmpty(graphData) && graphData === undefined ? {} : graphData;
     const topologyStatus = details !== undefined ? details.status : '';
+    const lagPanelHeader = <h4>
+      Kafka Spout Lag
+      <CommonExpanded  expandFlag={topologyLagFlag}/>
+      {
+        <CommonSwitchComponent KYC="kafka" checked={toggleGraphAndTable} textON="Table" textOFF="Graph" switchCallBack={this.toggleKafkaLag.bind(this,'kafkaSpoutLag')} />
+      }
+    </h4>;
+
+    const graphPanelHead = <h4> {details.name}
+                              <CommonExpanded  expandFlag={expandGraph}/></h4>;
+
+    const spoutPanelHead = <h4> Spouts
+                            <CommonExpanded  expandFlag={expandSpout}/></h4>;
+
+    const boltPanelHead = <h4> Bolts
+                            <CommonExpanded  expandFlag={expandBolt}/></h4>;
+
+    const configPanelHead = <h4> Topology Configuration
+                              <CommonExpanded  expandFlag={expandConfig}/></h4>;
+
     return (
     <BaseContainer ref="BaseContainer">
       <Breadcrumbs links={this.getLinks()} />
@@ -303,7 +350,7 @@ export default class TopologyDetailView extends Component {
         <div className="col-sm-12">
           <div className="box filter">
             <div className="box-body form-horizontal">
-              <CommonWindowPanel selectedWindowKey={selectedWindowKey} windowOptions={windowOptions} status={topologyStatus} systemFlag={systemFlag} debugFlag={debugFlag} handleWindowChange={this.handleWindowChange.bind(this)} toggleSystem={this.toggleSystem.bind(this)} handleTopologyAction={this.handleTopologyAction.bind(this)} handleLogLevel={this.handleLogLevel.bind(this)} topologyStatus={topologyStatus}/>
+              <CommonWindowPanel KYC="detailView" selectedWindowKey={selectedWindowKey} windowOptions={windowOptions} status={topologyStatus} systemFlag={systemFlag} debugFlag={debugFlag} handleWindowChange={this.handleWindowChange.bind(this)} toggleSystem={this.toggleSystem.bind(this)} handleTopologyAction={this.handleTopologyAction.bind(this)} handleLogLevel={this.handleLogLevel.bind(this)} topologyStatus={topologyStatus}/>
               {
                 showLogLevel
                 ? <LogLevelComponent topologyId={details.id}/>
@@ -408,14 +455,45 @@ export default class TopologyDetailView extends Component {
           </div>
         </div>
       </div>
-      <Panel defaultExpanded collapsible header={details.name} eventKey="1">
+      <Panel expanded={expandGraph} collapsible header={graphPanelHead} eventKey="1" onSelect={this.commonOnSelectFunction.bind(this,'expandGraph')}>
         <div className="graph-bg">
           <TopologyGraph
             data={graphDataObj}
           />
         </div>
       </Panel>
-      <Panel defaultExpanded collapsible header="Spouts" eventKey="2">
+      {
+        !_.isEmpty(topologyLag)
+        ? <Panel expanded={topologyLagFlag} collapsible header={lagPanelHeader} eventKey="3" onSelect={this.lagAccodianClick.bind(this)}>
+          {
+            toggleGraphAndTable
+            ? <Table className="table no-margin"  noDataText="No found !"  currentPage={topologyLagPage-1} itemsPerPage={pageSize}>
+                <Thead>
+                  <Th column="spoutId" title="Id">Id</Th>
+                  <Th column="topic" title="Topic">Topic</Th>
+                  <Th column="partition" title="Partition">Partition</Th>
+                  <Th column="logHeadOffset" title="Latest Offset"></Th>
+                  <Th column="consumerCommittedOffset" title="Spout Committed Offset">Spout Committed Offset</Th>
+                  <Th column="lag" title="Lag">Lag</Th>
+                </Thead>
+              </Table>
+            : <div id="lag-graph">
+                <BarChart
+                  ref="barChart"
+                  width={window != window.parent ? 1100 : 1300}
+                  height={400}
+                  xAttr="spoutId-partition"
+                  yAttr="count"
+                  data={[{'Latest Offset':23,'Spout Committed Offset': 100,'spoutId-partition': 'partition'},{'Latest Offset':300,'Spout Committed Offset': 380,'spoutId-partition': 'partition 23'}]}
+                />
+            </div>
+          }
+
+
+          </Panel>
+        : null
+      }
+      <Panel expanded={expandSpout} collapsible header={spoutPanelHead} eventKey="3" onSelect={this.commonOnSelectFunction.bind(this,'expandSpout')}>
         <div className="input-group col-sm-4">
           <input type="text"  onKeyUp={this.handleFilter.bind(this,'spout')} className="form-control" placeholder="Search By Id" />
           <span className="input-group-btn">
@@ -464,7 +542,7 @@ export default class TopologyDetailView extends Component {
           : ''
         }
       </Panel>
-      <Panel defaultExpanded collapsible header="Bolts" eventKey="3">
+      <Panel expanded={expandBolt} collapsible header={boltPanelHead} eventKey="4" onSelect={this.commonOnSelectFunction.bind(this,'expandBolt')}>
         <div className="input-group col-sm-4">
           <input type="text"  onKeyUp={this.handleFilter.bind(this,'bolt')} className="form-control" placeholder="Search By Id" />
           <span className="input-group-btn">
@@ -519,7 +597,7 @@ export default class TopologyDetailView extends Component {
           : ''
         }
       </Panel>
-      <Panel defaultExpanded collapsible header="Topology Configuration" eventKey="4">
+      <Panel expanded={expandConfig} collapsible header={configPanelHead} eventKey="5" onSelect={this.commonOnSelectFunction.bind(this,'expandConfig')}>
         <div className="input-group col-sm-4">
           <input type="text"  onKeyUp={this.handleFilter.bind(this,'topologyConfig')} className="form-control" placeholder="Search By Key" />
           <span className="input-group-btn">

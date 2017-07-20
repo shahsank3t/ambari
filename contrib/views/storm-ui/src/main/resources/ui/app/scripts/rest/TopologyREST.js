@@ -29,10 +29,14 @@ const TopologyREST = {
     }
     return this.requestCall(url, options);
   },
-  getTopologyComponentDetail(TopId, CompName, options){
+  getTopologyComponentDetail(TopId, CompName,windowSize,systemFlag, options){
     options = options || {};
     options.method = options.method || 'GET';
-    return this.requestCall(baseUrl+'topology/'+TopId+'/component/'+CompName, options);
+    let url = baseUrl+'topology/'+TopId+'/component/'+CompName+'?window='+windowSize;
+    if(systemFlag !== '' && systemFlag !== undefined){
+      url += '&sys='+systemFlag;
+    }
+    return this.requestCall(url, options);
   },
   getLogConfig(id,options) {
     options = options || {};
@@ -70,11 +74,21 @@ const TopologyREST = {
     }
     return this.requestCall(url,options);
   },
+  getTopologyLag(id,options) {
+    options = options || {};
+    options.method = options.method || 'GET';
+    return this.requestCall(baseUrl+'topology/'+id+'/lag', options);
+  },
+  getProfiling(id,type,hostPort,options) {
+    options = options || {};
+    options.method = options.method || 'GET';
+    return this.requestCall(baseUrl+'topology/'+id+'/profiling/'+type+'/'+hostPort, options);
+  },
   requestCall(url, options){
-    // let urlPart = url.split('url=')[0];
-    // let stormUrlPart = url.split('url=')[1];
-    // urlPart += 'url=' + encodeURIComponent(stormUrlPart);
-    // url = urlPart;
+    let urlPart = url.split('url=')[0];
+    let stormUrlPart = url.split('url=')[1];
+    urlPart += 'url=' + encodeURIComponent(stormUrlPart);
+    url = urlPart;
     options.credentials = 'same-origin';
     return fetch(url, options)
       .then((response) => {
