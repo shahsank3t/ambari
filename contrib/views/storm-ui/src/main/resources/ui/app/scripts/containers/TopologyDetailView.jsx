@@ -44,13 +44,14 @@ export default class TopologyDetailView extends Component {
       systemFlag : false,
       killWaitTime : 30,
       showLogLevel : false,
-      topologyLagFlag : false,
+      topologyLagFlag : true,
       topologyLagPage : 1,
       toggleGraphAndTable: true,
       expandGraph : true,
       expandSpout : true,
       expandBolt : true,
-      expandConfig : false
+      expandConfig : false,
+      topologyLag : []
     };
     this.fetchDetails();
   }
@@ -76,9 +77,32 @@ export default class TopologyDetailView extends Component {
       stateObj.debugSimplePCT = stateObj.details.samplingPct;
       stateObj.selectedWindowKey = {label : stateObj.details.windowHint, value : stateObj.details.window};
       stateObj.graphData = results[1];
-      stateObj.topologyLag = results[2];
+      stateObj.topologyLag = _.isEmpty(results[2]) ? [] : this.generateTopologyLagData(results[2]);
       this.setState(stateObj);
     });
+  }
+
+  generateTopologyLagData = (lagObj) => {
+    const objKey = _.keys(lagObj);
+    let arr = [];
+    _.map(objKey, (o) => {
+      let data = lagObj[o];
+      const topicKeys = _.keys(data.spoutLagResult);
+      _.map(topicKeys, (t) => {
+        const topicName = t;
+        const partitionData = data.spoutLagResult[t];
+        const partitionKey = _.keys(partitionData);
+        _.map(partitionKey, (pk) => {
+          let obj = partitionData[pk];
+          obj['spoutId'] = data.spoutId;
+          obj['spoutType'] = data.spoutType;
+          obj['partition'] = pk;
+          obj['topic'] = topicName;
+          arr.push(obj);
+        });
+      });
+    });
+    return arr;
   }
 
   componentDidUpdate(){
@@ -296,6 +320,18 @@ export default class TopologyDetailView extends Component {
     this.setState(tempState);
   }
 
+  populateLagGraphData = (data) => {
+    let graphArr=[];
+    _.map(data, (t) => {
+      graphArr.push({
+        'Latest Offset': t.logHeadOffset,
+  			'Spout Committed Offset': t.consumerCommittedOffset,
+  			'spoutId-partition': t.spoutId+'-'+t.partition
+      });
+    });
+    return graphArr;
+  }
+
   render() {
     const {details,spotActivePage,boltsActivePage,topologyActivePage,spotFilterValue,blotFilterValue,topologyFilterValue,
       graphData,selectedWindowKey,windowOptions,systemFlag,debugFlag,debugSimplePCT,killWaitTime,showLogLevel,
@@ -463,19 +499,31 @@ export default class TopologyDetailView extends Component {
         </div>
       </Panel>
       {
-        !_.isEmpty(topologyLag)
+        topologyLag.length
         ? <Panel expanded={topologyLagFlag} collapsible header={lagPanelHeader} eventKey="3" onSelect={this.lagAccodianClick.bind(this)}>
           {
             toggleGraphAndTable
-            ? <Table className="table no-margin"  noDataText="No found !"  currentPage={topologyLagPage-1} itemsPerPage={pageSize}>
+            ? <Table className="table table-striped table-bordered"  noDataText="No data found !"  currentPage={topologyLagPage-1} itemsPerPage={pageSize}>
                 <Thead>
                   <Th column="spoutId" title="Id">Id</Th>
                   <Th column="topic" title="Topic">Topic</Th>
                   <Th column="partition" title="Partition">Partition</Th>
-                  <Th column="logHeadOffset" title="Latest Offset"></Th>
+                  <Th column="logHeadOffset" title="Latest Offset">Latest Offset</Th>
                   <Th column="consumerCommittedOffset" title="Spout Committed Offset">Spout Committed Offset</Th>
                   <Th column="lag" title="Lag">Lag</Th>
                 </Thead>
+                {
+                  _.map(topologyLag , (l, i) => {
+                    return <Tr key={i}>
+                      <Td column="spoutId">{l.spoutId}</Td>
+                      <Td column="topic">{l.topic}</Td>
+                      <Td column="partition">{l.partition}</Td>
+                      <Td column="logHeadOffset">{l.logHeadOffset}</Td>
+                      <Td column="consumerCommittedOffset">{l.consumerCommittedOffset}</Td>
+                      <Td column="lag">{l.lag}</Td>
+                    </Tr>;
+                  })
+                }
               </Table>
             : <div id="lag-graph">
                 <BarChart
@@ -484,7 +532,7 @@ export default class TopologyDetailView extends Component {
                   height={400}
                   xAttr="spoutId-partition"
                   yAttr="count"
-                  data={[{'Latest Offset':23,'Spout Committed Offset': 100,'spoutId-partition': 'partition'},{'Latest Offset':300,'Spout Committed Offset': 380,'spoutId-partition': 'partition 23'}]}
+                  data={this.populateLagGraphData(topologyLag)}
                 />
             </div>
           }

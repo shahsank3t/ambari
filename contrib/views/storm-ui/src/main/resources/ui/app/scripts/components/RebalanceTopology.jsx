@@ -28,6 +28,7 @@ export default class RebalanceTopology extends Component{
         stateObj.freeSlot = result.slotsFree;
         stateObj.rebalanceData={};
         stateObj.rebalanceData.workers = topologyExecutors + stateObj.freeSlot;
+        this.totalWorker = stateObj.rebalanceData.workers;
         _.map(spoutArr, (s) => {
           stateObj.rebalanceData[s.spoutId] = s.executors;
         });
@@ -92,7 +93,7 @@ export default class RebalanceTopology extends Component{
             <label>Workers:<span className="text-danger">*</span></label>
           </div>
           <div className="col-sm-7">
-            <span style={{float : 'left'}}>0</span><input type="range" min={0} style={{width : '90%', float : 'left',margin : '0 7px' }} max={rebalanceData.workers} onChange={this.rebalanceValueChange.bind(this,'workers')} /><span style={{float : 'left', clear : 'right'}}>{rebalanceData.workers}</span>
+            <span style={{float : 'left'}}>0</span><input type="range" title={rebalanceData.workers +' workers selected.'} min={0} style={{width : '90%', float : 'left',margin : '6px 7px' }} max={this.totalWorker} onChange={this.rebalanceValueChange.bind(this,'workers')} /><span style={{float : 'left', clear : 'right'}}>{this.totalWorker}</span>
           </div>
         </div>
         {
