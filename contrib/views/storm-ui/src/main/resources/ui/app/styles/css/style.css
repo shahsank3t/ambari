@@ -581,6 +581,14 @@ ul.legends li.legend{
 .searchbar .open > .dropdown-toggle.btn-default:focus{
   border: 1px solid transparent;
 }
+.searchbar .form-group, .searchbar .checkbox {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.searchbar .checkbox label {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
 .topology-table{
   margin-bottom: 0 !important;
 }
@@ -811,3 +819,10 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 /* input range css end here*/
+.editable-input {
+  display: inline-block;
+  width: auto;
+}
+.editable-container .btn {
+  margin-left: 7px;
+}

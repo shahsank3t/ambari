@@ -77,9 +77,9 @@ export default class Editable extends Component {
     const {edit, errorMsg} = this.state;
 
     const buttons = showButtons
-      ? ([<Button className="btn-link btn-xs" bsStyle="success" onClick={this.handleResolve} key="resolve">
+      ? ([<Button type="button" className="btn-xs" bsStyle="primary" onClick={this.handleResolve} key="resolve">
           <i className="fa fa-check"></i></Button>,
-        <Button className="btn-link btn-xs" bsStyle="danger" onClick={this.handleReject} key="reject">
+        <Button type="button" className="btn-xs" bsStyle="default" onClick={this.handleReject} key="reject">
             <i className="fa fa-times"></i>
           </Button>
       ])

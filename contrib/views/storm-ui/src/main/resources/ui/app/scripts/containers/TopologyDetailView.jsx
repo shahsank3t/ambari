@@ -294,7 +294,7 @@ export default class TopologyDetailView extends Component {
           FSReactToastr.error(
             <CommonNotification flag="error" content={result.responseMessage}/>, '', toastOpt);
         } else {
-          FSReactToastr.success(<strong>"Topology "+action+" successfully."</strong>);
+          FSReactToastr.success(<strong>{"Topology "+action+"d successfully."}</strong>);
         }
       });
       confirmBox.cancel();

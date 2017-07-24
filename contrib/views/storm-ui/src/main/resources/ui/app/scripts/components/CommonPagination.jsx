@@ -18,7 +18,7 @@ export default class CommonPagination extends Component{
     return(
       <div className="pagination-wrapper">
         <div className="pull-left">
-          <span>{`Showing ${activePage > 1 ? (activePage-1)*pageSize : activePage }  ot ${activePage*pageSize > filteredEntities.length ? filteredEntities.length : (activePage*pageSize)} of ${filteredEntities.length} entries`}</span>
+          <span>{`Showing ${activePage > 1 ? (activePage-1)*pageSize : activePage }  to ${activePage*pageSize > filteredEntities.length ? filteredEntities.length : (activePage*pageSize)} of ${filteredEntities.length} entries`}</span>
         </div>
         <Pagination
          className={`${filteredEntities.length === 0? 'hidden':'shown pull-right'}`}
