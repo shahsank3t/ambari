@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Select from 'react-select';
 import CommonSwitchComponent from './CommonSwitchComponent';
+import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 
 export default class CommonWindowPanel extends Component{
   constructor(props){
@@ -39,24 +40,38 @@ export default class CommonWindowPanel extends Component{
           <div className="btn-group" role="group">
             {
               KYC === 'detailView'
-              ? [<button key={1} type="button" className="btn btn-primary" onClick={this.commonTopologyActionHandler.bind(this,'activate')} title="Activate" data-rel="tooltip" disabled={topologyStatus === 'ACTIVE' ? "disabled" : null}>
-                <i className="fa fa-play"></i>
-                </button>,
-                <button key={2} type="button" className="btn btn-primary" onClick={this.commonTopologyActionHandler.bind(this,'deactivate')} title="Deactivate" data-rel="tooltip" disabled={topologyStatus === 'INACTIVE' ? "disabled" : null}>
-                  <i className="fa fa-stop"></i>
-                </button>,
-                <button key={3} type="button" className="btn btn-primary" onClick={this.commonTopologyActionHandler.bind(this,'rebalance')} title="Rebalance" data-rel="tooltip" disabled={topologyStatus === 'REBALANCING' ? "disabled" : null}>
-                  <i className="fa fa-balance-scale"></i>
-                </button>,
-                <button key={4} type="button" className="btn btn-primary" onClick={this.commonTopologyActionHandler.bind(this,'kill')} title="Kill" data-rel="tooltip" disabled={topologyStatus === 'KILLED' ? "disabled" : null}>
-                  <i className="fa fa-ban"></i>
-                </button>,
-                <button key={5} type="button" className="btn btn-primary" onClick={handleLogLevel} title="Change Log Level" data-rel="tooltip">
-                  <i className="fa fa-file-o"></i>
-                </button>]
-              : <button type="button" className="btn btn-primary" onClick={handleProfiling} title="Profiling & Debugging" data-rel="tooltip">
-									<i className="fa fa-cogs"></i>
-								</button>
+              ? [ <OverlayTrigger  key={1} placement="top" overlay={<Tooltip id="tooltip1">Activate</Tooltip>}>
+                    <button type="button" className="btn btn-primary" onClick={this.commonTopologyActionHandler.bind(this,'activate')} disabled={topologyStatus === 'ACTIVE' ? "disabled" : null}>
+                      <i className="fa fa-play"></i>
+                    </button>
+                  </OverlayTrigger>,
+                <OverlayTrigger key={2}  placement="top" overlay={<Tooltip id="tooltip1">Deactivate</Tooltip>}>
+                  <button type="button" className="btn btn-primary" onClick={this.commonTopologyActionHandler.bind(this,'deactivate')}  disabled={topologyStatus === 'INACTIVE' ? "disabled" : null}>
+                    <i className="fa fa-stop"></i>
+                  </button>
+                </OverlayTrigger>,
+                <OverlayTrigger key={3} placement="top" overlay={<Tooltip id="tooltip1">Rebalance</Tooltip>}>
+                  <button type="button" className="btn btn-primary" onClick={this.commonTopologyActionHandler.bind(this,'rebalance')} disabled={topologyStatus === 'REBALANCING' ? "disabled" : null}>
+                    <i className="fa fa-balance-scale"></i>
+                  </button>
+                </OverlayTrigger>,
+                <OverlayTrigger  key={4} placement="top" overlay={<Tooltip id="tooltip1">Kill</Tooltip>}>
+                  <button type="button" className="btn btn-primary" onClick={this.commonTopologyActionHandler.bind(this,'kill')} disabled={topologyStatus === 'KILLED' ? "disabled" : null}>
+                    <i className="fa fa-ban"></i>
+                  </button>
+                </OverlayTrigger>,
+                <OverlayTrigger key={5} placement="top" overlay={<Tooltip id="tooltip1">Change Log Level</Tooltip>}>
+                  <button  type="button" className="btn btn-primary" onClick={handleLogLevel}>
+                    <i className="fa fa-file-o"></i>
+                  </button>
+                </OverlayTrigger>
+              ]
+              : <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip1">Profiling & Debugging</Tooltip>}>
+                  <button type="button" className="btn btn-primary" onClick={handleProfiling}>
+                   <i className="fa fa-cogs"></i>
+                 </button>
+                </OverlayTrigger>
+
             }
           </div>
         </div>

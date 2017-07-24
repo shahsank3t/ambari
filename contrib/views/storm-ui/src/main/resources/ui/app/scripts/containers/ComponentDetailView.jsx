@@ -20,7 +20,7 @@ import React, {Component} from 'react';
 import BaseContainer from './BaseContainer';
 import SearchLogs from '../components/SearchLogs';
 import TopologyREST from '../rest/TopologyREST';
-import {Accordion, Panel} from 'react-bootstrap';
+import {Accordion, Panel,OverlayTrigger, Tooltip} from 'react-bootstrap';
 import TopologyGraph from '../components/TopologyGraph';
 import {
   Table,
@@ -69,6 +69,9 @@ export default class ComponentDetailView extends Component {
       stateObj.spoutFlag = stateObj.componentDetail.componentType === 'spout' ? true: false;
       stateObj.samplingPct = stateObj.componentDetail.samplingPct;
       stateObj.windowOptions = Utils.populateWindowsOptions(stateObj.spoutFlag ? stateObj.componentDetail.spoutSummary : stateObj.componentDetail.boltStats);
+      if(stateObj.windowOptions.length === 0){
+        stateObj.selectedWindowKey = '';
+      }
       stateObj.topologyStatus = stateObj.componentDetail.topologyStatus;
       this.setState(stateObj);
     });
@@ -162,13 +165,41 @@ export default class ComponentDetailView extends Component {
     return (
     <Table className="table no-margin"  noDataText={noDataText}  currentPage={activePage-1} itemsPerPage={pageSize}>
       <Thead>
-        <Th column="component" title="The ID assigned to a the Component by the Topology.">Component</Th>
-        <Th column="stream" title="The name of the Tuple stream given in the Topolgy, or &#34;default&#34; if none was given.">Stream</Th>
-        <Th column="executeLatency" title="The average time a Tuple spends in the execute method. The execute method may complete without sending an Ack for the tuple.">Execute Latency (ms)</Th>
-        <Th column="executed" title="The number of incoming Tuples processed.">Executed</Th>
-        <Th column="processLatency" title="The average time it takes to Ack a Tuple after it is first received.  Bolts that join, aggregate or batch may not Ack a tuple until a number of other Tuples have been received.">Process Latency (ms)</Th>
-        <Th column="acked" title="The number of Tuples acknowledged by this Bolt.">Acked</Th>
-        <Th column="failed" title="The number of tuples Failed by this Bolt.">Failed</Th>
+        <Th column="component">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The ID assigned to a the Component by the Topology.</Tooltip>}>
+             <span>Component</span>
+          </OverlayTrigger>
+        </Th>
+        <Th column="stream">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The name of the Tuple stream given in the Topolgy, or &#34;default&#34; if none was given.</Tooltip>}>
+             <span>Stream</span>
+          </OverlayTrigger>
+        </Th>
+        <Th column="executeLatency">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The average time a Tuple spends in the execute method. The execute method may complete without sending an Ack for the tuple.</Tooltip>}>
+             <span>Execute Latency (ms)</span>
+          </OverlayTrigger>
+        </Th>
+        <Th column="executed">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of incoming Tuples processed.</Tooltip>}>
+             <span>Executed</span>
+          </OverlayTrigger>
+        </Th>
+        <Th column="processLatency">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The average time it takes to Ack a Tuple after it is first received.  Bolts that join, aggregate or batch may not Ack a tuple until a number of other Tuples have been received.</Tooltip>}>
+             <span>Process Latency (ms)</span>
+          </OverlayTrigger>
+        </Th>
+        <Th column="acked">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Tuples acknowledged by this Bolt.</Tooltip>}>
+             <span>Acked</span>
+          </OverlayTrigger>
+        </Th>
+        <Th column="failed">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of tuples Failed by this Bolt.</Tooltip>}>
+             <span>Failed</span>
+          </OverlayTrigger>
+        </Th>
       </Thead>
       {
         _.map(FilteredEntities, (d,i) => {
@@ -195,15 +226,39 @@ export default class ComponentDetailView extends Component {
     return(
     <Table className="table no-margin"  noDataText={noDataText}  currentPage={activePage-1} itemsPerPage={pageSize}>
       <Thead>
-        <Th column="stream" title="The name of the Tuple stream given in the Topolgy, or &#34;default&#34; if none was given.">Stream</Th>
-        <Th column="emitted" title="The number of Tuples emitted.">Emitted</Th>
-        <Th column="transferred" title="The number of Tuples emitted that sent to one or more bolts.">Transferred</Th>
+        <Th column="stream">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The name of the Tuple stream given in the Topolgy, or &#34;default&#34; if none was given.</Tooltip>}>
+             <span>Stream</span>
+          </OverlayTrigger>
+        </Th>
+        <Th column="emitted">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Tuples emitted.</Tooltip>}>
+             <span>Emitted</span>
+          </OverlayTrigger>
+        </Th>
+        <Th column="transferred">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Tuples emitted that sent to one or more bolts.</Tooltip>}>
+             <span>Transferred</span>
+          </OverlayTrigger>
+        </Th>
         {
           spoutFlag
           ? [
-            <Th key={1} column="completeLatency" title="The average time a Tuple &#34;tree&#34; takes to be completely processed by the Topology. A value of 0 is expected if no acking is done.">Complete Latency (ms)</Th>,
-            <Th key={2} column="acked" title="The number of Tuple &#34;trees&#34; successfully processed. A value of 0 is expected if no acking is done.">Acked</Th>,
-            <Th key={3} column="failed" title="The number of Tuple &#34;trees&#34; that were explicitly failed or timed out before acking was completed. A value of 0 is expected if no acking is done.">Failed</Th>
+            <Th key={1} column="completeLatency">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The average time a Tuple &#34;tree&#34; takes to be completely processed by the Topology. A value of 0 is expected if no acking is done.</Tooltip>}>
+                 <span>Complete Latency (ms)</span>
+              </OverlayTrigger>
+            </Th>,
+            <Th key={2} column="acked">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Tuple &#34;trees&#34; successfully processed. A value of 0 is expected if no acking is done.</Tooltip>}>
+                 <span>Acked</span>
+              </OverlayTrigger>
+            </Th>,
+            <Th key={3} column="failed">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Tuple &#34;trees&#34; that were explicitly failed or timed out before acking was completed. A value of 0 is expected if no acking is done.</Tooltip>}>
+                 <span>Failed</span>
+              </OverlayTrigger>
+            </Th>
           ]
           : <Th key={4} column=""></Th>
         }
@@ -238,23 +293,79 @@ export default class ComponentDetailView extends Component {
     return(
     <Table className="table no-margin"  noDataText={noDataText}  currentPage={activePage-1} itemsPerPage={pageSize}>
       <Thead>
-        <Th column="id" title="The unique executor ID.">Id</Th>
-        <Th column="uptime" title="The length of time an Executor (thread) has been alive.">Uptime</Th>
-        <Th column="port" title="The hostname reported by the remote host. (Note that this hostname is not the result of a reverse lookup at the Nimbus node.) Click on it to open the logviewer page for this Worker.">Host:Port</Th>
-        <Th column="emitted" title="The number of Tuples emitted.">Emitted</Th>
-        <Th column="transferred" title="The number of Tuples emitted that sent to one or more bolts.">Transferred</Th>
+        <Th column="id">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The unique executor ID.</Tooltip>}>
+             <span>Id</span>
+          </OverlayTrigger>
+        </Th>
+        <Th column="uptime">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The length of time an Executor (thread) has been alive.</Tooltip>}>
+             <span>Uptime</span>
+          </OverlayTrigger>
+        </Th>
+        <Th column="port">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The hostname reported by the remote host. (Note that this hostname is not the result of a reverse lookup at the Nimbus node.) Click on it to open the logviewer page for this Worker.</Tooltip>}>
+             <span>Host:Port</span>
+          </OverlayTrigger>
+        </Th>
+        <Th column="emitted">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Tuples emitted.</Tooltip>}>
+             <span>Emitted</span>
+          </OverlayTrigger>
+        </Th>
+        <Th column="transferred">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Tuples emitted that sent to one or more bolts.</Tooltip>}>
+             <span>Transferred</span>
+          </OverlayTrigger>
+        </Th>
         {!spoutFlag ?
         [
-          <Th key={1} column="capacity" title="If this is around 1.0, the corresponding Bolt is running as fast as it can, so you may want to increase the Bolt's parallelism. This is (number executed * average execute latency) / measurement time.">Capacity (last 10m)</Th>,
-          <Th key={2} column="executeLatency" title=" average time a Tuple spends in the execute method. The execute method may complete without sending an Ack for the tuple.">Execute Latency (ms)</Th>,
-          <Th key={3} column="executed" title="The number of incoming Tuples processed.">Executed</Th>,
-          <Th key={4} column="processLatency" title="The average time it takes to Ack a Tuple after it is first received.  Bolts that join, aggregate or batch may not Ack a tuple until a number of other Tuples have been received.">Process Latency (ms</Th>,
-          <Th key={5} column="completeLatency" title="The average time a Tuple &#34;tree&#34; takes to be completely processed by the Topology. A value of 0 is expected if no acking is done.">Complete Latency (ms)</Th>
-        ] : <Th column="completeLatency" title="The average time a Tuple &#34;tree&#34; takes to be completely processed by the Topology. A value of 0 is expected if no acking is done.">Complete Latency (ms)</Th>
+          <Th key={1} column="capacity">
+            <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">If this is around 1.0, the corresponding Bolt is running as fast as it can, so you may want to increase the Bolt's parallelism. This is (number executed * average execute latency) / measurement time.</Tooltip>}>
+               <span>Capacity (last 10m)</span>
+            </OverlayTrigger>
+          </Th>,
+          <Th key={2} column="executeLatency">
+            <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The average time a Tuple spends in the execute method. The execute method may complete without sending an Ack for the tuple.</Tooltip>}>
+               <span>Execute Latency (ms)</span>
+            </OverlayTrigger>
+          </Th>,
+          <Th key={3} column="executed">
+            <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of incoming Tuples processed.</Tooltip>}>
+               <span>Executed</span>
+            </OverlayTrigger>
+          </Th>,
+          <Th key={4} column="processLatency">
+            <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The average time it takes to Ack a Tuple after it is first received.  Bolts that join, aggregate or batch may not Ack a tuple until a number of other Tuples have been received.</Tooltip>}>
+               <span>Process Latency (ms)</span>
+            </OverlayTrigger>
+          </Th>,
+          <Th key={5} column="completeLatency">
+            <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The average time a Tuple &#34;tree&#34; takes to be completely processed by the Topology. A value of 0 is expected if no acking is done.</Tooltip>}>
+               <span>Complete Latency (ms)</span>
+            </OverlayTrigger>
+          </Th>
+        ] : <Th column="completeLatency">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The average time a Tuple &#34;tree&#34; takes to be completely processed by the Topology. A value of 0 is expected if no acking is done.</Tooltip>}>
+                 <span>Complete Latency (ms)</span>
+              </OverlayTrigger>
+            </Th>
         }
-        <Th column="acked" title="The number of Tuple &#34;trees&#34; successfully processed. A value of 0 is expected if no acking is done.">Acked</Th>
-        <Th column="failed" title="The number of Tuple &#34;trees&#34; that were explicitly failed or timed out before acking was completed. A value of 0 is expected if no acking is done.">Failed</Th>
-        <Th column="workerLogLink">Dumps</Th>
+        <Th column="acked">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Tuple &#34;trees&#34; successfully processed. A value of 0 is expected if no acking is done.</Tooltip>}>
+             <span>Acked</span>
+          </OverlayTrigger>
+        </Th>
+        <Th column="failed">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Tuple &#34;trees&#34; that were explicitly failed or timed out before acking was completed. A value of 0 is expected if no acking is done.</Tooltip>}>
+             <span>Failed</span>
+          </OverlayTrigger>
+        </Th>
+        <Th column="workerLogLink">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Dumps</Tooltip>}>
+             <span>Dumps</span>
+          </OverlayTrigger>
+        </Th>
       </Thead>
       {
         _.map(FilteredEntities, (d,i) => {
@@ -278,7 +389,7 @@ export default class ComponentDetailView extends Component {
               <Td column="acked">{d.acked}</Td>
               <Td column="failed">{d.failed}</Td>
               <Td column="workerLogLink">
-                <a href={d.workerLogLink.split('/log')[0]+'/dumps/'+this.props.params.id+'/'+d.host+':'+d.port} target="_blank"><i className="fa fa-file-text"></i></a>
+                <a href={d.workerLogLink.split('/log')[0]+'/dumps/'+this.props.params.id+'/'+d.host+':'+d.port} target="_blank" className="btn btn-primary btn-xs"><i className="fa fa-file-text"></i></a>
               </Td>
             </Tr>
           );
@@ -294,9 +405,21 @@ export default class ComponentDetailView extends Component {
     return(
     <Table className="table no-margin"  noDataText={noDataText}  currentPage={activePage-1} itemsPerPage={pageSize}>
       <Thead>
-        <Th column="errorTime">Time</Th>
-        <Th column="errorPort">Host:Port</Th>
-        <Th column="error">Error</Th>
+        <Th column="errorTime">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Time</Tooltip>}>
+             <span>Time</span>
+          </OverlayTrigger>
+        </Th>
+        <Th column="errorPort">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Host:Port</Tooltip>}>
+             <span>Host:Port</span>
+          </OverlayTrigger>
+        </Th>
+        <Th column="error">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Error</Tooltip>}>
+             <span>Error</span>
+          </OverlayTrigger>
+        </Th>
       </Thead>
       {
         _.map(FilteredEntities, (d,i) => {
@@ -430,15 +553,51 @@ export default class ComponentDetailView extends Component {
               <table className="table table-enlarge">
                 <thead>
                   <tr>
-                    <th><span data-rel="tooltip" title="The past period of time for which the statistics apply.">Window</span></th>
-                    <th><span data-rel="tooltip" title="The number of Tuples emitted.">Emitted</span></th>
-                    <th><span data-rel="tooltip" title="The number of Tuples emitted that sent to one or more bolts.">Transferred</span></th>
-                    {spoutFlag ? <th><span data-rel="tooltip" title='The average time a Tuple "tree" takes to be completely processed by the Topology. A value of 0 is expected if no acking is done.'>Complete Latency (ms)</span></th> : null}
-                    {!spoutFlag ? <th><span data-rel="tooltip" title="The average time a Tuple spends in the execute method. The execute method may complete without sending an Ack for the tuple.">Execute Latency (ms)</span></th> : null}
-                    {!spoutFlag ? <th><span data-rel="tooltip" title="The number of incoming Tuples processed.">Executed</span></th> : null}
-                    {!spoutFlag ? <th><span data-rel="tooltip" title="The average time it takes to Ack a Tuple after it is first received.  Bolts that join, aggregate or batch may not Ack a tuple until a number of other Tuples have been received.">Process Latency (ms)</span></th> : null}
-                    <th><span data-rel="tooltip" title={spoutFlag ? 'The number of Tuple "trees" successfully processed. A value of 0 is expected if no acking is done.' : "The number of Tuples acknowledged by this Bolt."}>Acked</span></th>
-                    <th><span data-rel="tooltip" title={spoutFlag ? 'The number of Tuple "trees" that were explicitly failed or timed out before acking was completed. A value of 0 is expected if no acking is done.' : "The number of tuples Failed by this Bolt."}>Failed</span></th>
+                    <th>
+                      <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip1">The past period of time for which the statistics apply.</Tooltip>}>
+                         <span>Window</span>
+                      </OverlayTrigger>
+                    </th>
+                    <th>
+                      <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip1">The number of Tuples emitted.</Tooltip>}>
+                         <span>Emitted</span>
+                      </OverlayTrigger>
+                    </th>
+                    <th>
+                      <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip1">The number of Tuples emitted that sent to one or more bolts.</Tooltip>}>
+                         <span>Transferred</span>
+                      </OverlayTrigger>
+                    </th>
+                    {spoutFlag ? <th>
+                      <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip1">The average time a Tuple "tree" takes to be completely processed by the Topology. A value of 0 is expected if no acking is done.</Tooltip>}>
+                         <span>Complete Latency (ms)</span>
+                      </OverlayTrigger>
+                    </th> : null}
+                    {!spoutFlag ? <th>
+                      <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip1">The average time a Tuple spends in the execute method. The execute method may complete without sending an Ack for the tuple.</Tooltip>}>
+                         <span>Execute Latency (ms)</span>
+                      </OverlayTrigger>
+                    </th> : null}
+                    {!spoutFlag ? <th>
+                      <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip1">The number of incoming Tuples processed.</Tooltip>}>
+                         <span>Executed</span>
+                      </OverlayTrigger>
+                    </th> : null}
+                    {!spoutFlag ? <th>
+                      <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip1">The average time it takes to Ack a Tuple after it is first received.  Bolts that join, aggregate or batch may not Ack a tuple until a number of other Tuples have been received.</Tooltip>}>
+                         <span>Process Latency (ms)</span>
+                      </OverlayTrigger>
+                    </th> : null}
+                    <th>
+                      <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip1">{spoutFlag ? 'The number of Tuple "trees" successfully processed. A value of 0 is expected if no acking is done.' : "The number of Tuples acknowledged by this Bolt."}</Tooltip>}>
+                         <span>Acked</span>
+                      </OverlayTrigger>
+                    </th>
+                    <th>
+                      <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip1">{spoutFlag ? 'The number of Tuple "trees" that were explicitly failed or timed out before acking was completed. A value of 0 is expected if no acking is done.' : "The number of tuples Failed by this Bolt."}</Tooltip>}>
+                         <span>Failed</span>
+                      </OverlayTrigger>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>

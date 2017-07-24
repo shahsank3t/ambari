@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import BaseContainer from './BaseContainer';
 import SearchLogs from '../components/SearchLogs';
 import TopologyREST from '../rest/TopologyREST';
-import {Accordion, Panel} from 'react-bootstrap';
+import {Accordion, Panel,OverlayTrigger, Tooltip} from 'react-bootstrap';
 import TopologyGraph from '../components/TopologyGraph';
 import {
   Table,
@@ -335,7 +335,7 @@ export default class TopologyDetailView extends Component {
   render() {
     const {details,spotActivePage,boltsActivePage,topologyActivePage,spotFilterValue,blotFilterValue,topologyFilterValue,
       graphData,selectedWindowKey,windowOptions,systemFlag,debugFlag,debugSimplePCT,killWaitTime,showLogLevel,
-      topologyLagFlag,topologyLagPage,topologyLag,toggleGraphAndTable,expandGraph,expandSpout,expandBolt,expandConfig} = this.state;
+      topologyLagFlag,topologyLagPage,topologyLag,toggleGraphAndTable,expandGraph,expandSpout,expandBolt,expandConfig,onEntervalue} = this.state;
     const spoutfilteredEntities = Utils.filterByKey(details.spouts || [], spotFilterValue,'spoutId');
     const blotfilteredEntities = Utils.filterByKey(details.bolts || [], blotFilterValue,'boltId');
     const topologyfilteredEntities = Utils.filterByKey(_.keys(details.configuration) || [], topologyFilterValue);
@@ -465,12 +465,36 @@ export default class TopologyDetailView extends Component {
             <div className="stats-body">
               <Table className="table table-enlarge" noDataText="No records found." currentPage={0} >
                 <Thead>
-                  <Th column="windowPretty"  title="The past period of time for which the statistics apply.">Window</Th>
-                  <Th column="emitted"  title="The number of Tuples emitted.">Emitted</Th>
-                  <Th column="transferred"  title="The number of Tuples emitted that sent to one or more bolts.">Transferred</Th>
-                  <Th column="completeLatency"  title="The average time a Tuple tree takes to be completely processed by the Topology. A value of 0 is expected if no acking is done.">Complete Latency (ms)</Th>
-                  <Th column="acked"  title="The number of Tuple trees successfully processed. A value of 0 is expected if no acking is done.">Acked</Th>
-                  <Th column="failed"  title="The number of Tuple trees that were explicitly failed or timed out before acking was completed. A value of 0 is expected if no acking is done.">Failed</Th>
+                  <Th column="windowPretty">
+                    <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip1">The past period of time for which the statistics apply.</Tooltip>}>
+                      <span>Window</span>
+                    </OverlayTrigger>
+                  </Th>
+                  <Th column="emitted">
+                    <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip1">The number of Tuples emitted.</Tooltip>}>
+                       <span>Emitted</span>
+                    </OverlayTrigger>
+                  </Th>
+                  <Th column="transferred">
+                    <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip1">The number of Tuples emitted that sent to one or more bolts.</Tooltip>}>
+                       <span>Transferred</span>
+                    </OverlayTrigger>
+                  </Th>
+                  <Th column="completeLatency">
+                    <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip1">The average time a Tuple tree takes to be completely processed by the Topology. A value of 0 is expected if no acking is done.</Tooltip>}>
+                       <span>Complete Latency (ms)</span>
+                    </OverlayTrigger>
+                  </Th>
+                  <Th column="acked">
+                    <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip1">The number of Tuple trees successfully processed. A value of 0 is expected if no acking is done.</Tooltip>}>
+                       <span>Acked</span>
+                    </OverlayTrigger>
+                  </Th>
+                  <Th column="failed">
+                    <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip1">The number of Tuple trees that were explicitly failed or timed out before acking was completed. A value of 0 is expected if no acking is done.</Tooltip>}>
+                       <span>Failed</span>
+                    </OverlayTrigger>
+                  </Th>
                 </Thead>
                 {
                   _.map(details.topologyStats,(s,i) => {
@@ -491,7 +515,7 @@ export default class TopologyDetailView extends Component {
           </div>
         </div>
       </div>
-      <Panel expanded={expandGraph} collapsible header={graphPanelHead} eventKey="1" onSelect={this.commonOnSelectFunction.bind(this,'expandGraph')}>
+      <Panel expanded={expandGraph} collapsible header={graphPanelHead} eventKey="1"  onSelect={this.commonOnSelectFunction.bind(this,'expandGraph')}>
         <div className="graph-bg">
           <TopologyGraph
             data={graphDataObj}
@@ -500,17 +524,41 @@ export default class TopologyDetailView extends Component {
       </Panel>
       {
         topologyLag.length
-        ? <Panel expanded={topologyLagFlag} collapsible header={lagPanelHeader} eventKey="3" onSelect={this.lagAccodianClick.bind(this)}>
+        ? <Panel expanded={topologyLagFlag} collapsible header={lagPanelHeader} eventKey="2" onSelect={this.lagAccodianClick.bind(this)}>
           {
             toggleGraphAndTable
             ? <Table className="table table-striped table-bordered"  noDataText="No data found !"  currentPage={topologyLagPage-1} itemsPerPage={pageSize}>
                 <Thead>
-                  <Th column="spoutId" title="Id">Id</Th>
-                  <Th column="topic" title="Topic">Topic</Th>
-                  <Th column="partition" title="Partition">Partition</Th>
-                  <Th column="logHeadOffset" title="Latest Offset">Latest Offset</Th>
-                  <Th column="consumerCommittedOffset" title="Spout Committed Offset">Spout Committed Offset</Th>
-                  <Th column="lag" title="Lag">Lag</Th>
+                  <Th column="spoutId">
+                    <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Id</Tooltip>}>
+                       <span>Id</span>
+                    </OverlayTrigger>
+                  </Th>
+                  <Th column="topic">
+                    <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Topic</Tooltip>}>
+                       <span>Topic</span>
+                    </OverlayTrigger>
+                  </Th>
+                  <Th column="partition">
+                    <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Partition</Tooltip>}>
+                       <span>Partition</span>
+                    </OverlayTrigger>
+                  </Th>
+                  <Th column="logHeadOffset">
+                    <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Latest Offset</Tooltip>}>
+                       <span>Latest Offset</span>
+                    </OverlayTrigger>
+                  </Th>
+                  <Th column="consumerCommittedOffset">
+                    <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Spout Committed Offset</Tooltip>}>
+                       <span>Spout Committed Offset</span>
+                    </OverlayTrigger>
+                  </Th>
+                  <Th column="lag">
+                    <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Lag</Tooltip>}>
+                       <span>Lag</span>
+                    </OverlayTrigger>
+                  </Th>
                 </Thead>
                 {
                   _.map(topologyLag , (l, i) => {
@@ -551,17 +599,61 @@ export default class TopologyDetailView extends Component {
         <div className="table-responsive">
         <Table className="table no-margin"  noDataText="No spouts found !"  currentPage={spotActivePage-1} itemsPerPage={pageSize}>
           <Thead>
-            <Th column="spoutId" title="The ID assigned to a the Component by the Topology. Click on the name to view the Component's page.">Id</Th>
-            <Th column="executors" title="Executors are threads in a Worker process.">Executors</Th>
-            <Th column="tasks" title="A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors.">Tasks</Th>
-            <Th column="emitted" title="The number of Tuples emitted.">Emitted</Th>
-            <Th column="transferred" title="The number of Tuples emitted that sent to one or more bolts.">Transferred</Th>
-            <Th column="completeLatency" title="The average time a Tuple tree takes to be completely processed by the Topology. A value of 0 is expected if no acking is done.">Complete Latency (ms)</Th>
-            <Th column="acked" title="The number of Tuple trees successfully processed. A value of 0 is expected if no acking is done.">Acked</Th>
-            <Th column="failed" title="The number of Tuple trees that were explicitly failed or timed out before acking was completed. A value of 0 is expected if no acking is done.">Failed</Th>
-            <Th column="errorHost" >Error Host:Port</Th>
-            <Th column="lastError" >Last Error</Th>
-            <Th column="errorTime" >Error Time</Th>
+            <Th column="spoutId">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The ID assigned to a the Component by the Topology. Click on the name to view the Component's page.</Tooltip>}>
+                 <span>Id</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="executors">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Executors are threads in a Worker process.</Tooltip>}>
+                 <span>Executors</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="tasks">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors.</Tooltip>}>
+                 <span>Tasks</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="emitted">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Tuples emitted.</Tooltip>}>
+                 <span>Emitted</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="transferred">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Tuples emitted that sent to one or more bolts.</Tooltip>}>
+                 <span>Transferred</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="completeLatency">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The average time a Tuple tree takes to be completely processed by the Topology. A value of 0 is expected if no acking is done.</Tooltip>}>
+                 <span>Complete Latency (ms)</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="acked" title="">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Tuple trees successfully processed. A value of 0 is expected if no acking is done.</Tooltip>}>
+                 <span>Acked</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="failed">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Tuple trees that were explicitly failed or timed out before acking was completed. A value of 0 is expected if no acking is done.</Tooltip>}>
+                 <span>Failed</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="errorHost">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Error Host:Port</Tooltip>}>
+                 <span>Error Host:Port</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="lastError">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Last Error</Tooltip>}>
+                 <span>Last Error</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="errorTime">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Error Time</Tooltip>}>
+                 <span>Error Time</span>
+              </OverlayTrigger>
+            </Th>
           </Thead>
           {
             _.map(spoutfilteredEntities, (s,i) => {
@@ -600,20 +692,76 @@ export default class TopologyDetailView extends Component {
         <div className="table-responsive">
         <Table className="table no-margin"  noDataText="No bolts found !"  currentPage={boltsActivePage-1} itemsPerPage={pageSize}>
           <Thead>
-            <Th column="boltId" title="The ID assigned to a the Component by the Topology. Click on the name to view the Component's page.">Id</Th>
-            <Th column="executors" title="Executors are threads in a Worker process.">Executors</Th>
-            <Th column="tasks" title="A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors.">Tasks</Th>
-            <Th column="emitted" title="The number of Tuples emitted.">Emitted</Th>
-            <Th column="transferred" title="The number of Tuples emitted that sent to one or more bolts.">Transferred</Th>
-            <Th column="capacity" title="If this is around 1.0, the corresponding Bolt is running as fast as it can, so you may want to increase the Bolt's parallelism. This is (number executed * average execute latency) / measurement time.">Capacity (last 10m)</Th>
-            <Th column="executeLatency" title="The average time a Tuple spends in the execute method. The execute method may complete without sending an Ack for the tuple.">Execute Latency (ms)</Th>
-            <Th column="executed" title="The number of incoming Tuples processed.">Executed</Th>
-            <Th column="processLatency" title="The average time it takes to Ack a Tuple after it is first received.  Bolts that join, aggregate or batch may not Ack a tuple until a number of other Tuples have been received.">Process Latency (ms)</Th>
-            <Th column="acked" title="The number of Tuples acknowledged by this Bolt.">Acked</Th>
-            <Th column="failed" title="The number of tuples Failed by this Bolt.">Failed</Th>
-            <Th column="errorHost" >Error Host:Port</Th>
-            <Th column="lastError" >Last Error</Th>
-            <Th column="errorTime" >Error Time</Th>
+            <Th column="boltId">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The ID assigned to a the Component by the Topology. Click on the name to view the Component's page.</Tooltip>}>
+                 <span>Id</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="executors">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Executors are threads in a Worker process.</Tooltip>}>
+                 <span>Executors</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="tasks">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors.</Tooltip>}>
+                 <span>Tasks</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="emitted">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Tuples emitted.</Tooltip>}>
+                 <span>Emitted</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="transferred">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Tuples emitted that sent to one or more bolts.</Tooltip>}>
+                 <span>Transferred</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="capacity">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">If this is around 1.0, the corresponding Bolt is running as fast as it can, so you may want to increase the Bolt's parallelism. This is (number executed * average execute latency) / measurement time.</Tooltip>}>
+                 <span>Capacity (last 10m)</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="executeLatency">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The average time a Tuple spends in the execute method. The execute method may complete without sending an Ack for the tuple.</Tooltip>}>
+                 <span>Execute Latency (ms)</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="executed">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of incoming Tuples processed.</Tooltip>}>
+                 <span>Executed</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="processLatency">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The average time it takes to Ack a Tuple after it is first received.  Bolts that join, aggregate or batch may not Ack a tuple until a number of other Tuples have been received.</Tooltip>}>
+                 <span>Process Latency (ms)</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="acked">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Tuples acknowledged by this Bolt.</Tooltip>}>
+                 <span>Acked</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="failed">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of tuples Failed by this Bolt.</Tooltip>}>
+                 <span>Failed</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="errorHost">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Error Host:Port</Tooltip>}>
+                 <span>Error Host:Port</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="lastError">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Last Error</Tooltip>}>
+                 <span>Last Error</span>
+              </OverlayTrigger>
+            </Th>
+            <Th column="errorTime">
+              <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Error Time</Tooltip>}>
+                 <span>Error Time</span>
+              </OverlayTrigger>
+            </Th>
           </Thead>
           {
             _.map(blotfilteredEntities, (b,k) => {

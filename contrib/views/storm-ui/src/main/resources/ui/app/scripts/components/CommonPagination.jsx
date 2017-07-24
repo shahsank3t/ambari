@@ -22,8 +22,8 @@ export default class CommonPagination extends Component{
         </div>
         <Pagination
          className={`${filteredEntities.length === 0? 'hidden':'shown pull-right'}`}
-         prev
-         next
+         prev={false}
+         next={false}
          first
          last
          ellipsis

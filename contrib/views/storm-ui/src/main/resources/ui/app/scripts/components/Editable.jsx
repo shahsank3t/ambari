@@ -77,10 +77,10 @@ export default class Editable extends Component {
     const {edit, errorMsg} = this.state;
 
     const buttons = showButtons
-      ? ([<Button type="button" className="btn-xs" bsStyle="primary" onClick={this.handleResolve} key="resolve">
+      ? ([<Button className="btn-primary btn-sm" onClick={this.handleResolve} key="resolve" style={{margin : "0 0 3px 5px"}}>
           <i className="fa fa-check"></i></Button>,
-        <Button type="button" className="btn-xs" bsStyle="default" onClick={this.handleReject} key="reject">
-            <i className="fa fa-times"></i>
+        <Button className="btn-default btn-sm"  onClick={this.handleReject} key="reject"  style={{margin : "0 3px"}}>
+          <i className="fa fa-times"></i>
           </Button>
       ])
       : null;

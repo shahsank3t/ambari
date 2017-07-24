@@ -18,6 +18,7 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import CommonPagination from '../components/CommonPagination';
 import {pageSize} from '../utils/Constants';
 import Utils from '../utils/Utils';
+import Footer from '../components/Footer';
 
 export default class TopologyListing extends Component{
   constructor(props){
@@ -40,11 +41,11 @@ export default class TopologyListing extends Component{
         stateObj.entities = results.topologies;
         if(!this.props.fromDashboard){
           var additionalColumns = [
-            {name: 'assignedTotalMem', title: 'Memory Assigned (MB)', tooltip:'Assigned Total Memory by Scheduler.'},
-            {name: 'workersTotal', title: 'Workers', tooltip:'The number of Workers (processes).'},
-            {name: 'executorsTotal', title: 'Executors', tooltip:'Executors are threads in a Worker process.'},
-            {name: 'tasksTotal', title: 'Tasks', tooltip:'A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors.'},
-            {name: 'owner', title: 'Owner', tooltip:'The user that submitted the Topology, if authentication is enabled.'}
+            {name: 'assignedTotalMem', title: 'Memory Assigned (MB)'},
+            {name: 'workersTotal', title: 'Workers'},
+            {name: 'executorsTotal', title: 'Executors'},
+            {name: 'tasksTotal', title: 'Tasks'},
+            {name: 'owner', title: 'Owner'}
           ];
           Array.prototype.push.apply(stateObj.entities, additionalColumns);
         }
@@ -129,12 +130,35 @@ export default class TopologyListing extends Component{
                   {
                     !fromDashboard
                     ? [
-                      <Th key={3} column="assignedTotalMem" title="Assigned Total Memory by Scheduler.">Memory Assigned (MB)</Th>,
-                      <Th key={4} column="workersTotal" title="The number of Workers (processes).">Workers</Th>,
-                      <Th key={5} column="executorsTotal" title="Executors are threads in a Worker process.">Executors</Th>,
-                      <Th key={6} column="tasksTotal" title="A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors.">Tasks</Th>,
-                      <Th key={7} column="owner" title="The user that submitted the Topology, if authentication is enabled.">Owner</Th>,
-                      <Th key={8} column="uptime" title="The time since the Topology was submitted.">Uptime</Th>
+                      <Th key={3} column="assignedTotalMem">
+                        <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Assigned Total Memory by Scheduler.</Tooltip>}>
+                          <span>Memory Assigned (MB)</span>
+                        </OverlayTrigger></Th>,
+                      <Th key={4} column="workersTotal">
+                        <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The number of Workers (processes).</Tooltip>}>
+                           <span>Workers</span>
+                        </OverlayTrigger>
+                      </Th>,
+                      <Th key={5} column="executorsTotal">
+                        <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">Executors are threads in a Worker process.</Tooltip>}>
+                           <span>Executors</span>
+                        </OverlayTrigger>
+                      </Th>,
+                      <Th key={6} column="tasksTotal">
+                        <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors.</Tooltip>}>
+                           <span>Tasks</span>
+                        </OverlayTrigger>
+                      </Th>,
+                      <Th key={7} column="owner" title="">
+                        <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The user that submitted the Topology, if authentication is enabled.</Tooltip>}>
+                           <span>Owner</span>
+                        </OverlayTrigger>
+                      </Th>,
+                      <Th key={8} column="uptime">
+                        <OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The time since the Topology was submitted.</Tooltip>}>
+                           <span>Uptime</span>
+                        </OverlayTrigger>
+                      </Th>
                     ]
                     : <Th column="uptime"><OverlayTrigger placement="bottom" overlay={<Tooltip id="tooltip1">The time since the Topology was submitted.</Tooltip>}><span>Uptime</span></OverlayTrigger></Th>
                   }
@@ -169,6 +193,11 @@ export default class TopologyListing extends Component{
               }
             </div>
         </div>
+        {
+          !fromDashboard
+          ? <Footer />
+          : null
+        }
       </div>
     );
   }

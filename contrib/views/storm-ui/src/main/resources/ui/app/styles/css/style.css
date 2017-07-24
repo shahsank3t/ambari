@@ -688,6 +688,14 @@ ul.legends li.legend{
   font-size: 12px;
   line-height: 29px;
 }
+.switchItemOn.graphSwitchOn{
+    background-color: #5cb85c;
+}
+
+.switchItemOff.graphSwitchOff{
+    background-color: #5bc0de;
+    color: #fff;
+}
 /*------------------------------------------------*/
 /* Switch SECTION END*/
 /*------------------------------------------------*/
@@ -817,12 +825,7 @@ input[type=range]:focus::-ms-fill-lower {
 input[type=range]:focus::-ms-fill-upper {
   background: #c6c6c6;
 }
-
-/* input range css end here*/
-.editable-input {
-  display: inline-block;
-  width: auto;
-}
-.editable-container .btn {
-  margin-left: 7px;
+input.editInput{
+  width: 68%;
+  float: left;
 }

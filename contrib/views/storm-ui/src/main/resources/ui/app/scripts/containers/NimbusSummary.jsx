@@ -16,6 +16,7 @@ import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import Breadcrumbs from '../components/Breadcrumbs';
 import CommonPagination from '../components/CommonPagination';
 import Utils from '../utils/Utils';
+import Footer from '../components/Footer';
 
 export default class NimbusSummary extends Component{
   constructor(props){
@@ -124,6 +125,7 @@ export default class NimbusSummary extends Component{
               }
             </div>
         </div>
+        {!fromDashboard ? <Footer /> : null}
       </div>
     );
   }

@@ -173,7 +173,7 @@ export default class LogLevelComponent extends Component{
                       </Td>
                       <Td column="timeout">
                         <Editable ref={`logKey${i}`} inline={true} resolve={this.modifyCommonObjValue.bind(this,`logKey${i}`,logKey,'timeout','save',null)} reject={this.modifyCommonObjValue.bind(this,`logKey${i}`,logKey,'timeout','reject',null)}>
-                          <input className="form-control input-sm editable-input"  ref={this.focusInput} defaultValue={logLevelObj[logKey].timeout} onChange={this.handleTimeChange.bind(this)}/>
+                          <input className="form-control input-sm editInput"  ref={this.focusInput} defaultValue={logLevelObj[logKey].timeout} onChange={this.handleTimeChange.bind(this)}/>
                         </Editable>
                       </Td>
                       <Td column="timeout_epoch">{this.getDateFormat(logLevelObj[logKey].timeout_epoch)}</Td>
@@ -189,7 +189,7 @@ export default class LogLevelComponent extends Component{
           <Tr key={Math.random()}>
             <Td  column="logger">
               <Editable ref="addRowRef" inline={true} resolve={this.addLoggerName.bind(this,'addRowRef','save')} reject={this.addLoggerName.bind(this,"addRowRef",'reject')}>
-                <input className="form-control input-sm editable-input"  ref={this.focusInput} defaultValue={selectedKeyName} onChange={this.handleNameChange.bind(this)}/>
+                <input className="form-control input-sm editInput"  ref={this.focusInput} defaultValue={selectedKeyName} onChange={this.handleNameChange.bind(this)}/>
               </Editable>
             </Td>
             <Td  column="target_level">
@@ -197,7 +197,7 @@ export default class LogLevelComponent extends Component{
             </Td>
             <Td  column="timeout">
               <Editable ref={"timeoutRef"} inline={true} resolve={this.modifyCommonObjValue.bind(this,"timeoutRef",null,'timeout','save','ADD')} reject={this.modifyCommonObjValue.bind(this,"timeoutRef",null,'timeout','reject','ADD')}>
-                <input className="form-control input-sm editable-input"  ref={this.focusInput} defaultValue={selectedTimeOut} onChange={this.handleTimeChange.bind(this)}/>
+                <input className="form-control input-sm editInput"  ref={this.focusInput} defaultValue={selectedTimeOut} onChange={this.handleTimeChange.bind(this)}/>
               </Editable>
             </Td>
             <Td  column="timeout_epoch">&nbsp;</Td>

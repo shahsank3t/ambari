@@ -7,9 +7,9 @@ export default class CommonSwitchComponent extends Component {
     return (
       <div className={`switchWrapper ${!!KYC ? 'lagSwitchSetting pull-right' : ''}`}>
         <span className={`switchSlider ${checked ?  'onSlider' : 'offSlider'}`} onClick={switchCallBack}>
-          <span className="switchItemOn sliderText">{textON}</span>
+          <span className={`switchItemOn sliderText ${!!KYC ? 'graphSwitchOn' : ''}`}>{textON}</span>
           <span className="switchItemMid"></span>
-          <span className="switchItemOff sliderText">{textOFF}</span>
+          <span className={`switchItemOff sliderText ${!!KYC ? 'graphSwitchOff' : ''}`}>{textOFF}</span>
         </span>
       </div>
 

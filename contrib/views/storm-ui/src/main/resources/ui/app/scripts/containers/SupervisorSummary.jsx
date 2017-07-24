@@ -17,6 +17,7 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import CommonPagination from '../components/CommonPagination';
 import Utils from '../utils/Utils';
+import Footer from '../components/Footer';
 
 export default class SupervisorSummary extends Component{
   constructor(props){
@@ -139,6 +140,7 @@ export default class SupervisorSummary extends Component{
               }
             </div>
         </div>
+        {!fromDashboard ? <Footer /> : null}
       </div>
     );
   }

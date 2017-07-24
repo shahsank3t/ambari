@@ -31,10 +31,16 @@ export default class TopologyGraph extends Component{
   constructor(props) {
     super(props);
     this.syncData(this.props.data);
+    this.updateFlag = true;
   }
   componentDidUpdate() {
-    this.syncData(this.props.data);
-    this.updateGraph();
+    if(!!this.updateFlag){
+      this.syncData(this.props.data);
+      this.updateGraph();
+    }
+  }
+  componentWillReceiveProps(nextProps){
+    _.isEqual(nextProps.data,this.props.data) ? this.updateFlag = false : this.updateFlag = true;
   }
   componentDidMount(){
     var that = this;
@@ -75,7 +81,6 @@ export default class TopologyGraph extends Component{
     var inner = this.inner = this.svg.append("g");
     // Create the renderer
     var render = new dagreD3.render();
-      
     render.arrows().arrowPoint = (parent, id, edge, type) => {
       var marker = parent.append("marker")
         .attr("id", id)
@@ -86,7 +91,6 @@ export default class TopologyGraph extends Component{
         .attr("markerWidth", 6)
         .attr("markerHeight", 6.5)
         .attr("orient", "auto");
-
       var path = marker.append("path")
         .attr("d", "M 0 0 L 10 5 L 0 10 z")
         .style("stroke-width", 1)
@@ -97,20 +101,23 @@ export default class TopologyGraph extends Component{
     };
 
     render.shapes().img = (parent, bbox, node) => {
-      var shapeSvg = parent.insert("image")
-        .attr("class", "nodeImage")
-        .attr("xlink:href", function(d) {
-          if (node) {
-            if(node.type === 'spout'){
-              return "styles/img/icon-spout.png";
-            } else if(node.type === 'bolt'){
-              return "styles/img/icon-bolt.png";
+      var shapeSvg;
+      if(parent){
+        shapeSvg = parent.insert("image")
+          .attr("class", "nodeImage")
+          .attr("xlink:href", function(d) {
+            if (node) {
+              if(node.type === 'spout'){
+                return "styles/img/icon-spout.png";
+              } else if(node.type === 'bolt'){
+                return "styles/img/icon-bolt.png";
+              }
             }
-          }
-        }).attr("x", "-12px")
-        .attr("y", "-12px")
-        .attr("width", "30px")
-        .attr("height", "30px");
+          }).attr("x", "-12px")
+          .attr("y", "-12px")
+          .attr("width", "30px")
+          .attr("height", "30px");
+      }
       node.intersect = function(point) {
         return dagreD3.intersect.circle(node, 20, point);
       };
@@ -127,7 +134,6 @@ export default class TopologyGraph extends Component{
       .on('mouseout', function(d) {
         that.tooltip.hide(this);
       });
-
     inner.selectAll("g.nodes g.label")
       .attr("transform", "translate(2,-30)");
     // Center the graph
