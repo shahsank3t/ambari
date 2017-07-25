@@ -4,8 +4,8 @@ import {Modal, Button} from 'react-bootstrap';
 const defaultState = {
   show: false,
   title: '',
-  btnOkText: '',
-  btnCancelText: ''
+  btnOkText: 'Ok',
+  btnCancelText: 'Cancel'
 };
 
 export default class FSModal extends Component {
@@ -51,12 +51,20 @@ export default class FSModal extends Component {
   footer() {
     return (
       <Modal.Footer>
-        <Button bsStyle='default' onClick={this.cancel.bind(this)} data-stest="cancelbtn">
-          {this.state.btnCancelText || 'Cancel'}
-        </Button>
-        <Button bsStyle='success' onClick={this.sure.bind(this)}  data-stest="okbtn" disabled={this.props.btnOkDisabled}>
-          {this.state.btnOkText || 'Ok'}
-        </Button>
+        {
+          this.props.hideCloseBtn
+          ? null
+          : <Button bsStyle='default' onClick={this.cancel.bind(this)} data-stest="cancelbtn">
+              {this.props.closeLabel || this.state.btnCancelText}
+            </Button>
+        }
+        {
+          this.props.hideOkBtn
+          ? null
+          : <Button bsStyle='success' onClick={this.sure.bind(this)}  data-stest="okbtn" disabled={this.props.btnOkDisabled}>
+              {this.props.okLabel || this.state.btnOkText}
+            </Button>
+        }
       </Modal.Footer>
     );
   }

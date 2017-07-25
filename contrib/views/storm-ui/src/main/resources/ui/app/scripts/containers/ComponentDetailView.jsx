@@ -40,6 +40,7 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import CommonWindowPanel from '../components/CommonWindowPanel';
 import Modal from '../components/FSModel';
 import ProfilingView from '../components/ProfilingView';
+import CommonExpanded from '../components/CommonExpanded';
 
 export default class ComponentDetailView extends Component {
   constructor(props){
@@ -56,7 +57,11 @@ export default class ComponentDetailView extends Component {
       debugFlag : false,
       outputStatsFilter : '',
       executorStatsFilter : '',
-      componentErrorsFilter : ''
+      componentErrorsFilter : '',
+      expandInputStats : true,
+      expandOutputStats : true,
+      expandExecutorStats : true,
+      expandComponentErrors : true
     };
     this.fetchDetails();
   }
@@ -514,10 +519,30 @@ export default class ComponentDetailView extends Component {
     this.refs.profileModelRef.show();
   }
 
+  commonOnSelectFunction = (type) => {
+    let tempState = _.cloneDeep(this.state);
+    tempState['expand'+type] = !tempState['expand'+type];
+    this.setState(tempState);
+  }
+
   render(){
     const {componentDetail, InputStatsActivePage, OutputStatsActivePage, ExecutorStatsActivePage, ErrorStatsActivePage,
       inputStatsFilter, outputStatsFilter, executorStatsFilter, errorStatsFilter,
-    selectedWindowKey,windowOptions,systemFlag,debugFlag,topologyStatus,spoutFlag,samplingPct} = this.state;
+    selectedWindowKey,windowOptions,systemFlag,debugFlag,topologyStatus,spoutFlag,samplingPct,expandInputStats,expandOutputStats,
+    expandComponentErrors,expandExecutorStats} = this.state;
+
+    const inputStatsPanelHead = <h4> Input Stats ({componentDetail.windowHint})
+                              <CommonExpanded  expandFlag={expandInputStats}/></h4>;
+
+    const outputStatsHead = <h4> Output Stats ({componentDetail.windowHint})
+                            <CommonExpanded  expandFlag={expandOutputStats}/></h4>;
+
+    const executorStatsPanelHead = <h4> Executor Stats ({componentDetail.windowHint})
+                            <CommonExpanded  expandFlag={expandExecutorStats}/></h4>;
+
+    const componentErrorsPanelHead = <h4> Error Stats ({componentDetail.windowHint})
+                              <CommonExpanded  expandFlag={expandComponentErrors}/></h4>;
+
     return (
     <BaseContainer>
       <Breadcrumbs links={this.getLinks()} />
@@ -610,7 +635,7 @@ export default class ComponentDetailView extends Component {
       </div>
       {componentDetail.inputStats
         ?
-        <Panel defaultExpanded collapsible header={"Input Stats ("+ componentDetail.windowHint +")"} eventKey="1">
+        <Panel expanded={expandInputStats} collapsible header={inputStatsPanelHead} eventKey="1"   onSelect={this.commonOnSelectFunction.bind(this,'InputStats')}>
           {this.getContent('inputStats', 'No input stats found!')}
         </Panel>
         :
@@ -618,7 +643,7 @@ export default class ComponentDetailView extends Component {
       }
       {componentDetail.outputStats
         ?
-        <Panel defaultExpanded collapsible header={"Output Stats ("+ componentDetail.windowHint +")"} eventKey="2">
+        <Panel  expanded={expandOutputStats} collapsible header={outputStatsHead} eventKey="2"  onSelect={this.commonOnSelectFunction.bind(this,'OutputStats')}>
           {this.getContent('outputStats', 'No output stats found!')}
         </Panel>
         :
@@ -626,7 +651,7 @@ export default class ComponentDetailView extends Component {
       }
       {componentDetail.executorStats
         ?
-        <Panel defaultExpanded collapsible header={"Executor Stats ("+ componentDetail.windowHint +")"} eventKey="3">
+        <Panel  expanded={expandExecutorStats} collapsible header={executorStatsPanelHead} eventKey="3"  onSelect={this.commonOnSelectFunction.bind(this,'ExecutorStats')}>
           {this.getContent('executorStats', 'No executor stats found!')}
         </Panel>
         :
@@ -634,7 +659,7 @@ export default class ComponentDetailView extends Component {
       }
       {componentDetail.componentErrors
         ?
-        <Panel defaultExpanded collapsible header={"Error Stats ("+ componentDetail.windowHint +")"} eventKey="4">
+        <Panel  expanded={expandComponentErrors} collapsible header={componentErrorsPanelHead} eventKey="4" onSelect={this.commonOnSelectFunction.bind(this,'ComponentErrors')}>
           {this.getContent('componentErrors', 'No errors found!')}
         </Panel>
         :
@@ -646,7 +671,7 @@ export default class ComponentDetailView extends Component {
         <input className="form-control" type="number" min={0} max={Number.MAX_SAFE_INTEGER} value={samplingPct} onChange={this.inputTextChange.bind(this,'samplingPct')}/>
       </Modal>
 
-      <Modal ref={"profileModelRef"} hideFooter={true} data-title="Profiling & Debugging"  data-resolve={this.handleModelAction.bind(this,'profileModelRef','save')} data-reject={this.handleModelAction.bind(this,'profileModelRef','hide')}>
+      <Modal ref={"profileModelRef"} hideOkBtn={true} closeLabel="Close" data-title="Profiling & Debugging"  data-resolve={this.handleModelAction.bind(this,'profileModelRef','save')} data-reject={this.handleModelAction.bind(this,'profileModelRef','hide')}>
         <ProfilingView topologyId={componentDetail.topologyId} executorStats={componentDetail.executorStats} />
       </Modal>
 
