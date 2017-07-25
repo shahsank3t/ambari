@@ -14,7 +14,7 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-*/
+**/
 
 const path = require('path');
 const express = require('express');
@@ -58,7 +58,8 @@ app.use("/", express.static(__dirname + '/app'));
 //-------------------proxy-------------------
 
 const proxyMiddleware = require('http-proxy-middleware');
-const restTarget = 'http://10.129.86.44:9090';
+// Below URL need to be storm server host:port...
+const restTarget = 'http://172.22.104.28:8744';
 
 const proxyTable = {}; // when request.headers.host == 'dev.localhost:3000',
 proxyTable[host + ':' + port] = restTarget; // override target 'http://www.example.org' to 'http://localhost:8000'

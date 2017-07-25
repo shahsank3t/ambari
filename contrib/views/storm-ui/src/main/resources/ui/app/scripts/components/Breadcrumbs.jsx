@@ -14,7 +14,7 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-*/
+**/
 
 import React, {Component} from 'react';
 import ReactDom from 'react-dom';
@@ -23,10 +23,10 @@ export default class Breadcrumbs extends Component{
   static propTypes = {
     links: React.PropTypes.array.isRequired
   }
-  render() {			
+  render() {
     return (
       <ol id="breadcrumb">
-        {this.renderLinks()}					
+        {this.renderLinks()}
       </ol>
     );
   }
@@ -38,7 +38,7 @@ export default class Breadcrumbs extends Component{
         object.title = <i className="fa fa-home"></i>;
       }
       links.push(<li key={i}><a href={object.link}>{object.title}</a></li>);
-    }    		
+    }
     return links;
   }
 }
