@@ -20,6 +20,7 @@ import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import {baseUrl} from '../utils/Constants';
 import {DropdownButton, FormGroup, Checkbox} from 'react-bootstrap';
+import fetch from 'isomorphic-fetch';
 
 export default class SearchLogs extends Component{
   render() {
@@ -37,7 +38,7 @@ export default class SearchLogs extends Component{
                   <FormGroup>
                     <Checkbox id="deepSearch">Deep search</Checkbox>
                   </FormGroup>
-                </DropdownButton>                
+                </DropdownButton>
               </div>
               <button type="button" className="btn btn-default" onClick={this.handleSearch.bind(this)}>
                 <i className="fa fa-search"></i>
@@ -54,7 +55,7 @@ export default class SearchLogs extends Component{
     var deepSearchEl = document.getElementById('deepSearch');
     var topologyId = this.props.id;
 
-    fetch(baseUrl.replace('proxy?url=', 'storm_details'))
+    fetch(baseUrl.replace('proxy?url=/api/v1/', 'storm_details'), {"credentials": "same-origin"})
       .then((response) => {
         return response.json();
       })
