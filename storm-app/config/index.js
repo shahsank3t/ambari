@@ -1,6 +1,40 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 var path = require('path');
 
+const host = process.env.HOST || 'localhost';
+const port = process.env.PORT || 8080;
+
+//-------------------proxy-------------------
+
+const proxyMiddleware = require('http-proxy-middleware');
+// Below URL need to be storm server host:port...
+const restTarget = 'http://172.22.104.28:8744';
+
+const proxyTable = {}; // when request.headers.host == 'dev.localhost:3000',
+proxyTable[host + ':' + port] = restTarget; // override target 'http://www.example.org' to 'http://localhost:8000'
+
+// configure proxy middleware options
+const options = {
+  target: restTarget, // target host
+  changeOrigin: true, // needed for virtual hosted sites
+  ws: true, // proxy websockets
+  router: proxyTable,
+  onProxyRes: function(proxyRes, req, res) {
+    if (proxyRes.headers['set-cookie']) {
+      var _cookie = proxyRes.headers['set-cookie'][0];
+      _cookie = _cookie.replace(/Path=\/[a-zA-Z0-9_.-]*\/;/gi, "Path=/;");
+      proxyRes.headers['set-cookie'] = [_cookie];
+    }
+  },
+  onProxyReq: function(proxyReq, req, res) {
+
+  },
+  onError: function(err, req, res) {
+    console.log('Error on proxy request');
+  }
+};
+
+
 module.exports = {
   build: {
     env: require('./prod.env'),
@@ -27,7 +61,7 @@ module.exports = {
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {options},
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
     // (https://github.com/webpack/css-loader#sourcemaps)

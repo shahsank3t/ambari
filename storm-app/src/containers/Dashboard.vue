@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row">
+    <div class="row topMargin">
       <div class="col-sm-5">
         <app-clusterSummary></app-clusterSummary>
       </div>
@@ -32,3 +32,9 @@
     }
   };
 </script>
+
+<style scope>
+.topMargin{
+  margin-top: 20px;
+}
+</style>
