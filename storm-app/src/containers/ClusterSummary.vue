@@ -26,7 +26,8 @@
             <div class="tile-header text-center">Supervisor</div>
             <div class="tile-body text-center">
                 <div id="supervisorCount">
-                  Graph
+                  <app-clustersummary-radial :graphData="supervisorsData" :labels="labels" :width="width" :height="height"
+                    :innerRadius="innerRadius" :outerRadius="outerRadius" :color="color"></app-clustersummary-radial>
                 </div>
             </div>
         </div>
@@ -36,7 +37,8 @@
             <div class="tile-header text-center">Slots</div>
             <div class="tile-body text-center">
                 <div id="slotsCount">
-                  Graph
+                  <app-clustersummary-radial :graphData="slotsUsedData" :labels="labels" :width="width" :height="height"
+                    :innerRadius="innerRadius" :outerRadius="outerRadius" :color="color"></app-clustersummary-radial>
                 </div>
             </div>
         </div>
@@ -47,21 +49,42 @@
 </template>
 
 <script>
+  import TopologyREST from '@/rest/TopologyREST';
+  import RadialChart from '@/components/RadialChart';
 
   export default{
     name: 'ClusterSummary',
-    entity : {},
-    data() {
-      this.entity = {};
-      return this.entity;
+    data : () => {
+      return{
+        entity : {},
+        supervisorsData : [],
+        slotsUsedData : [],
+        labels : ['Used','Total'],
+        width : 100,
+        height : 100,
+        innerRadius :46,
+        outerRadius : 50,
+        color : ["rgba(255,255,255,0.6)", "rgba(255,255,255,1)"]
+      };
     },
     created() {
       this.fetchData();
     },
     methods : {
       fetchData(){
-        console.log('fetchData');
+        TopologyREST.getSummary('cluster').then((result) => {
+          if(result.responseMessage !== undefined){
+            console.error("Error in ClusterSummary");
+          } else {
+            this.entity = result;
+            this.supervisorsData = [this.entity.supervisors,this.entity.supervisors];
+            this.slotsUsedData = [this.entity.slotsUsed,this.entity.slotsTotal];
+          }
+        });
       }
+    },
+    components : {
+      'app-clustersummary-radial' : RadialChart
     }
   };
 </script>

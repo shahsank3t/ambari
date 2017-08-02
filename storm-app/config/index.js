@@ -8,14 +8,14 @@ const port = process.env.PORT || 8080;
 
 const proxyMiddleware = require('http-proxy-middleware');
 // Below URL need to be storm server host:port...
-const restTarget = 'http://172.22.104.28:8744';
+const restTarget = "http://172.22.104.28:8744";
 
 const proxyTable = {}; // when request.headers.host == 'dev.localhost:3000',
 proxyTable[host + ':' + port] = restTarget; // override target 'http://www.example.org' to 'http://localhost:8000'
 
 // configure proxy middleware options
 const options = {
-  target: restTarget, // target host
+  target: "http://172.22.104.28:8744", // target host
   changeOrigin: true, // needed for virtual hosted sites
   ws: true, // proxy websockets
   router: proxyTable,
@@ -33,7 +33,6 @@ const options = {
     console.log('Error on proxy request');
   }
 };
-
 
 module.exports = {
   build: {
@@ -61,7 +60,7 @@ module.exports = {
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {options},
+    proxyTable: options,
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
     // (https://github.com/webpack/css-loader#sourcemaps)
