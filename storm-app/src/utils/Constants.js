@@ -15,8 +15,15 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 **/
+const routePaths = {
+  DASHBOARD: {name: 'Home', path: '/'},
+  TOPOLOGY_LISTING: {name: 'TopologyListing', path: '/topology'},
+  TOPOLOGY_DETAIL: {name: 'TopologyDetail', path: '/topology/:topologyId'},
+  COMPONENT_DETAIL: {name: 'ComponentDetail', path: '/topology/:topologyId/component/:componentName'},
+  NIMBUS: {name: 'NimbusSummary', path: '/nimbus'},
+  SUPERVISOR: {name: 'SupervisorSummary', path: '/supervisor'}
+};
 
-import TopologyREST from '../rest/TopologyREST';
 const baseUrl = '/api/v1/';
 // const baseUrl = location.pathname+'proxy?url=/api/v1/';
 const toastOpt = {
@@ -29,17 +36,9 @@ const toastOpt = {
 
 const pageSize = 25;
 
-let stormVersion = '';
-function getStormVersion(){
-  return TopologyREST.getSummary('cluster').then((res) => {
-    stormVersion = res.stormVersion;
-  });
-}
-
 export {
+  routePaths,
   baseUrl,
   toastOpt,
-  pageSize,
-  getStormVersion,
-  stormVersion
+  pageSize
 };
