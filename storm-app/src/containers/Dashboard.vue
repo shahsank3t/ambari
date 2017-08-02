@@ -5,7 +5,7 @@
         <app-clusterSummary></app-clusterSummary>
       </div>
       <div class="col-sm-7">
-        <app-topologListing></app-topologListing>
+        <app-topologListing :fromDashboard="true"></app-topologListing>
         <app-supervisorSummary></app-supervisorSummary>
       </div>
     </div>
