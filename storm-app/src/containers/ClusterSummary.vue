@@ -44,13 +44,18 @@
         </div>
       </div>
     </div>
-
+    <div className="row">
+      <div className="col-sm-12">
+        <app-nimbusSummary :fromDashboard="true"></app-nimbusSummary>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
   import TopologyREST from '@/rest/TopologyREST';
   import RadialChart from '@/components/RadialChart';
+  import NimbusSummary from './NimbusSummary';
 
   export default{
     name: 'ClusterSummary',
@@ -84,7 +89,8 @@
       }
     },
     components : {
-      'app-clustersummary-radial' : RadialChart
+      'app-clustersummary-radial' : RadialChart,
+      'app-nimbusSummary': NimbusSummary
     }
   };
 </script>

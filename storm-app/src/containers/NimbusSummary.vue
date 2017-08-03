@@ -3,9 +3,9 @@
     <div class="col-sm-12">
     <div class="box">
       <div class="box-header">
-        <h4>Supervisor Summary</h4>
+        <h4>Nimbus Summary</h4>
         <div v-if="fromDashboard" class="box-control">
-          <router-link to="/supervisor" class="primary"><i class="fa fa-external-link"></i></router-link>
+          <router-link to="/nimbus" class="primary"><i class="fa fa-external-link"></i></router-link>
         </div>
       </div>
       <div :class="[{paddless: fromDashboard}, 'box-body']">
@@ -19,49 +19,30 @@
           <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="onFilter" :show-empty="true">
               <!-- Custom formatted header cells -->
               <template slot="HEAD_hostName" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="The hostname reported by the remote host. (Note that this hostname is not the result of a reverse lookup at the Nimbus node.)">
+                <b-popover triggers="hover" placement="bottom" content="Nimbus hostname and port number">
                   {{data.label}}
                 </b-popover>
               </template>
-              <template slot="HEAD_slots" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="Slots are Workers (processes).">
-                  {{data.label}}
-                </b-popover>
-              </template>
-              <template slot="HEAD_cpu" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="CPU that has been allocated.">
-                  {{data.label}}
-                </b-popover>
-              </template>
-              <template slot="HEAD_memory" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="Memory that has been allocated.">
+              <template slot="HEAD_status" scope="data">
+                <b-popover triggers="hover" placement="bottom" content="Leader if this host is leader, Not a Leader for all other live hosts, note that these hosts may or may not be in leader lock queue, and Dead for hosts that are part of nimbus.seeds list but are not alive.">
                   {{data.label}}
                 </b-popover>
               </template>
               <template slot="HEAD_uptime" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="The length of time a Supervisor has been registered to the cluster.">
+                <b-popover triggers="hover" placement="bottom" content="Time since this nimbus host has been running.">
                   {{data.label}}
                 </b-popover>
               </template>
 
               <!-- Custom formatted value cells -->
               <template slot="hostName" scope="data">
-                <a :href="data.item.logLink" target="_blank">{{data.item.host}}</a>
+                <a :href="data.item.nimbusLogLink" target="_blank">{{data.item.host+':'+data.item.port}}</a>
               </template>
-              <template slot="slots" scope="data">
-                <app-supervisorsummary-radial :graphData="[data.item.slotsUsed,data.item.slotsTotal]" :labels="labels" :width="width" :height="height"
-                    :innerRadius="innerRadius" :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
-              </template>
-              <template slot="cpu" scope="data">
-                <app-supervisorsummary-radial :graphData="[data.item.usedCpu,data.item.totalCpu]" :labels="labels" :width="width" :height="height"
-                    :innerRadius="innerRadius" :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
-              </template>
-              <template slot="memory" scope="data">
-                <app-supervisorsummary-radial :graphData="[data.item.usedMem,data.item.totalMem]" :labels="labels" :width="width" :height="height"
-                    :innerRadius="innerRadius" :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
+              <template slot="status" scope="item">
+                <span :class="item.value | statusClass">{{item.value}}</span>
               </template>
               <template slot="uptime" scope="data">
-                <small>{{data.item.uptime}}</small>
+                <small>{{data.item.nimbusUpTime}}</small>
               </template>
           </b-table>
         </div>
@@ -78,10 +59,9 @@
 <script>
   import TopologyREST from '@/rest/TopologyREST';
   import FilterUtils from '@/utils/FilterUtils';
-  import RadialChart from '@/components/RadialChart';
 
   export default {
-    name: 'SupervisorSummary',
+    name: 'NimbusSummary',
     props: ["fromDashboard"],
     created(){
       this.fetchData();
@@ -95,13 +75,7 @@
         items: [],
         currentPage: 1,
         perPage: 2,
-        filter: null,
-        labels : ['Used','Total'],
-        width : null,
-        height : null,
-        innerRadius :19,
-        outerRadius : 21,
-        color: ["#bcbcbc", "#235693"]
+        filter: null
       };
     },
 
@@ -109,10 +83,8 @@
       //Get all the table fields
       getTableFields(){
         let fields = {
-          hostName: {label: 'Host'},
-          slots: {label: 'Slots'},
-          cpu: {label: 'CPU'},
-          memory: {label: 'Memory'},
+          hostName: {label: 'Host:Port'},
+          status: {label: 'Status'},
           uptime: {label: 'Uptime'}
         };
         return fields;
@@ -120,12 +92,12 @@
 
       //Request call to get nimbus data
       fetchData(){
-        TopologyREST.getSummary('supervisor').then((result) => {
+        TopologyREST.getSummary('nimbus').then((result) => {
           if(result.responseMessage !== undefined){
-            console.error("Error in SupervisorSummary");
+            console.error("Error in NimbusSummary");
           } else {
-            this.entities = result.supervisors;
-            this.items = result.supervisors;
+            this.entities = result.nimbuses;
+            this.items = result.nimbuses;
           }
         });
       },
@@ -138,9 +110,6 @@
         }
       }
 
-    },
-    components : {
-      'app-supervisorsummary-radial' : RadialChart
     },
     filters: {
       filterByKey: FilterUtils.filterByKey,

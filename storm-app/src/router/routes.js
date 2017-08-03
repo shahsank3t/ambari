@@ -7,6 +7,7 @@ import Dashboard from '@/containers/Dashboard';
 import TopologyListing from '@/containers/TopologyListing';
 import NimbusConfigSummary from '@/containers/NimbusConfigSummary';
 import SupervisorSummary from '@/containers/SupervisorSummary';
+import NimbusSummary from '@/containers/NimbusSummary';
 
 Vue.use(Router);
 
@@ -30,7 +31,7 @@ export default new Router({
     {
       path: routePaths.NIMBUS.path,
       name: routePaths.NIMBUS.name,
-      component: NimbusConfigSummary
+      component: NimbusSummary
     },
     {
       path: routePaths.SUPERVISOR.path,

@@ -38,6 +38,9 @@ export default {
     case 'KILLED':
       classname += "label-danger";
       break;
+    case 'Leader':
+      classname += "label-success";
+      break;
     default:
       classname += "label-primary";
       break;

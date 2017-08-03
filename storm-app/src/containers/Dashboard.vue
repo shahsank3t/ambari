@@ -6,7 +6,7 @@
       </div>
       <div class="col-sm-7">
         <app-topologListing :fromDashboard="true"></app-topologListing>
-        <app-supervisorSummary></app-supervisorSummary>
+        <app-supervisorSummary :fromDashboard="true"></app-supervisorSummary>
       </div>
     </div>
     <div class="row">
