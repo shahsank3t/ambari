@@ -16,7 +16,7 @@
             </span>
           </div>
           <div class="table-responsive">
-            <b-table :busy="isBusy" :items="fetchData" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter" :show-empty="true">
+            <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="onFilter" :show-empty="true">
               <!-- Custom formatted header cells -->
               <template slot="HEAD_name" scope="data">
                 <b-popover triggers="hover" placement="bottom" content="The name given to the topology by when it was submitted. Click the name to view the Topology's information.">
@@ -71,9 +71,9 @@
               </template>
             </b-table>
           </div>
-          <div v-if="!fromDashboard && tableData.length > 0" class="clearfix">
-            <span>Showing {{currentPage > 1 ? (currentPage-1)*perPage+1 : currentPage }}  to {{currentPage*perPage > tableData.length ? tableData.length : (currentPage*perPage)}} of {{tableData.length}} entries.</span>
-            <b-pagination size="sm" class="pull-right no-margin" :hide-goto-end-buttons="true" :total-rows="tableData.length" :per-page="perPage" v-model="currentPage" />
+          <div v-if="!fromDashboard && items.length > 0" class="clearfix">
+            <span>Showing {{currentPage > 1 ? (currentPage-1)*perPage+1 : currentPage }}  to {{currentPage*perPage > items.length ? items.length : (currentPage*perPage)}} of {{items.length}} entries.</span>
+            <b-pagination size="sm" class="pull-right no-margin" :hide-goto-end-buttons="true" :total-rows="items.length" :per-page="perPage" v-model="currentPage" />
           </div>
         </div>
       </div>
@@ -83,12 +83,13 @@
 
 <script>
   import TopologyREST from '@/rest/TopologyREST';
+  import FilterUtils from '@/utils/FilterUtils';
 
   export default {
     name: 'TopologyListing',
     props: ["fromDashboard"],
     created(){
-      // this.fetchData();
+      this.fetchData();
     },
     data() {
       let tableFields = this.getTableFields();
@@ -104,11 +105,11 @@
         //   {fieldName: "uptime", tooltip: "The time since the Topology was submitted."}
         // ],
         fields: tableFields,
-        tableData: [],
+        topologiesEntities: [],
+        items: [],
         currentPage: 1,
         perPage: 2,
-        filter: null,
-        isBusy: false
+        filter: null
       };
     },
     methods: {
@@ -134,58 +135,30 @@
 
       //Request call to get topology data
       fetchData(){
-        this.isBusy = true;
-        return TopologyREST.getSummary('topology').then((result) => {
+        TopologyREST.getSummary('topology').then((result) => {
           if(result.responseMessage !== undefined){
             console.error("Error in Topology Listing");
-            this.isBusy = false;
           } else {
-            this.isBusy = false;
-            this.tableData = result.topologies;
-            return this.tableData;
-            // this.tableData = [
-            //   {
-            //     "assignedTotalMem":832.0,"owner":"storm","requestedMemOnHeap":0.0,"encodedId":"streamline-4-storm_ui-3-1500617459","assignedMemOnHeap":832.0,"id":"streamline-4-storm_ui-3-1500617459","uptime":"12d 4h 29m 13s","schedulerInfo":null,"name":"streamline-4-storm_ui","workersTotal":1,"status":"ACTIVE","requestedMemOffHeap":0.0,"tasksTotal":5,"requestedCpu":0.0,
-            //     "replicationCount":1,"executorsTotal":5,"uptimeSeconds":1052953,"assignedCpu":0.0,"assignedMemOffHeap":0.0,"requestedTotalMem":0.0
-            //   },
-            //   {
-            //     "assignedTotalMem":832.0,"owner":"storm","requestedMemOnHeap":0.0,"encodedId":"streamline-5-application1-4-1500618779","assignedMemOnHeap":832.0,"id":"streamline-5-application1-4-1500618779","uptime":"12d 4h 7m 13s","schedulerInfo":null,"name":"streamline-5-application1","workersTotal":1,"status":"ACTIVE","requestedMemOffHeap":0.0,"tasksTotal":6,"requestedCpu":0.0,
-            //     "replicationCount":1,"executorsTotal":6,"uptimeSeconds":1051633,"assignedCpu":0.0,"assignedMemOffHeap":0.0,"requestedTotalMem":0.0
-            //   },
-            //   {
-            //     "assignedTotalMem":832.0,"owner":"storm","requestedMemOnHeap":0.0,"encodedId":"streamline-4-storm_ui-3-1500617459","assignedMemOnHeap":832.0,"id":"streamline-4-storm_ui-3-1500617459","uptime":"12d 4h 29m 13s","schedulerInfo":null,"name":"streamline-6-storm_ui","workersTotal":1,"status":"ACTIVE","requestedMemOffHeap":0.0,"tasksTotal":5,"requestedCpu":0.0,
-            //     "replicationCount":1,"executorsTotal":5,"uptimeSeconds":1052953,"assignedCpu":0.0,"assignedMemOffHeap":0.0,"requestedTotalMem":0.0
-            //   },
-            //   {
-            //     "assignedTotalMem":832.0,"owner":"storm","requestedMemOnHeap":0.0,"encodedId":"streamline-5-application1-4-1500618779","assignedMemOnHeap":832.0,"id":"streamline-5-application1-4-1500618779","uptime":"12d 4h 7m 13s","schedulerInfo":null,"name":"streamline-7-application1","workersTotal":1,"status":"ACTIVE","requestedMemOffHeap":0.0,"tasksTotal":6,"requestedCpu":0.0,
-            //     "replicationCount":1,"executorsTotal":6,"uptimeSeconds":1051633,"assignedCpu":0.0,"assignedMemOffHeap":0.0,"requestedTotalMem":0.0
-            //   }
-            // ];
+            this.topologiesEntities = result.topologies;
+            this.items = result.topologies;
           }
         });
+      },
+      onFilter(filterStr){
+        if(typeof filterStr === 'string'){
+          this.items = this.$options.filters.filterByKey(this.topologiesEntities, filterStr, 'name');
+        } else {
+          return this.items;
+        }
       }
     },
     filters: {
-      statusClass(status){
-        let classname = "label ";
-        switch(status){
-        case 'ACTIVE':
-          classname += "label-success";
-          break;
-        case 'INACTIVE':
-          classname += "label-default";
-          break;
-        case 'REBALANCING':
-          classname += "label-warning";
-          break;
-        case 'KILLED':
-          classname += "label-danger";
-          break;
-        default:
-          classname += "label-primary";
-          break;
-        }
-        return classname;
+      filterByKey: FilterUtils.filterByKey,
+      statusClass: FilterUtils.statusClass
+    },
+    watch:{
+      filter(filterStr){
+        this.onFilter(filterStr);
       }
     }
   };

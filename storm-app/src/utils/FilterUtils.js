@@ -15,37 +15,33 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 **/
-
-import React from 'react';
+import Vue from 'vue';
 import _ from 'lodash';
 
-const filterByKey = function(entities, filterValue,entity) {
-  let matchFilter = new RegExp(filterValue, 'i');
-  return entities.filter(filteredList => !filterValue || _.isEmpty(entity) ? matchFilter.test(filteredList) : matchFilter.test(filteredList[entity]));
-};
-
-const hideFSModal = function(modal,callback){
-  this.refs[modal].hide();
-  if(!!callback){
-    return  new Promise((resolve,reject) => {
-      return resolve(callback);
-    });
+export default {
+  filterByKey: (entities, filterValue,entity) => {
+    let matchFilter = new RegExp(filterValue, 'i');
+    return entities.filter(filteredList => !filterValue || _.isEmpty(entity) ? matchFilter.test(filteredList) : matchFilter.test(filteredList[entity]));
+  },
+  statusClass: (status) => {
+    let classname = "label ";
+    switch(status){
+    case 'ACTIVE':
+      classname += "label-success";
+      break;
+    case 'INACTIVE':
+      classname += "label-default";
+      break;
+    case 'REBALANCING':
+      classname += "label-warning";
+      break;
+    case 'KILLED':
+      classname += "label-danger";
+      break;
+    default:
+      classname += "label-primary";
+      break;
+    }
+    return classname;
   }
-};
-
-const populateWindowsOptions = function(optionsArr){
-  let options=[];
-  _.map(optionsArr, (opt) => {
-    options.push({
-      label : opt.windowPretty,
-      value : opt.window
-    });
-  });
-  return options;
-};
-
-export default{
-  filterByKey,
-  hideFSModal,
-  populateWindowsOptions
 };
