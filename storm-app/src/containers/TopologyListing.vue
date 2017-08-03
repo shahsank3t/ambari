@@ -15,66 +15,14 @@
               <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
             </span>
           </div>
-          <div class="table-responsive">
-            <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="onFilter" :show-empty="true">
-              <!-- Custom formatted header cells -->
-              <template slot="HEAD_name" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="The name given to the topology by when it was submitted. Click the name to view the Topology's information.">
-                  {{data.label}}
-                </b-popover>
-              </template>
-              <template slot="HEAD_status" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="The status can be one of ACTIVE, INACTIVE, KILLED, or REBALANCING.">
-                  {{data.label}}
-                </b-popover>
-              </template>
-              <template slot="HEAD_assignedTotalMem" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="Assigned Total Memory by Scheduler.">
-                  {{data.label}}
-                </b-popover>
-              </template>
-              <template slot="HEAD_workersTotal" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="The number of Workers (processes).">
-                  {{data.label}}
-                </b-popover>
-              </template>
-              <template slot="HEAD_executorsTotal" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="Executors are threads in a Worker process.">
-                  {{data.label}}
-                </b-popover>
-              </template>
-              <template slot="HEAD_tasksTotal" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors.">
-                  {{data.label}}
-                </b-popover>
-              </template>
-              <template slot="HEAD_owner" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="The user that submitted the Topology, if authentication is enabled.">
-                  {{data.label}}
-                </b-popover>
-              </template>
-              <template slot="HEAD_uptime" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="The time since the Topology was submitted.">
-                  {{data.label}}
-                </b-popover>
-              </template>
-
-              <!-- Custom formatted value cells -->
-              <template slot="name" scope="data">
-                <router-link :to="{name: 'TopologyDetail', params: {topologyId: data.item.id}}">{{data.value}}</router-link>
-              </template>
-              <template slot="status" scope="item">
-                <span :class="item.value | statusClass">{{item.value}}</span>
-              </template>
-              <template slot="uptime" scope="item">
-                <small>{{item.value}}</small>
-              </template>
-            </b-table>
-          </div>
-          <div v-if="!fromDashboard && items.length > 0" class="clearfix">
-            <span>Showing {{currentPage > 1 ? (currentPage-1)*perPage+1 : currentPage }}  to {{currentPage*perPage > items.length ? items.length : (currentPage*perPage)}} of {{items.length}} entries.</span>
-            <b-pagination size="sm" class="pull-right no-margin" :hide-goto-end-buttons="true" :total-rows="items.length" :per-page="perPage" v-model="currentPage" />
-          </div>
+          <CommonTable
+            classname='no-margin'
+            :items="items"
+            :fields="fields"
+            :showPagination="showPagination"
+            :tableHeaderData="tableHeaderData"
+          >
+          </CommonTable>
         </div>
       </div>
     </div>
@@ -84,9 +32,13 @@
 <script>
   import TopologyREST from '@/rest/TopologyREST';
   import FilterUtils from '@/utils/FilterUtils';
+  import CommonTable from '@/components/CommonTable';
 
   export default {
     name: 'TopologyListing',
+    components: {
+      'CommonTable': CommonTable
+    },
     props: ["fromDashboard"],
     created(){
       this.fetchData();
@@ -94,22 +46,21 @@
     data() {
       let tableFields = this.getTableFields();
       return {
-        // tableMetadata:[
-        //   {fieldName: "name", tooltip: "The name given to the topology by when it was submitted. Click the name to view the Topology's information."},
-        //   {fieldName: "status", tooltip: "The status can be one of ACTIVE, INACTIVE, KILLED, or REBALANCING."},
-        //   {fieldName: "assignedTotalMem", tooltip: "Assigned Total Memory by Scheduler."},
-        //   {fieldName: "workersTotal", tooltip: "The number of Workers (processes)."},
-        //   {fieldName: "executorsTotal", tooltip: "Executors are threads in a Worker process."},
-        //   {fieldName: "tasksTotal", tooltip: "A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors."},
-        //   {fieldName: "owner", tooltip: "The user that submitted the Topology, if authentication is enabled."},
-        //   {fieldName: "uptime", tooltip: "The time since the Topology was submitted."}
-        // ],
+        tableHeaderData:[
+          {fieldName: "name", tooltip: "The name given to the topology by when it was submitted. Click the name to view the Topology's information."},
+          {fieldName: "status", tooltip: "The status can be one of ACTIVE, INACTIVE, KILLED, or REBALANCING."},
+          {fieldName: "assignedTotalMem", tooltip: "Assigned Total Memory by Scheduler."},
+          {fieldName: "workersTotal", tooltip: "The number of Workers (processes)."},
+          {fieldName: "executorsTotal", tooltip: "Executors are threads in a Worker process."},
+          {fieldName: "tasksTotal", tooltip: "A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors."},
+          {fieldName: "owner", tooltip: "The user that submitted the Topology, if authentication is enabled."},
+          {fieldName: "uptime", tooltip: "The time since the Topology was submitted."}
+        ],
         fields: tableFields,
         topologiesEntities: [],
         items: [],
-        currentPage: 1,
-        perPage: 2,
-        filter: null
+        filter: null,
+        showPagination: !this.fromDashboard ? true : false
       };
     },
     methods: {
@@ -144,6 +95,8 @@
           }
         });
       },
+
+      //Filter by topology name
       onFilter(filterStr){
         if(typeof filterStr === 'string'){
           this.items = this.$options.filters.filterByKey(this.topologiesEntities, filterStr, 'name');
@@ -157,8 +110,13 @@
       statusClass: FilterUtils.statusClass
     },
     watch:{
+      //when filter value changes, it will call this method; being reactive
       filter(filterStr){
         this.onFilter(filterStr);
+      },
+      //if no data present in search result, hide pagination
+      items(data){
+        this.showPagination = !this.fromDashboard && data.length > 0;
       }
     }
   };
