@@ -7,6 +7,7 @@ import router from '@/router/routes';
 import './assets/css/font-awesome.min.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import './assets/css/bootstrap.css';
+import 'animate.css/animate.css';
 import './assets/css/style.css';
 
 import App from './App';
