@@ -46,5 +46,15 @@ export default {
       break;
     }
     return classname;
+  },
+  populateWindowsOptions : (optionsArr) => {
+    let options=[];
+    _.map(optionsArr, (opt) => {
+      options.push({
+        label : opt.windowPretty,
+        value : opt.window
+      });
+    });
+    return options;
   }
 };

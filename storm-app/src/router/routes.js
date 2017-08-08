@@ -8,6 +8,7 @@ import TopologyListing from '@/containers/TopologyListing';
 import NimbusConfigSummary from '@/containers/NimbusConfigSummary';
 import SupervisorSummary from '@/containers/SupervisorSummary';
 import NimbusSummary from '@/containers/NimbusSummary';
+import TopologyDetailView from '@/containers/TopologyDetailView';
 
 Vue.use(Router);
 
@@ -26,7 +27,7 @@ export default new Router({
     {
       path: routePaths.TOPOLOGY_DETAIL.path,
       name: routePaths.TOPOLOGY_DETAIL.name,
-      component: NimbusConfigSummary
+      component: TopologyDetailView
     },
     {
       path: routePaths.NIMBUS.path,
