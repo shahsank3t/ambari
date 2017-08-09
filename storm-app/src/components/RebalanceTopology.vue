@@ -76,7 +76,7 @@
           }
         });
       },
-      
+
       rebalanceValueChange(type,event){
         this.rebalanceData[type] = +event.target.value;
       },

@@ -20,6 +20,7 @@
         <template scope="data" :slot="headData.isCustom ? headData.fieldName : ''" v-for="headData in tableHeaderData">
           <slot :item="data" :name="'__'+headData.fieldName+'__'"></slot>
         </template>
+
       </b-table>
     </div>
     <div v-if="showPagination && items.length > 0" class="clearfix">
