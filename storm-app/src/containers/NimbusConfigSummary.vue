@@ -43,8 +43,8 @@
         filter: null,
         showPagination: true,
         tableHeaderData : [
-          {fieldName: "key", tooltip: "key"},
-          {fieldName: "value", tooltip: "value"}
+          {fieldName: "key", tooltip: "Key"},
+          {fieldName: "value", tooltip: "Value"}
         ]
       };
     },

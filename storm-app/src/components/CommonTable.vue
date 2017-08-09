@@ -43,7 +43,7 @@
     data(){
       return {
         currentPage: 1,
-        perPage: 35
+        perPage: 25
       };
     },
     watch: {},

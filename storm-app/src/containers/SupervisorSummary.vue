@@ -1,84 +1,67 @@
 <template>
-	<div class="row">
+  <div class="row">
     <div class="col-sm-12">
-    <div class="box">
-      <div class="box-header">
-        <h4>Supervisor Summary</h4>
-        <div v-if="fromDashboard" class="box-control">
-          <router-link to="/supervisor" class="primary"><i class="fa fa-external-link"></i></router-link>
+      <div class="box">
+        <div class="box-header">
+          <h4>Supervisor Summary</h4>
+          <div v-if="fromDashboard" class="box-control">
+            <router-link to="/supervisor" class="primary"><i class="fa fa-external-link"></i></router-link>
+          </div>
         </div>
-      </div>
-      <div :class="[{paddless: fromDashboard}, 'box-body']">
-        <div v-if="!fromDashboard" class="input-group col-sm-4">
-          <b-form-input v-model="filter" type="text" placeholder="Search By Host"></b-form-input>
-          <span class="input-group-btn">
-            <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
-          </span>
-        </div>
-        <div class="table-responsive">
-          <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="onFilter" :show-empty="true">
-              <!-- Custom formatted header cells -->
-              <template slot="HEAD_hostName" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="The hostname reported by the remote host. (Note that this hostname is not the result of a reverse lookup at the Nimbus node.)">
-                  {{data.label}}
-                </b-popover>
-              </template>
-              <template slot="HEAD_slots" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="Slots are Workers (processes).">
-                  {{data.label}}
-                </b-popover>
-              </template>
-              <template slot="HEAD_cpu" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="CPU that has been allocated.">
-                  {{data.label}}
-                </b-popover>
-              </template>
-              <template slot="HEAD_memory" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="Memory that has been allocated.">
-                  {{data.label}}
-                </b-popover>
-              </template>
-              <template slot="HEAD_uptime" scope="data">
-                <b-popover triggers="hover" placement="bottom" content="The length of time a Supervisor has been registered to the cluster.">
-                  {{data.label}}
-                </b-popover>
-              </template>
-
-              <!-- Custom formatted value cells -->
-              <template slot="hostName" scope="data">
-                <a :href="data.item.logLink" target="_blank">{{data.item.host}}</a>
-              </template>
-              <template slot="slots" scope="data">
-                <app-supervisorsummary-radial :graphData="[data.item.slotsUsed,data.item.slotsTotal]" :labels="labels" :width="width" :height="height"
-                    :innerRadius="innerRadius" :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
-              </template>
-              <template slot="cpu" scope="data">
-                <app-supervisorsummary-radial :graphData="[data.item.usedCpu,data.item.totalCpu]" :labels="labels" :width="width" :height="height"
-                    :innerRadius="innerRadius" :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
-              </template>
-              <template slot="memory" scope="data">
-                <app-supervisorsummary-radial :graphData="[data.item.usedMem,data.item.totalMem]" :labels="labels" :width="width" :height="height"
-                    :innerRadius="innerRadius" :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
-              </template>
-              <template slot="uptime" scope="data">
-                <small>{{data.item.uptime}}</small>
-              </template>
-          </b-table>
-        </div>
-        <div v-if="!fromDashboard && items.length > 0" class="clearfix">
-          <span>Showing {{currentPage > 1 ? (currentPage-1)*perPage+1 : currentPage }}  to {{currentPage*perPage > items.length ? items.length : (currentPage*perPage)}} of {{items.length}} entries.</span>
-          <b-pagination size="sm" class="pull-right no-margin" :hide-goto-end-buttons="true" :total-rows="items.length" :per-page="perPage" v-model="currentPage" />
+        <div :class="[{paddless: fromDashboard}, 'box-body']">
+          <div v-if="!fromDashboard" class="input-group col-sm-4">
+            <b-form-input v-model="filter" type="text" placeholder="Search By Host"></b-form-input>
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+          <CommonTable
+            classname='no-margin'
+            :items="items"
+            :fields="fields"
+            :showPagination="showPagination"
+            :tableHeaderData="tableHeaderData"
+          >
+            <!-- Custom formatted value cells -->
+            <template slot="__hostName__" scope="{item}">
+              <a :href="item.item.logLink" target="_blank">{{item.item.host}}</a>
+            </template>
+            <template slot="__slots__" scope="{item}">
+              <app-supervisorsummary-radial
+                :graphData="[item.item.slotsUsed,item.item.slotsTotal]"
+                :labels="labels" :width="width" :height="height"
+                :innerRadius="innerRadius"
+                :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
+            </template>
+            <template slot="__cpu__" scope="{item}">
+              <app-supervisorsummary-radial
+                :graphData="[item.item.usedCpu,item.item.totalCpu]"
+                :labels="labels" :width="width" :height="height"
+                :innerRadius="innerRadius"
+                :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
+            </template>
+            <template slot="__memory__" scope="{item}">
+              <app-supervisorsummary-radial
+                :graphData="[item.item.usedMem,item.item.totalMem]"
+                :labels="labels" :width="width" :height="height"
+                :innerRadius="innerRadius"
+                :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
+            </template>
+            <template scope="{item}" slot="__uptime__">
+              <small>{{item.value}}</small>
+            </template>
+          </CommonTable>
         </div>
       </div>
     </div>
-    </div>
-	</div>
+  </div>
 </template>
 
 <script>
   import TopologyREST from '@/rest/TopologyREST';
   import FilterUtils from '@/utils/FilterUtils';
   import RadialChart from '@/components/RadialChart';
+  import CommonTable from '@/components/CommonTable';
 
   export default {
     name: 'SupervisorSummary',
@@ -90,18 +73,24 @@
     data() {
       let tableFields = this.getTableFields();
       return {
+        tableHeaderData:[
+          {fieldName: "hostName", tooltip: "The hostname reported by the remote host. (Note that this hostname is not the result of a reverse lookup at the Nimbus node.)", isCustom: true},
+          {fieldName: "slots", tooltip: "Slots are Workers (processes).", isCustom: true},
+          {fieldName: "cpu", tooltip: "CPU that has been allocated.", isCustom: true},
+          {fieldName: "memory", tooltip: "Memory that has been allocated.", isCustom: true},
+          {fieldName: "uptime", tooltip: "The length of time a Supervisor has been registered to the cluster.", isCustom: true}
+        ],
         fields: tableFields,
         entities: [],
         items: [],
-        currentPage: 1,
-        perPage: 2,
         filter: null,
         labels : ['Used','Total'],
         width : null,
         height : null,
         innerRadius :19,
         outerRadius : 21,
-        color: ["#bcbcbc", "#235693"]
+        color: ["#bcbcbc", "#235693"],
+        showPagination: !this.fromDashboard ? true : false
       };
     },
 
@@ -140,7 +129,8 @@
 
     },
     components : {
-      'app-supervisorsummary-radial' : RadialChart
+      'app-supervisorsummary-radial' : RadialChart,
+      'CommonTable': CommonTable
     },
     filters: {
       filterByKey: FilterUtils.filterByKey,

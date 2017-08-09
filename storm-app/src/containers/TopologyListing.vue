@@ -22,6 +22,7 @@
             :showPagination="showPagination"
             :tableHeaderData="tableHeaderData"
           >
+            <!-- Custom formatted value cells -->
             <template scope="{item}" slot="__name__">
               <router-link :to="{name: 'TopologyDetail', params: {topologyId: item.item.id}}">{{item.value}}</router-link>
             </template>
