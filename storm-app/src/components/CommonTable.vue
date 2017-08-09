@@ -17,14 +17,8 @@
         </template>
 
         <!-- Custom formatted value cells -->
-        <template slot="name" scope="data">
-          <router-link :to="{name: 'TopologyDetail', params: {topologyId: data.item.id}}">{{data.value}}</router-link>
-        </template>
-        <template slot="status" scope="item">
-          <span :class="item.value | statusClass">{{item.value}}</span>
-        </template>
-        <template slot="uptime" scope="item">
-          <small>{{item.value}}</small>
+        <template scope="data" :slot="headData.isCustom ? headData.fieldName : ''" v-for="headData in tableHeaderData">
+          <slot :item="data" :name="'__'+headData.fieldName+'__'"></slot>
         </template>
       </b-table>
     </div>
@@ -43,8 +37,6 @@
 </template>
 
 <script>
-  import FilterUtils from '@/utils/FilterUtils';
-
   export default {
     name: 'TableComponent',
     props: ["items", "fields", "classname", "showPagination", "tableHeaderData"],
@@ -55,9 +47,7 @@
       };
     },
     watch: {},
-    filters: {
-      statusClass: FilterUtils.statusClass
-    },
+    filters: {},
     methods: {}
   };
 </script>

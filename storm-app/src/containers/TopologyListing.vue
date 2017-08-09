@@ -22,6 +22,15 @@
             :showPagination="showPagination"
             :tableHeaderData="tableHeaderData"
           >
+            <template scope="{item}" slot="__name__">
+              <router-link :to="{name: 'TopologyDetail', params: {topologyId: item.item.id}}">{{item.value}}</router-link>
+            </template>
+            <template scope="{item}" slot="__status__">
+              <span :class="item.value | statusClass">{{item.value}}</span>
+            </template>
+            <template scope="{item}" slot="__uptime__">
+              <small>{{item.value}}</small>
+            </template>
           </CommonTable>
         </div>
       </div>
@@ -47,14 +56,14 @@
       let tableFields = this.getTableFields();
       return {
         tableHeaderData:[
-          {fieldName: "name", tooltip: "The name given to the topology by when it was submitted. Click the name to view the Topology's information."},
-          {fieldName: "status", tooltip: "The status can be one of ACTIVE, INACTIVE, KILLED, or REBALANCING."},
+          {fieldName: "name", tooltip: "The name given to the topology by when it was submitted. Click the name to view the Topology's information.", isCustom: true},
+          {fieldName: "status", tooltip: "The status can be one of ACTIVE, INACTIVE, KILLED, or REBALANCING.", isCustom: true},
           {fieldName: "assignedTotalMem", tooltip: "Assigned Total Memory by Scheduler."},
           {fieldName: "workersTotal", tooltip: "The number of Workers (processes)."},
           {fieldName: "executorsTotal", tooltip: "Executors are threads in a Worker process."},
           {fieldName: "tasksTotal", tooltip: "A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors."},
           {fieldName: "owner", tooltip: "The user that submitted the Topology, if authentication is enabled."},
-          {fieldName: "uptime", tooltip: "The time since the Topology was submitted."}
+          {fieldName: "uptime", tooltip: "The time since the Topology was submitted.", isCustom: true}
         ],
         fields: tableFields,
         topologiesEntities: [],
