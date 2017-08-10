@@ -1,6 +1,6 @@
 <template>
   <div class="switchWrapper" :class="[!!KYC ? 'lagSwitchSetting pull-right' : '']">
-    <span class="switchSlider" :class="[ checked ? 'onSlider' : 'offSlider']" @click="switchCallBack">
+    <span class="switchSlider" :class="[ checked ? 'onSlider' : 'offSlider']" @click.stop.prevent="switchClicked">
       <span class="switchItemOn sliderText" :class="[ !!KYC ? 'graphSwitchOn' : '']">{{on}}</span>
       <span class="switchItemMid"></span>
       <span class="switchItemOff sliderText" :class="[ !!KYC ? 'graphSwitchOff' : '']">{{off}}</span>
@@ -8,9 +8,11 @@
   </div>
 </template>
 <script>
+  import { EventBus } from '@/utils/EventBus';
+
   export default{
     name : "CommonSwitchComponent",
-    props : ["KYC","checked","textON","textOFF"],
+    props : ["KYC","checked","textON","textOFF","type"],
     data() {
       return{
         on : !!this.textON ? this.textON : "ON",
@@ -18,8 +20,8 @@
       };
     },
     methods : {
-      switchCallBack(){
-        this.$emit('switchCallBack');
+      switchClicked(){
+        EventBus.$emit('switchCallBack',this.type);
       }
     }
   };

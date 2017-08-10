@@ -11,7 +11,7 @@
       >
         <!-- Custom formatted header cells -->
         <template scope="data" :slot="'HEAD_'+headData.fieldName" v-for="headData in tableHeaderData">
-          <b-popover triggers="hover" placement="bottom" :content="headData.tooltip">
+          <b-popover triggers="hover" :placement="popoverPosition ? popoverPosition : 'bottom'" :content="headData.tooltip">
             {{data.label}}
           </b-popover>
         </template>
@@ -40,7 +40,7 @@
 <script>
   export default {
     name: 'TableComponent',
-    props: ["items", "fields", "classname", "showPagination", "tableHeaderData"],
+    props: ["items", "fields", "classname", "showPagination", "tableHeaderData","popoverPosition"],
     data(){
       return {
         currentPage: 1,

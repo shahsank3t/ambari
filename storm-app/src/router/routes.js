@@ -9,6 +9,7 @@ import NimbusConfigSummary from '@/containers/NimbusConfigSummary';
 import SupervisorSummary from '@/containers/SupervisorSummary';
 import NimbusSummary from '@/containers/NimbusSummary';
 import TopologyDetailView from '@/containers/TopologyDetailView';
+import ComponentDetailView from '@/containers/ComponentDetailView';
 
 Vue.use(Router);
 
@@ -38,6 +39,11 @@ export default new Router({
       path: routePaths.SUPERVISOR.path,
       name: routePaths.SUPERVISOR.name,
       component: SupervisorSummary
+    },
+    {
+      path: routePaths.COMPONENT_DETAIL.path,
+      name: routePaths.COMPONENT_DETAIL.name,
+      component: ComponentDetailView
     }
   ]
 });

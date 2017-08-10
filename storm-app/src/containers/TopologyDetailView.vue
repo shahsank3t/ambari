@@ -8,7 +8,6 @@
           <div class="box-body form-horizontal">
             <app-CommonWindowPanel
               KYC="detailView"
-              :toggleSystem="toggleSystem"
               :systemFlag="systemFlag"
               :debugFlag="debugFlag"
               :selectedWindowKey="selectedWindowKey"
@@ -23,6 +22,189 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="col-sm-5">
+        <div class="summary-tile">
+          <div class="summary-title">Topology Summary</div>
+          <div class="summary-body form-horizontal">
+            <div class="form-group">
+              <label class="col-sm-4 control-label">ID:</label>
+              <div class="col-sm-8">
+                <p class="form-control-static">{{details.id}}</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-4 control-label">Owner:</label>
+              <div class="col-sm-8">
+                <p class="form-control-static">{{details.owner}}</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-4 control-label">Status:</label>
+              <div class="col-sm-8">
+                <p class="form-control-static">{{details.status}}</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-4 control-label">Uptime:</label>
+              <div class="col-sm-8">
+                <p class="form-control-static">{{details.uptime}}</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-4 control-label">Workers:</label>
+              <div class="col-sm-8">
+                <p class="form-control-static">{{details.workersTotal}}</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-4 control-label">Executors:</label>
+              <div class="col-sm-8">
+                <p class="form-control-static">{{details.executorsTotal}}</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-4 control-label">Tasks:</label>
+              <div class="col-sm-8">
+                <p class="form-control-static">{{details.tasksTotal}}</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-4 control-label">Memory:</label>
+              <div class="col-sm-8">
+                <p class="form-control-static">{{details.assignedTotalMem}}</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-4 control-label">Worker-Host:Port:</label>
+              <div class="col-sm-8">
+                <p class="form-control-static preformatted">{{getWorkerData()}}</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-7">
+        <div class="stats-tile">
+          <div class="stats-title">Topology Stats</div>
+          <div class="stats-body">
+            <app-CommonTable
+              classname='no-margin'
+              :items="topStateItem"
+              :fields="topStateFields"
+              :showPagination="false"
+              popoverPosition="top"
+              :tableHeaderData="topStateHeaderData"
+              >
+            </app-CommonTable>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-ToggleComponent caption="Kafka Spout Lag"
+      :lag="true"
+      :toggle="toggleGraphAndTable"
+      :toggleTableAndGraphFUNC="toggleTableAndGraphFUNC">
+      <div class="box-body">
+        <app-CommonTable
+          v-if="toggleGraphAndTable"
+          classname='no-margin'
+          :items="topologyLag"
+          :fields="topologyLagFields"
+          :showPagination="false"
+          :tableHeaderData="topLagHeaderData"
+        >
+      </app-CommonTable>
+        <div v-else id="lag-graph">
+          <app-BarChart
+            ref="barChart"
+            :width="screenWidth"
+            :height="400"
+            xAttr="spoutId-partition"
+            yAttr="count"
+            :data="barChartData"
+            >
+          </app-BarChart>
+        </div>
+      </div>
+    </app-ToggleComponent>
+
+    <app-ToggleComponent caption="Spouts">
+      <div class="box-body">
+        <div class="input-group col-sm-4">
+          <input @input="filterChanged('spoutItems','constSpoutItems','spoutId', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
+          </span>
+        </div>
+        <app-CommonTable
+          classname='no-margin'
+          :items="spoutItems"
+          :fields="spoutFields"
+          :showPagination="true"
+          :tableHeaderData="spoutHeaderData"
+          :parentId = "topologyId"
+          >
+
+          <template scope="{item}" slot="__spoutId__">
+            <router-link :to="{name: 'ComponentDetail', params: {topologyId: topologyId, componentName : item.value}}">{{item.value}}</router-link>
+          </template>
+
+        </app-CommonTable>
+      </div>
+    </app-ToggleComponent>
+
+    <app-ToggleComponent caption="Bolts">
+      <div class="box-body">
+        <div class="input-group col-sm-4">
+          <input @input="filterChanged('blotsItems','constBoltsItems','boltId', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
+          </span>
+        </div>
+
+        <app-CommonTable
+          classname='no-margin'
+          :items="blotsItems"
+          :fields="boltsFields"
+          :showPagination="true"
+          :tableHeaderData="boltsHeaderData"
+          :parentId = "topologyId"
+          >
+
+          <template scope="{item}" slot="__boltId__">
+            <router-link :to="{name: 'ComponentDetail', params: {topologyId: topologyId, componentName : item.value}}">{{item.value}}</router-link>
+          </template>
+
+        </app-CommonTable>
+      </div>
+    </app-ToggleComponent>
+
+
+    <app-ToggleComponent caption="Topology Configuration">
+      <div class="box-body">
+        <div class="input-group col-sm-4">
+          <input @input="filterChanged('configItems','constConfigItems','Key', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
+          </span>
+        </div>
+
+        <app-CommonTable
+          classname='no-margin'
+          :items="configItems"
+          :fields="configFields"
+          :showPagination="true"
+          :tableHeaderData="configHeaderData"
+          >
+        </app-CommonTable>
+      </div>
+    </app-ToggleComponent>
+
+
+
+
     <!-- debug modal  -->
     <app-FSModal
       modalTitle="Do you really want to debug this topology ? If yes, please, specify sampling percentage."
@@ -107,6 +289,10 @@
   import FSModal from '@/components/FSModal';
   import RebalanceTopology from '@/components/RebalanceTopology';
   import LogLevelComponent from '@/components/LogLevelComponent';
+  import CommonTable from '@/components/CommonTable';
+  import ToggleComponent from '@/components/ToggleComponent';
+  import BarChart from '@/components/BarChart';
+  import {EventBus} from '@/utils/EventBus';
 
   export default{
     name : "TopologyDetailView",
@@ -116,7 +302,11 @@
       "app-CommonWindowPanel" : CommonWindowPanel,
       "app-FSModal" : FSModal,
       "app-RebalanceTopology" : RebalanceTopology,
-      "app-LogLevelComponent" : LogLevelComponent
+      "app-LogLevelComponent" : LogLevelComponent,
+      "app-CommonTable" : CommonTable,
+      "app-ToggleComponent" : ToggleComponent,
+      "app-BarChart" : BarChart
+
     },
     data(){
       return{
@@ -134,12 +324,38 @@
         topologyStatus : '',
         activeTopologyBoxContent : '',
         topologyAction : '',
-        showLogLevel : false
+        showLogLevel : false,
+        topStateItem : [],
+        filter : null,
+        topStateFields : this.getStateTableFields(),
+        topStateHeaderData : this.getTopStateHeaderData(),
+        topologyLagFields : this.getTopologyLagFields(),
+        topLagHeaderData : this.getTopologyLagHeaderData(),
+        toggleGraphAndTable : true,
+        spoutItems : [],
+        constSpoutItems :[],
+        spoutFields : this.getSpoutFields(),
+        spoutHeaderData : this.getSpoutHeaderData(),
+        blotsItems : [],
+        constBoltsItems:[],
+        boltsFields : this.getBoltsFields(),
+        boltsHeaderData : this.getBoltesHeaderData(),
+        configItems : [],
+        constConfigItems : [],
+        configFields : this.getConfigFields(),
+        configHeaderData : this.getConfigHeaderData(),
+        screenWidth : window != window.parent ? 1100 : 1300,
+        barChartData :[]
       };
     },
     created(){
       this.fetchDetails();
     },
+
+    mounted () {
+      EventBus.$on("switchCallBack", this.toggleSystem);
+    },
+
     methods:{
       // populate link for breadcrumbs
       getLinks(){
@@ -176,6 +392,14 @@
           self.graphData = results[1];
           self.topologyStatus = self.details !== undefined ? self.details.status : '';
           self.topologyLag = _.isEmpty(results[2]) ? [] : self.generateTopologyLagData(results[2]);
+          self.topStateItem = self.details.topologyStats;
+          self.spoutItems = self.details.spouts;
+          self.constSpoutItems = self.details.spouts;
+          self.blotsItems = self.details.bolts;
+          self.constBoltsItems = self.details.bolts;
+          self.configItems = this.dataTransformation(self.details.configuration);
+          self.constConfigItems = this.dataTransformation(self.details.configuration);
+          self.barChartData = this.populateLagGraphData(self.topologyLag);
         });
       },
 
@@ -202,6 +426,7 @@
         });
         return arr;
       },
+
       // toggle for systemFlag and debugFlag
       toggleSystem(toggleStatus){
         this[toggleStatus] = !this[toggleStatus];
@@ -261,7 +486,7 @@
       // confirmbox modal resovle
       handleConfirmResolve(modal){
         if(modal === "debugConfirmBox"){
-          this.debugFlag = true;
+          this.debugFlag = false;
         } else if(modal === "killModelRef"){
           this.handleTopologyKilled();
         } else if (modal === "activateConfirmBox"){
@@ -332,7 +557,7 @@
           }
         });
       },
-      
+
       handleRebalanceModalSave(modalType){
         if(this.$refs.rebalanceModal.validateData()){
           this.$refs[modalType].hide();
@@ -348,10 +573,178 @@
             }
           });
         }
+      },
+
+      getWorkerData(){
+        const {details} = this;
+        let data='';
+        _.map(details.workers,(worker,i) => {
+          data += worker.host+':'+worker.port;
+          if(i !== details.workers.length - 1){
+            data += ', \n';
+          }
+        });
+        return data;
+      },
+
+      getStateTableFields(){
+        return {
+          windowPretty: {label: 'Window'},
+          emitted: {label: 'Emitted'},
+          transferred: {label: 'Transferred'},
+          completeLatency: {label: 'Complete Latency (ms)'},
+          acked: {label: 'Acked'},
+          failed: {label: 'Failed'}
+        };
+      },
+
+      getTopStateHeaderData(){
+        return [
+          {fieldName : "windowPretty" , tooltip : "The past period of time for which the statistics apply."},
+          {fieldName : "emitted" , tooltip : "The number of Tuples emitted." },
+          {fieldName : "transferred" , tooltip : "The number of Tuples emitted that sent to one or more bolts." },
+          {fieldName : "completeLatency" , tooltip : "The average time a Tuple tree takes to be completely processed by the Topology. A value of 0 is expected if no acking is done." },
+          {fieldName : "acked" , tooltip : "The number of Tuple trees successfully processed. A value of 0 is expected if no acking is done." },
+          {fieldName : "failed" , tooltip : "The number of Tuple trees that were explicitly failed or timed out before acking was completed. A value of 0 is expected if no acking is done." }
+        ];
+      },
+
+      getTopologyLagHeaderData(){
+        return [
+          {fieldName : "spoutId" , tooltip : "Id"},
+          {fieldName : "topic" , tooltip : "Topic"},
+          {fieldName : "partition" , tooltip : "Partition"},
+          {fieldName : "logHeadOffset" , tooltip : "Latest Offset"},
+          {fieldName : "consumerCommittedOffset" , tooltip : "Spout Committed Offset"},
+          {fieldName : "lag" , tooltip : "Lag"}
+        ];
+      },
+
+      getTopologyLagFields(){
+        return {
+          spoutId: {label: 'Id'},
+          topic: {label: 'Topic'},
+          partition: {label: 'Partition'},
+          logHeadOffset: {label: 'Latest Offset'},
+          consumerCommittedOffset: {label: 'Spout Committed Offset'},
+          lag: {label: 'Lag'}
+        };
+      },
+
+      getSpoutHeaderData(){
+        return [
+          {fieldName : "spoutId" , tooltip : "The ID assigned to a the Component by the Topology. Click on the name to view the Component's page.", isCustom :true},
+          {fieldName : "executors" , tooltip : "Executors are threads in a Worker process."},
+          {fieldName : "tasks" , tooltip : "A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors."},
+          {fieldName : "emitted" , tooltip : "The number of Tuples emitted."},
+          {fieldName : "transferred" , tooltip : "The number of Tuples emitted that sent to one or more bolts."},
+          {fieldName : "completeLatency" , tooltip : "The average time a Tuple tree takes to be completely processed by the Topology. A value of 0 is expected if no acking is done."},
+          {fieldName : "acked" , tooltip : "The number of Tuple trees successfully processed. A value of 0 is expected if no acking is done."},
+          {fieldName : "failed" , tooltip : "The number of Tuple trees that were explicitly failed or timed out before acking was completed. A value of 0 is expected if no acking is done."},
+          {fieldName : "errorHost" , tooltip : "Error Host:Port"},
+          {fieldName : "lastError" , tooltip : "Last Error"},
+          {fieldName : "errorTime" , tooltip : "Error Time"}
+        ];
+      },
+
+      getSpoutFields(){
+        return{
+          spoutId : {label : "Id"},
+          executors : {label : "Executors"},
+          tasks : {label : "Tasks"},
+          emitted : {label : "Emitted"},
+          transferred : {label : "Transferred"},
+          completeLatency : {label : "Complete Latency (ms)"},
+          acked : {label : "Acked"},
+          failed : {label : "Failed"},
+          errorHost : {label : "Error Host:Port"},
+          lastError : {label : "Last Error"},
+          errorTime : {label : "Error Time"}
+        };
+      },
+
+      getBoltsFields(){
+        return {
+          boltId : {label : "Id"},
+          executors : {label : "Executors"},
+          tasks : {label : "Tasks"},
+          emitted : {label : "Emitted"},
+          transferred : {label : "Transferred"},
+          capacity : {label : "Capacity (last 10m)"},
+          executeLatency : {label : "Execute Latency (ms)"},
+          executed : {label : "Executed"},
+          processLatency : {label : "Process Latency (ms)"},
+          acked : {label : "Acked"},
+          failed : {label : "Failed"},
+          errorHost : {label : "Error Host:Port"},
+          lastError : {label : "Last Error"},
+          errorTime : {label : "Error Time"}
+        };
+      },
+
+      getBoltesHeaderData(){
+        return [
+          {fieldName : "boltId" , tooltip : "The ID assigned to a the Component by the Topology. Click on the name to view the Component's page.", isCustom : true},
+          {fieldName : "executors" , tooltip : "Executors are threads in a Worker process."},
+          {fieldName : "tasks" , tooltip : "A Task is an instance of a Bolt or Spout. The number of Tasks is almost always equal to the number of Executors."},
+          {fieldName : "emitted" , tooltip : "The number of Tuples emitted."},
+          {fieldName : "transferred" , tooltip : "The number of Tuples emitted that sent to one or more bolts."},
+          {fieldName : "capacity" , tooltip : "If this is around 1.0, the corresponding Bolt is running as fast as it can, so you may want to increase the Bolt's parallelism. This is (number executed * average execute latency) / measurement time."},
+          {fieldName : "executeLatency" , tooltip : "The average time a Tuple spends in the execute method. The execute method may complete without sending an Ack for the tuple."},
+          {fieldName : "executed" , tooltip : "The number of incoming Tuples processed."},
+          {fieldName : "processLatency" , tooltip : "The average time it takes to Ack a Tuple after it is first received.  Bolts that join, aggregate or batch may not Ack a tuple until a number of other Tuples have been received."},
+          {fieldName : "acked" , tooltip : "The number of Tuples acknowledged by this Bolt."},
+          {fieldName : "failed" , tooltip : "The number of tuples Failed by this Bolt."},
+          {fieldName : "errorHost" , tooltip : "Error Host:Port"},
+          {fieldName : "lastError" , tooltip : "Last Error"},
+          {fieldName : "errorTime" , tooltip : "Error Time"}
+        ];
+      },
+
+      getConfigFields(){
+        return{
+          Key : {label : "Key"},
+          value : {label : "Value"}
+        };
+      },
+
+      getConfigHeaderData(){
+        return[
+          {fieldName : "Key"},
+          {fieldName : "value"}
+        ];
+      },
+
+      toggleTableAndGraphFUNC(){
+        this.toggleGraphAndTable = !this.toggleGraphAndTable;
+      },
+
+      dataTransformation(obj){
+        let arr = [];
+        const list = _.keys(obj);
+        _.map(list, (l) => {
+          arr.push({Key : l, value : obj[l]});
+        });
+        return arr;
+      },
+
+      //Filter by topology name
+      filterChanged(typeVal, fixTypeVal, key ,event){
+        const filterStr = event.target.value.trim();
+        this[typeVal] = FilterUtils.filterByKey(this[fixTypeVal], filterStr,key);
+      },
+
+      populateLagGraphData(){
+        let graphArr=[];
+        _.map(this.topologyLag, (t) => {
+          graphArr.push({
+            'Latest Offset': t.logHeadOffset,
+            'Spout Committed Offset': t.consumerCommittedOffset,
+            'spoutId-partition': t.spoutId+'-'+t.partition
+          });
+        });
+        return graphArr;
       }
-
-
-
     }
   };
 </script>

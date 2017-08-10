@@ -6,12 +6,12 @@
     </div>
     <label class="col-sm-2 control-label">System Summary</label>
     <div class="col-sm-2">
-      <app-CommonSwitchComponent :checked="systemFlag" @switchCallBack="toggleSystem('systemFlag')"></app-CommonSwitchComponent>
+      <app-CommonSwitchComponent :checked="systemFlag" type="systemFlag" ></app-CommonSwitchComponent>
       <!-- <CommonSwitchComponent checked={systemFlag} switchCallBack={this.commonToggleChange.bind(this,'systemFlag')}/> -->
     </div>
     <label class="col-sm-1 control-label">Debug</label>
     <div class="col-sm-1">
-      <app-CommonSwitchComponent :checked="debugFlag" @switchCallBack="toggleSystem('debugFlag')"></app-CommonSwitchComponent>
+      <app-CommonSwitchComponent :checked="debugFlag" type="debugFlag" ></app-CommonSwitchComponent>
       <!-- <CommonSwitchComponent checked={debugFlag} switchCallBack={this.commonToggleChange.bind(this,'debugFlag')}/> -->
     </div>
      <div class="col-sm-3 text-right">
@@ -32,7 +32,7 @@
         <button v-if="KYC === 'detailView'" type="button" class="btn btn-primary" @click="handleLogLevel">
             <i class="fa fa-file-o"></i>
         </button>
-        <button v-if="KYC !== 'detailView'" type="button" class="btn btn-primary" @click={handleProfiling}>
+        <button v-if="KYC !== 'detailView'" type="button" class="btn btn-primary" @click={profilingClicked}>
            <i class="fa fa-cogs"></i>
         </button>
       </div>
@@ -59,12 +59,16 @@
       windowChange(val){
         console.log("trigger");
       },
+
       commonTopologyActionHandler(type) {
         this.$emit("handleTopologyAction",type);
       },
-      handleProfiling(){
-        console.log("handleProfiling");
+
+      profilingClicked(){
+        // console.log("profilingClicked");
+        // this.$emit("handleProfiling");
       },
+
       handleLogLevel(){
         this.$emit("handleLogLevel");
       }

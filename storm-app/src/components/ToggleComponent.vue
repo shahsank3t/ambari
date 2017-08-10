@@ -3,6 +3,14 @@
     <b-btn block v-b-toggle variant="default" @click="expanded = !expanded">
       <h4 class="text-left">{{computedCaption}}
         <toggleComponent-CommonExpanded :expandedProps="expanded"></toggleComponent-CommonExpanded>
+        <CommonSwitchComponent
+          v-if="lag"
+          KYC="kafka"
+          :checked="toggle"
+          textON="Table"
+          textOFF="Graph"
+          @switchCallBack="toggleTableAndGraphFUNC">
+        </CommonSwitchComponent>
       </h4>
     </b-btn>
     <transition name="bounce">
@@ -17,10 +25,11 @@
 
 <script>
   import CommonExpanded from '@/components/CommonExpanded';
+  import CommonSwitchComponent from '@/components/CommonSwitchComponent';
 
   export default{
     name: 'ToggleComponent',
-    props:["caption","contentData"],
+    props:["caption","lag","toggle","toggleTableAndGraphFUNC"],
     data(){
       return{
         expanded : false
@@ -31,14 +40,10 @@
         return this.caption;
       }
     },
-    watch : {
-      content : function(){
-        this.content = this.contentData;
-      }
-    },
-    methods : { },
+    methods : {},
     components : {
-      "toggleComponent-CommonExpanded" : CommonExpanded
+      "toggleComponent-CommonExpanded" : CommonExpanded,
+      "CommonSwitchComponent" : CommonSwitchComponent
     }
   };
 </script>

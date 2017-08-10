@@ -1,5 +1,5 @@
 <template>
-    <dashboard-ToggleComponent :caption="title" :contentData="entity">
+    <dashboard-ToggleComponent :caption="title">
       <div class="box-body">
         <div class="input-group col-sm-4">
           <b-form-input v-model="filter" type="text" placeholder="Search By Topology Name"></b-form-input>
