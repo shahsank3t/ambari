@@ -6,10 +6,10 @@
         <CommonSwitchComponent
           v-if="lag"
           KYC="kafka"
+          type="kafkaLag"
           :checked="toggle"
           textON="Table"
-          textOFF="Graph"
-          @switchCallBack="toggleTableAndGraphFUNC">
+          textOFF="Graph">
         </CommonSwitchComponent>
       </h4>
     </b-btn>
@@ -29,7 +29,7 @@
 
   export default{
     name: 'ToggleComponent',
-    props:["caption","lag","toggle","toggleTableAndGraphFUNC"],
+    props:["caption","lag","toggle","kafkaLag"],
     data(){
       return{
         expanded : false

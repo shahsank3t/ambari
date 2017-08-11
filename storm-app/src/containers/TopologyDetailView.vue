@@ -104,8 +104,8 @@
     </div>
     <app-ToggleComponent caption="Kafka Spout Lag"
       :lag="true"
-      :toggle="toggleGraphAndTable"
-      :toggleTableAndGraphFUNC="toggleTableAndGraphFUNC">
+      type="kafkaLag"
+      :toggle="toggleGraphAndTable">
       <div class="box-body">
         <app-CommonTable
           v-if="toggleGraphAndTable"
@@ -432,6 +432,8 @@
         this[toggleStatus] = !this[toggleStatus];
         if(toggleStatus === 'debugFlag'){
           !this.debugFlag ? this.debugEnableConfirmBox(this.debugFlag,'debugConfirmBox') : this.$refs.debugModelRef.show();
+        } else if ( toggleStatus ==="kafkaLag"){
+          this.toggleGraphAndTable = !this.toggleGraphAndTable;
         } else {
           this.fetchDetails();
         }
@@ -715,9 +717,9 @@
         ];
       },
 
-      toggleTableAndGraphFUNC(){
-        this.toggleGraphAndTable = !this.toggleGraphAndTable;
-      },
+      // toggleTableAndGraphFUNC(){
+      //   this.toggleGraphAndTable = !this.toggleGraphAndTable;
+      // },
 
       dataTransformation(obj){
         let arr = [];
