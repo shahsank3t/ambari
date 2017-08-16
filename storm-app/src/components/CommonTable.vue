@@ -11,7 +11,8 @@
       >
         <!-- Custom formatted header cells -->
         <template scope="data" :slot="'HEAD_'+headData.fieldName" v-for="headData in tableHeaderData">
-          <b-popover triggers="hover" :placement="popoverPosition ? popoverPosition : 'bottom'" :content="headData.tooltip">
+          <slot v-if="headData.customHead" :item="data" :name="'HEAD__'+headData.fieldName+'__'"></slot>
+          <b-popover v-else triggers="hover" :placement="popoverPosition ? popoverPosition : 'bottom'" :content="headData.tooltip">
             {{data.label}}
           </b-popover>
         </template>

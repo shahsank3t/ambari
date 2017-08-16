@@ -51,7 +51,7 @@ export default {
     let options=[];
     _.map(optionsArr, (opt) => {
       options.push({
-        label : opt.windowPretty,
+        text : opt.windowPretty,
         value : opt.window
       });
     });

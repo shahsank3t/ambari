@@ -2,17 +2,15 @@
   <div class="form-group no-margin">
     <label class="col-sm-1 control-label">Window</label>
     <div class="col-sm-2">
-      <!-- <Select value={selectedWindowKey} options={windowOptions} onChange={this.windowChange.bind(this)} valueKey="label" labelKey="label" clearable={false}/> -->
+      <app-select :options="windowOptions" :selectedVal="selectedWindowKey" :callBack="KYC !== 'detailView' ? 'componentWindowChange' : 'handleWindowChange'"/>
     </div>
     <label class="col-sm-2 control-label">System Summary</label>
     <div class="col-sm-2">
       <app-CommonSwitchComponent :checked="systemFlag" type="systemFlag" ></app-CommonSwitchComponent>
-      <!-- <CommonSwitchComponent checked={systemFlag} switchCallBack={this.commonToggleChange.bind(this,'systemFlag')}/> -->
     </div>
     <label class="col-sm-1 control-label">Debug</label>
     <div class="col-sm-1">
       <app-CommonSwitchComponent :checked="debugFlag" type="debugFlag" ></app-CommonSwitchComponent>
-      <!-- <CommonSwitchComponent checked={debugFlag} switchCallBack={this.commonToggleChange.bind(this,'debugFlag')}/> -->
     </div>
      <div class="col-sm-3 text-right">
       <div class="btn-group" role="group">
@@ -32,7 +30,7 @@
         <button v-if="KYC === 'detailView'" type="button" class="btn btn-primary" @click="handleLogLevel">
             <i class="fa fa-file-o"></i>
         </button>
-        <button v-if="KYC !== 'detailView'" type="button" class="btn btn-primary" @click={profilingClicked}>
+        <button v-if="KYC !== 'detailView'" type="button" class="btn btn-primary" @click="profilingClicked">
            <i class="fa fa-cogs"></i>
         </button>
       </div>
@@ -41,32 +39,26 @@
 </template>
 <script>
   import CommonSwitchComponent from '@/components/CommonSwitchComponent';
+  import VueSelect from '@/components/VueSelect';
 
   export default{
     name : "CommonWindowPanel",
     props : ["KYC","systemFlag","debugFlag","selectedWindowKey","windowOptions","toggleSystem","topologyStatus"],
     components : {
-      "app-CommonSwitchComponent" : CommonSwitchComponent
+      "app-CommonSwitchComponent" : CommonSwitchComponent,
+      "app-select" : VueSelect
     },
     data(){
       return{
       };
     },
-    computed : {
-
-    },
     methods:{
-      windowChange(val){
-        console.log("trigger");
-      },
-
       commonTopologyActionHandler(type) {
         this.$emit("handleTopologyAction",type);
       },
 
       profilingClicked(){
-        // console.log("profilingClicked");
-        // this.$emit("handleProfiling");
+        this.$emit("handleProfiling");
       },
 
       handleLogLevel(){

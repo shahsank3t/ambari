@@ -25,7 +25,7 @@
         </template>
 
         <template scope="{item}" slot="__target_level__">
-          {{item.value}}
+          <app-select :options="traceOption" :selectedVal="item.item.target_level" :loggerName="item.item.logger+'$%$'+item.index" callBack="handleLevelChange"/>
         </template>
 
         <template scope="{item}" slot="__timeout__">
@@ -64,13 +64,16 @@
   import Editable from '@/components/Editable';
   import FilterUtils from '@/utils/FilterUtils';
   import CommonTable from '@/components/CommonTable';
+  import VueSelect from '@/components/VueSelect';
+  import {EventBus} from '@/utils/EventBus';
 
   export default{
     name : "LogLevelComponent",
     props :["topologyId"],
     components : {
       "app-Editable" : Editable,
-      "app-CommonTable" : CommonTable
+      "app-CommonTable" : CommonTable,
+      "app-select" : VueSelect
     },
     data(){
       let tableFields = this.getTableFields();
@@ -94,9 +97,15 @@
         ]
       };
     },
+
     created(){
       this.fetchData();
     },
+
+    mounted () {
+      EventBus.$on("handleLevelChange", this.handleLevelChange);
+    },
+
     methods : {
       getTableFields(){
         return {
@@ -109,17 +118,15 @@
       },
 
       fetchData(){
-        const {topologyId} = this;
-        let self = this;
-        TopologyREST.getLogConfig(topologyId).then((result) => {
+        TopologyREST.getLogConfig(this.topologyId).then((result) => {
           if(result.responseMessage !== undefined){
             console.error(result.responseMessage);
           } else {
-            self.selectedKeyName = 'com.your.organization.LoggerName';
-            self.selectedTrace = 'ALL';
-            self.selectedTimeOut = 30;
-            self.logLevelObj = result.namedLoggerLevels;
-            self.items = this.objectToArray(result.namedLoggerLevels);
+            this.selectedKeyName = 'com.your.organization.LoggerName';
+            this.selectedTrace = 'ALL';
+            this.selectedTimeOut = 30;
+            this.logLevelObj = result.namedLoggerLevels;
+            this.items = this.objectToArray(result.namedLoggerLevels);
           }
         });
       },
@@ -141,7 +148,7 @@
         let temp=[];
         const arr = ['ALL','TRACE','DEBUG','INFO','WARN','ERROR','FATAL','OFF'];
         _.map(arr, (a) => {
-          temp.push({label : a, value : a});
+          temp.push({text : a, value : a});
         });
         return temp;
       },
@@ -196,10 +203,9 @@
       },
 
       callLogConfigAPI(obj,addRow,action){
-        const {topologyId,logConfig,logLevelObj} =  this;
-        TopologyREST.postLogConfig(topologyId, {body : JSON.stringify(obj)}).then((result) => {
+        TopologyREST.postLogConfig(this.topologyId, {body : JSON.stringify(obj)}).then((result) => {
           if(result.responseMessage !== undefined){
-            this.logLevelObj = logConfig;
+            this.logLevelObj = this.logConfig;
             console.error(result.responseMessage);
           } else {
             let msg = !!addRow ? "Log configuration added successfully" : (action === 'save' ? "Log configuration applied successfully." : "Log configuration cleared successfully.");
@@ -217,14 +223,26 @@
       },
 
       addLogRow(){
-        const {selectedKeyName,selectedTrace,selectedTimeOut} = this;
         let obj={};
         obj.namedLoggerLevels = {};
-        obj.namedLoggerLevels[selectedKeyName] = {};
-        obj.namedLoggerLevels[selectedKeyName].target_level = selectedTrace;
-        obj.namedLoggerLevels[selectedKeyName].reset_level = 'INFO';
-        obj.namedLoggerLevels[selectedKeyName].timeout = selectedTimeOut;
+        obj.namedLoggerLevels[this.selectedKeyName] = {};
+        obj.namedLoggerLevels[this.selectedKeyName].target_level = this.selectedTrace;
+        obj.namedLoggerLevels[this.selectedKeyName].reset_level = 'INFO';
+        obj.namedLoggerLevels[this.selectedKeyName].timeout = this.selectedTimeOut;
         this.callLogConfigAPI(obj,'addRow');
+      },
+
+      handleLevelChange(obj,logger){
+        if(!_.isEmpty(obj)){
+          const log = logger.split('$%$');
+          let addRow=null;
+          let type = log[0];
+          if(Number(log[1]) === (_.keys(this.logLevelObj).length)){
+            addRow = 'ADD';
+            type = null;
+          }
+          this.traceLavelChange(type,'target_level',addRow,obj);
+        }
       }
 
     }

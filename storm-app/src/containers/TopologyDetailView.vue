@@ -11,7 +11,6 @@
               :systemFlag="systemFlag"
               :debugFlag="debugFlag"
               :selectedWindowKey="selectedWindowKey"
-              @handleWindowChange = "handleWindowChange"
               :windowOptions="windowOptions"
               :topologyStatus="topologyStatus"
               @handleTopologyAction="handleTopologyAction"
@@ -313,7 +312,7 @@
         topologyId : this.$route.params.topologyId,
         items : [],
         details: {},
-        selectedWindowKey : null,
+        selectedWindowKey : {},
         windowOptions : [],
         systemFlag : false,
         debugFlag : false,
@@ -354,6 +353,7 @@
 
     mounted () {
       EventBus.$on("switchCallBack", this.toggleSystem);
+      EventBus.$on("handleWindowChange", this.handleWindowChange);
     },
 
     methods:{
@@ -370,7 +370,7 @@
       // fetch initial data
       fetchDetails(){
         let self = this;
-        const windowKeyVal = self.selectedWindowKey !== null ? self.selectedWindowKey.value : ':all-time' ;
+        const windowKeyVal = !_.isEmpty(self.selectedWindowKey) ? self.selectedWindowKey.value : ':all-time' ;
         let promiseArr=[
           TopologyREST.getTopologyDetails(self.topologyId,windowKeyVal,self.systemFlag),
           TopologyREST.getTopologyGraphData(self.topologyId,windowKeyVal),
@@ -387,8 +387,11 @@
           self.details = results[0];
           self.items = this.getLinks();
           self.windowOptions = FilterUtils.populateWindowsOptions(self.details.topologyStats);
+          if(this.windowOptions.length === 0){
+            this.selectedWindowKey = {};
+          }
           self.debugSimplePCT = self.details.samplingPct;
-          self.selectedWindowKey = {label : self.details.windowHint || 'All time', value : self.details.window || ':all-time'};
+          self.selectedWindowKey = {text : self.details.windowHint || 'All time', value : self.details.window || ':all-time'};
           self.graphData = results[1];
           self.topologyStatus = self.details !== undefined ? self.details.status : '';
           self.topologyLag = _.isEmpty(results[2]) ? [] : self.generateTopologyLagData(results[2]);
@@ -441,8 +444,10 @@
 
       // windows select2 change
       handleWindowChange(obj){
-        console.log("Change",obj);
-        console.log("Change",obj);
+        if(!_.isEmpty(obj)){
+          this.selectedWindowKey = obj;
+          this.fetchDetails();
+        }
       },
 
       // Log levels
