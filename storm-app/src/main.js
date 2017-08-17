@@ -5,6 +5,7 @@ import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue';
 import router from '@/router/routes';
 
 import './assets/css/font-awesome.min.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import './assets/css/bootstrap.css';
 import 'animate.css/animate.css';

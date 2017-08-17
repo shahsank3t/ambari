@@ -1,7 +1,11 @@
 <template>
   <div>
-    <app-Breadcrumbs :items="items"></app-Breadcrumbs>
-    <app-SearchLogs :id="topologyId"></app-SearchLogs>
+    <div class="row">
+      <div class="col-sm-12">
+        <app-Breadcrumbs :items="items"></app-Breadcrumbs>
+        <app-SearchLogs :id="topologyId"></app-SearchLogs>
+      </div>
+    </div>
     <div class="row">
       <div class="col-sm-12">
         <div class="box filter">
@@ -89,7 +93,6 @@
           <div class="stats-title">Topology Stats</div>
           <div class="stats-body">
             <app-CommonTable
-              classname='no-margin'
               :items="topStateItem"
               :fields="topStateFields"
               :showPagination="false"
@@ -102,7 +105,7 @@
       </div>
     </div>
 
-    <app-ToggleComponent :caption="details.name" type="topologyGraph">
+    <app-ToggleComponent :caption="details.name" type="topologyGraph" :default="true">
       <div class="box-body">
         <app-TopologyGraph :graphData="graphData"></app-TopologyGraph>
       </div>
@@ -111,11 +114,12 @@
     <app-ToggleComponent caption="Kafka Spout Lag"
       :lag="true"
       type="kafkaLag"
-      :toggle="toggleGraphAndTable">
+      :toggle="toggleGraphAndTable"
+      :default="true">
       <div class="box-body">
         <app-CommonTable
           v-if="toggleGraphAndTable"
-          classname='no-margin'
+          classname="table-striped table-bordered"
           :items="topologyLag"
           :fields="topologyLagFields"
           :showPagination="false"
@@ -136,7 +140,7 @@
       </div>
     </app-ToggleComponent>
 
-    <app-ToggleComponent caption="Spouts">
+    <app-ToggleComponent caption="Spouts" :default="true">
       <div class="box-body">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('spoutItems','constSpoutItems','spoutId', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
@@ -161,7 +165,7 @@
       </div>
     </app-ToggleComponent>
 
-    <app-ToggleComponent caption="Bolts">
+    <app-ToggleComponent caption="Bolts" :default="true">
       <div class="box-body">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('blotsItems','constBoltsItems','boltId', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
@@ -259,28 +263,26 @@
 
     <!-- debug confirmation box -->
     <app-FSModal
+      modalTitle="Do you really want to stop debugging this topology ?"
+      cssClass="sm"
       ref="debugConfirmBox"
       @resovle="handleConfirmResolve('debugConfirmBox')"
       @reject="handleConfirmReject('debugConfirmBox')"
       :confirmBox="true"
-      closeLabel="cancel"
+      closeLabel="Cancel"
       >
-      <div slot="mbody">
-       Do you really want to stop debugging this topology ?
-     </div>
     </app-FSModal>
 
     <!-- topology active deactivate confirmation box -->
     <app-FSModal
+      :modalTitle="activeTopologyBoxContent"
+      cssClass="sm"
       ref="activateConfirmBox"
       @resovle="handleConfirmResolve('activateConfirmBox')"
       @reject="handleConfirmReject('activateConfirmBox')"
       :confirmBox="true"
-      closeLabel="cancel"
+      closeLabel="Cancel"
       >
-      <div slot="mbody">
-       {{activeTopologyBoxContent}}
-     </div>
     </app-FSModal>
 
   </div>
@@ -360,7 +362,9 @@
     },
 
     mounted () {
-      EventBus.$on("switchCallBack", this.toggleSystem);
+      EventBus.$on("systemSwitch", this.toggleSystem);
+      EventBus.$on("debugSwitch", this.toggleSystem);
+      EventBus.$on("kafkaLagSwitch", this.toggleSystem);
       EventBus.$on("handleWindowChange", this.handleWindowChange);
     },
 

@@ -24,10 +24,9 @@
 
       </b-table>
     </div>
-    <div v-if="showPagination && items.length > 0" class="clearfix">
+    <div v-if="showPagination && items.length > 0" class="clearfix" :style="{'margin-top' : '10px'}">
       <span>Showing {{currentPage > 1 ? (currentPage-1)*perPage+1 : currentPage }}  to {{currentPage*perPage > items.length ? items.length : (currentPage*perPage)}} of {{items.length}} entries.</span>
       <b-pagination
-        size="sm"
         class="pull-right no-margin"
         :hide-goto-end-buttons="true"
         :total-rows="items.length"
@@ -53,3 +52,9 @@
     methods: {}
   };
 </script>
+<style scope>
+  .table.table.table th,
+  .table.table.table td {
+    padding: 11px;
+  }
+</style>

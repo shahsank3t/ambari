@@ -1,21 +1,19 @@
 <template>
-  <div class="col-md-3 pull-right searchbar">
+  <div class="col-md-3 pull-right searchbar" :style="{'margin-bottom' : '10px'}">
     <div class="input-group">
       <input type="text" id="searchBox" class="form-control" placeholder="Search in Logs"/>
       <div class="input-group-btn">
         <div class="btn-group" role="group">
           <div class="dropdown dropdown-lg">
             <b-dropdown id="bg-nested-dropdown" variant="default" right class="m-md-2">
-             <b-dropdown-item href="javascript:void(0)" :active="false">
-               <b-form-checkbox id="searchArchivedLogs"  value="accepted" unchecked-value="not_accepted">
-                 Search archived logs
-               </b-form-checkbox>
-             </b-dropdown-item>
-             <b-dropdown-item href="javascript:void(0)" :active="false">
-               <b-form-checkbox id="deepSearch"  value="accepted" unchecked-value="not_accepted">
-                 Deep search
-               </b-form-checkbox>
-             </b-dropdown-item>
+              <div>
+                <input type="checkbox" id="searchArchivedLogs"  value="accepted" unchecked-value="not_accepted"/>
+                <label for="searchArchivedLogs">Search archived logs</label>
+              </div>
+              <div>
+                <input type="checkbox" id="deepSearch"  value="accepted" unchecked-value="not_accepted"/>
+                <label for="deepSearch">Deep search</label>
+              </div>
            </b-dropdown>
           </div>
           <button type="button" class="btn btn-default" @click="handleSearch">
@@ -28,10 +26,15 @@
 </template>
 <script>
   import {baseUrl} from '@/utils/Constants';
-  
+
   export default{
     name : "SearchLogs",
     props : ["topologyId"],
+    data(){
+      return{
+        dropDownShow : false
+      };
+    },
     methods : {
       handleSearch(){
         var searchBoxEl = document.getElementById('searchBox');
@@ -64,7 +67,12 @@
             searchArchivedLogsEl.checked = false;
             deepSearchEl.checked = false;
           });
+      },
+
+      demo(){
+        console.log("demo");
       }
+
     }
   };
 </script>
@@ -72,4 +80,30 @@
 .m-md-2{
   margin: 0 !important;
 }
+.custom-control{
+    display: block;
+}
+.custom-control-indicator{
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border: 1px solid #a2a2a2;
+}
+.searchbar label{
+  font-weight: 600;
+  color: #4b4b4b;
+  cursor: pointer;
+}
+
+.searchbar .custom-checkbox .custom-control-input:checked ~ .custom-control-indicator{
+  background-color: #dedede;
+}
+
+.searchbar .dropdown-menu input[type="checkbox"]{
+      margin-right: 3px;
+}
+.searchbar .dropdown-toggle::after{
+  margin-left: 0;
+}
+
 </style>

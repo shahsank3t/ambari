@@ -6,7 +6,7 @@
       </div>
       <div class="col-sm-7">
         <span :style="{float : 'left'}">0</span>
-        <input type="range" :title="rebalanceData.workers +' workers selected.'" :min="0" :style="{width : '90%', float : 'left',margin : '6px 7px'}" :max="totalWorker" @input="rebalanceValueChange('workers',$event)" />
+        <input type="range" :value="rebalanceData.workers" :min="0" :title="rebalanceData.workers +' workers selected.'" :max="totalWorker" @input="rebalanceValueChange('workers',$event)" :style="{width : '90%', float : 'left',margin : '6px 7px'}" />
         <span :style="{float : 'left', clear : 'right'}">{{totalWorker}}</span>
       </div>
     </div>

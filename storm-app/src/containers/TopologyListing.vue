@@ -1,39 +1,38 @@
 <template>
-  <div class="row">
-    <div class="col-sm-12">
-      <div class="box">
-        <div class="box-header">
-          <h4>Topology Listing</h4>
-          <div v-if="fromDashboard" class="box-control">
-            <router-link to="/topology" class="primary"><i class="fa fa-external-link"></i></router-link>
-          </div>
+  <div>
+    <app-Breadcrumbs v-if="!fromDashboard" :items="linkList"></app-Breadcrumbs>
+    <div class="box">
+      <div class="box-header">
+        <h4>Topology Listing</h4>
+        <div v-if="fromDashboard" class="box-control">
+          <router-link to="/topology" class="primary"><i class="fa fa-external-link"></i></router-link>
         </div>
-        <div :class="[{paddless: fromDashboard}, 'box-body']">
-          <div v-if="!fromDashboard" class="input-group col-sm-4">
-            <b-form-input v-model="filter" type="text" placeholder="Search By Topology Name"></b-form-input>
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
-            </span>
-          </div>
-          <CommonTable
-            classname='no-margin'
-            :items="items"
-            :fields="fields"
-            :showPagination="showPagination"
-            :tableHeaderData="tableHeaderData"
-          >
-            <!-- Custom formatted value cells -->
-            <template scope="{item}" slot="__name__">
-              <router-link :to="{name: 'TopologyDetail', params: {topologyId: item.item.id}}">{{item.value}}</router-link>
-            </template>
-            <template scope="{item}" slot="__status__">
-              <span :class="item.value | statusClass">{{item.value}}</span>
-            </template>
-            <template scope="{item}" slot="__uptime__">
-              <small>{{item.value}}</small>
-            </template>
-          </CommonTable>
+      </div>
+      <div :class="[{paddless: fromDashboard}, 'box-body']">
+        <div v-if="!fromDashboard" class="input-group col-sm-4">
+          <b-form-input v-model="filter" type="text" placeholder="Search By Topology Name"></b-form-input>
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
+          </span>
         </div>
+        <CommonTable
+          classname='no-margin'
+          :items="items"
+          :fields="fields"
+          :showPagination="showPagination"
+          :tableHeaderData="tableHeaderData"
+        >
+          <!-- Custom formatted value cells -->
+          <template scope="{item}" slot="__name__">
+            <router-link :to="{name: 'TopologyDetail', params: {topologyId: item.item.id}}">{{item.value}}</router-link>
+          </template>
+          <template scope="{item}" slot="__status__">
+            <span :class="item.value | statusClass">{{item.value}}</span>
+          </template>
+          <template scope="{item}" slot="__uptime__">
+            <small>{{item.value}}</small>
+          </template>
+        </CommonTable>
       </div>
     </div>
   </div>
@@ -43,11 +42,13 @@
   import TopologyREST from '@/rest/TopologyREST';
   import FilterUtils from '@/utils/FilterUtils';
   import CommonTable from '@/components/CommonTable';
+  import Breadcrumbs from '@/components/Breadcrumbs';
 
   export default {
     name: 'TopologyListing',
     components: {
-      'CommonTable': CommonTable
+      'CommonTable': CommonTable,
+      'app-Breadcrumbs' : Breadcrumbs
     },
     props: ["fromDashboard"],
     created(){
@@ -70,7 +71,8 @@
         topologiesEntities: [],
         items: [],
         filter: null,
-        showPagination: !this.fromDashboard ? true : false
+        showPagination: !this.fromDashboard ? true : false,
+        linkList : this.getLinks()
       };
     },
     methods: {
@@ -113,6 +115,14 @@
         } else {
           return this.items;
         }
+      },
+
+      getLinks(){
+        var links = [
+          {link: '#/', title: 'Dashboard'},
+          {link: '#/topology', title: 'Topology Listing'}
+        ];
+        return links;
       }
     },
     filters: {

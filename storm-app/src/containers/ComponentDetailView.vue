@@ -50,7 +50,7 @@
       </div>
     </div>
 
-    <app-ToggleComponent v-if="componentDetail.inputStats" :caption="'Input Stats ('+componentDetail.windowHint+')'">
+    <app-ToggleComponent v-if="componentDetail.inputStats" :caption="'Input Stats ('+componentDetail.windowHint+')'" :default="true">
       <div class="box-body">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('inputItems','constInputItems','component', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
@@ -69,7 +69,7 @@
       </div>
     </app-ToggleComponent>
 
-    <app-ToggleComponent v-if="componentDetail.outputStats" :caption="'Output Stats ('+componentDetail.windowHint+')'">
+    <app-ToggleComponent v-if="componentDetail.outputStats" :caption="'Output Stats ('+componentDetail.windowHint+')'" :default="true">
       <div class="box-body">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('outputItems','constOutputItems','stream', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
@@ -88,7 +88,7 @@
       </div>
     </app-ToggleComponent>
 
-    <app-ToggleComponent v-if="componentDetail.executorStats" :caption="'Executor Stats ('+componentDetail.windowHint+')'">
+    <app-ToggleComponent v-if="componentDetail.executorStats" :caption="'Executor Stats ('+componentDetail.windowHint+')'" :default="true">
       <div class="box-body">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('executorItems','constExecutorItems','id', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
@@ -116,7 +116,7 @@
       </div>
     </app-ToggleComponent>
 
-    <app-ToggleComponent v-if="componentDetail.componentErrors" :caption="'Error Stats ('+componentDetail.windowHint+')'">
+    <app-ToggleComponent v-if="componentDetail.componentErrors" :caption="'Error Stats ('+componentDetail.windowHint+')'" :default="true">
       <div class="box-body">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('errorItems','constErrorItems','errorTime', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />

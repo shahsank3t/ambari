@@ -1,57 +1,56 @@
 <template>
-  <div class="row">
-    <div class="col-sm-12">
-      <div class="box">
-        <div class="box-header">
-          <h4>Supervisor Summary</h4>
-          <div v-if="fromDashboard" class="box-control">
-            <router-link to="/supervisor" class="primary"><i class="fa fa-external-link"></i></router-link>
-          </div>
+  <div>
+    <app-Breadcrumbs v-if="!fromDashboard" :items="linkList"></app-Breadcrumbs>
+    <div class="box">
+      <div class="box-header">
+        <h4>Supervisor Summary</h4>
+        <div v-if="fromDashboard" class="box-control">
+          <router-link to="/supervisor" class="primary"><i class="fa fa-external-link"></i></router-link>
         </div>
-        <div :class="[{paddless: fromDashboard}, 'box-body']">
-          <div v-if="!fromDashboard" class="input-group col-sm-4">
-            <b-form-input v-model="filter" type="text" placeholder="Search By Host"></b-form-input>
-            <span class="input-group-btn">
-              <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
-            </span>
-          </div>
-          <CommonTable
-            classname='no-margin'
-            :items="items"
-            :fields="fields"
-            :showPagination="showPagination"
-            :tableHeaderData="tableHeaderData"
-          >
-            <!-- Custom formatted value cells -->
-            <template slot="__hostName__" scope="{item}">
-              <a :href="item.item.logLink" target="_blank">{{item.item.host}}</a>
-            </template>
-            <template slot="__slots__" scope="{item}">
-              <app-supervisorsummary-radial
-                :graphData="[item.item.slotsUsed,item.item.slotsTotal]"
-                :labels="labels" :width="width" :height="height"
-                :innerRadius="innerRadius"
-                :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
-            </template>
-            <template slot="__cpu__" scope="{item}">
-              <app-supervisorsummary-radial
-                :graphData="[item.item.usedCpu,item.item.totalCpu]"
-                :labels="labels" :width="width" :height="height"
-                :innerRadius="innerRadius"
-                :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
-            </template>
-            <template slot="__memory__" scope="{item}">
-              <app-supervisorsummary-radial
-                :graphData="[item.item.usedMem,item.item.totalMem]"
-                :labels="labels" :width="width" :height="height"
-                :innerRadius="innerRadius"
-                :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
-            </template>
-            <template scope="{item}" slot="__uptime__">
-              <small>{{item.value}}</small>
-            </template>
-          </CommonTable>
+      </div>
+      <div :class="[{paddless: fromDashboard}, 'box-body']">
+        <div v-if="!fromDashboard" class="input-group col-sm-4">
+          <b-form-input v-model="filter" type="text" placeholder="Search By Host"></b-form-input>
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
+          </span>
         </div>
+        <CommonTable
+          classname='no-margin supervisor-table'
+          :items="items"
+          :fields="fields"
+          :showPagination="showPagination"
+          :tableHeaderData="tableHeaderData"
+        >
+          <!-- Custom formatted value cells -->
+          <template slot="__hostName__" scope="{item}">
+            <a :href="item.item.logLink" target="_blank">{{item.item.host}}</a>
+          </template>
+          <template slot="__slots__" scope="{item}">
+            <app-supervisorsummary-radial
+              :graphData="[item.item.slotsUsed,item.item.slotsTotal]"
+              :labels="labels" :width="width" :height="height"
+              :innerRadius="innerRadius"
+              :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
+          </template>
+          <template slot="__cpu__" scope="{item}">
+            <app-supervisorsummary-radial
+              :graphData="[item.item.usedCpu,item.item.totalCpu]"
+              :labels="labels" :width="width" :height="height"
+              :innerRadius="innerRadius"
+              :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
+          </template>
+          <template slot="__memory__" scope="{item}">
+            <app-supervisorsummary-radial
+              :graphData="[item.item.usedMem,item.item.totalMem]"
+              :labels="labels" :width="width" :height="height"
+              :innerRadius="innerRadius"
+              :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
+          </template>
+          <template scope="{item}" slot="__uptime__">
+            <small>{{item.value}}</small>
+          </template>
+        </CommonTable>
       </div>
     </div>
   </div>
@@ -62,6 +61,7 @@
   import FilterUtils from '@/utils/FilterUtils';
   import RadialChart from '@/components/RadialChart';
   import CommonTable from '@/components/CommonTable';
+  import Breadcrumbs from '@/components/Breadcrumbs';
 
   export default {
     name: 'SupervisorSummary',
@@ -90,7 +90,8 @@
         innerRadius :19,
         outerRadius : 21,
         color: ["#bcbcbc", "#235693"],
-        showPagination: !this.fromDashboard ? true : false
+        showPagination: !this.fromDashboard ? true : false,
+        linkList : this.getLinks()
       };
     },
 
@@ -125,12 +126,21 @@
         } else {
           return this.items;
         }
+      },
+
+      getLinks(){
+        var links = [
+          {link: '#/', title: 'Dashboard'},
+          {link: '#/supervisor', title: 'Supervisor Summary'}
+        ];
+        return links;
       }
 
     },
     components : {
       'app-supervisorsummary-radial' : RadialChart,
-      'CommonTable': CommonTable
+      'CommonTable': CommonTable,
+      'app-Breadcrumbs' : Breadcrumbs
     },
     filters: {
       filterByKey: FilterUtils.filterByKey,

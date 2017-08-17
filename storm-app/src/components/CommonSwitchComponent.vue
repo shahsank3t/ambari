@@ -12,7 +12,7 @@
 
   export default{
     name : "CommonSwitchComponent",
-    props : ["KYC","checked","textON","textOFF","type"],
+    props : ["KYC","checked","textON","textOFF","type","callBack"],
     data() {
       return{
         on : !!this.textON ? this.textON : "ON",
@@ -21,7 +21,7 @@
     },
     methods : {
       switchClicked(){
-        EventBus.$emit('switchCallBack',this.type);
+        EventBus.$emit(this.callBack,this.type);
       }
     }
   };
