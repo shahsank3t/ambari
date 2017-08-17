@@ -19,7 +19,7 @@
 
         <!-- Custom formatted value cells -->
         <template scope="data" :slot="headData.isCustom ? headData.fieldName : ''" v-for="headData in tableHeaderData">
-          <slot :item="data" :name="'__'+headData.fieldName+'__'"></slot>
+          <slot v-if="headData.isCustom" :item="data" :name="'__'+headData.fieldName+'__'"></slot>
         </template>
 
       </b-table>

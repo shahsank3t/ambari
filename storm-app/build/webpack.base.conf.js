@@ -1,6 +1,7 @@
 var path = require('path')
 var utils = require('./utils')
 var config = require('../config')
+var CopyWebpackPlugin = require('copy-webpack-plugin')
 var vueLoaderConfig = require('./vue-loader.conf')
 
 function resolve (dir) {
@@ -25,6 +26,12 @@ module.exports = {
       '@': resolve('src')
     }
   },
+  plugins:[
+    new CopyWebpackPlugin([{
+      from: path.join(__dirname, '../src/assets/img'),
+      to: utils.assetsPath('img')
+    }])
+  ],
   module: {
     rules: [
       {
@@ -47,7 +54,7 @@ module.exports = {
         include: [resolve('src'), resolve('test')]
       },
       {
-        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        test: /\.(gif|svg)(\?.*)?$/,
         loader: 'url-loader',
         options: {
           limit: 10000,

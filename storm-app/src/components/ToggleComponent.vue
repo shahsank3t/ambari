@@ -37,7 +37,7 @@
     },
     computed : {
       computedCaption(){
-        return this.caption;
+        return this.caption || '';
       }
     },
     methods : {},

@@ -101,6 +101,13 @@
         </div>
       </div>
     </div>
+
+    <app-ToggleComponent :caption="details.name" type="topologyGraph">
+      <div class="box-body">
+        <app-TopologyGraph :graphData="graphData"></app-TopologyGraph>
+      </div>
+    </app-ToggleComponent>
+
     <app-ToggleComponent caption="Kafka Spout Lag"
       :lag="true"
       type="kafkaLag"
@@ -291,6 +298,7 @@
   import CommonTable from '@/components/CommonTable';
   import ToggleComponent from '@/components/ToggleComponent';
   import BarChart from '@/components/BarChart';
+  import TopologyGraph from '@/components/TopologyGraph';
   import {EventBus} from '@/utils/EventBus';
 
   export default{
@@ -304,8 +312,8 @@
       "app-LogLevelComponent" : LogLevelComponent,
       "app-CommonTable" : CommonTable,
       "app-ToggleComponent" : ToggleComponent,
-      "app-BarChart" : BarChart
-
+      "app-BarChart" : BarChart,
+      "app-TopologyGraph": TopologyGraph
     },
     data(){
       return{
