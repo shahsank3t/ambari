@@ -28,9 +28,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.ambari.contrib.views</groupId>
   <artifactId>storm-view</artifactId>
-  <name>Storm_Monitoring_V1</name>
+  <name>Storm_Monitoring_Vue</name>
   <version>0.1.0.0</version>
-  <description>Storm Monitoring View V1</description>
+  <description>Storm Monitoring View Vue</description>
 
   <build>
     <plugins>

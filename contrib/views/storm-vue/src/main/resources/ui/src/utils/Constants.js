@@ -24,8 +24,8 @@ const routePaths = {
   SUPERVISOR: {name: 'SupervisorSummary', path: '/supervisor'}
 };
 
-const baseUrl = '/api/v1/';
-// const baseUrl = location.pathname+'proxy?url=/api/v1/';
+// const baseUrl = '/api/v1/';
+const baseUrl = location.pathname+'proxy?url=/api/v1/';
 const toastOpt = {
   timeOut: 0,
   closeButton: true,

@@ -130,9 +130,9 @@
               .attr("xlink:href", function(d) {
                 if (node) {
                   if(node.type === 'spout'){
-                    return "../static/img/spout.png";
+                    return "static/img/spout.png";
                   } else if(node.type === 'bolt'){
-                    return "../static/img/bolt.png";
+                    return "static/img/bolt.png";
                   }
                 }
               }).attr("x", "-12px")

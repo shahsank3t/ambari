@@ -29,3 +29,6 @@ createDDL.jdbc
 /contrib/views/storm-ui/src/main/resources/ui/node_modules/
 /contrib/views/storm-ui/src/main/resources/ui/public/
 /contrib/views/storm-ui/src/main/resources/ui/npm-debug.log
+/contrib/views/storm-vue/src/main/resources/ui/node_modules/
+/contrib/views/storm-vue/src/main/resources/ui/public/
+/contrib/views/storm-vue/src/main/resources/ui/npm-debug.log
