@@ -43,6 +43,7 @@
   import FilterUtils from '@/utils/FilterUtils';
   import CommonTable from '@/components/CommonTable';
   import Breadcrumbs from '@/components/Breadcrumbs';
+  import FSToaster from '@/utils/FSToaster';
 
   export default {
     name: 'TopologyListing',
@@ -101,6 +102,7 @@
         TopologyREST.getSummary('topology').then((result) => {
           if(result.responseMessage !== undefined){
             console.error("Error in Topology Listing");
+            FSToaster.error(result.responseMessage);
           } else {
             this.topologiesEntities = result.topologies;
             this.items = result.topologies;

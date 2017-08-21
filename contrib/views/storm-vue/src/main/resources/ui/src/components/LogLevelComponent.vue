@@ -66,6 +66,7 @@
   import CommonTable from '@/components/CommonTable';
   import VueSelect from '@/components/VueSelect';
   import {EventBus} from '@/utils/EventBus';
+  import FSToaster from '@/utils/FSToaster';
 
   export default{
     name : "LogLevelComponent",
@@ -120,7 +121,7 @@
       fetchData(){
         TopologyREST.getLogConfig(this.topologyId).then((result) => {
           if(result.responseMessage !== undefined){
-            console.error(result.responseMessage);
+            FSToaster.error(result.responseMessage);
           } else {
             this.selectedKeyName = 'com.your.organization.LoggerName';
             this.selectedTrace = 'ALL';
@@ -206,10 +207,10 @@
         TopologyREST.postLogConfig(this.topologyId, {body : JSON.stringify(obj)}).then((result) => {
           if(result.responseMessage !== undefined){
             this.logLevelObj = this.logConfig;
-            console.error(result.responseMessage);
+            FSToaster.error(result.responseMessage);
           } else {
             let msg = !!addRow ? "Log configuration added successfully" : (action === 'save' ? "Log configuration applied successfully." : "Log configuration cleared successfully.");
-            console.log(msg);
+            FSToaster.success(msg);
             this.fetchData();
           }
         });

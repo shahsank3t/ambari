@@ -193,6 +193,7 @@
   import ProfilingView from '@/components/ProfilingView';
   import ToggleComponent from '@/components/ToggleComponent';
   import CommonTable from '@/components/CommonTable';
+  import FSToaster from '@/utils/FSToaster';
 
   export default{
     name : "ComponentDetailView",
@@ -362,9 +363,9 @@
         TopologyREST.postDebugTopology(componentID,toEnableFlag,samplingPct).then((result) => {
           if(result.responseMessage !== undefined){
             this.samplingPct = componentDetail.samplingPct;
-            console.error(result.responseMessage);
+            FSToaster.error(result.responseMessage);
           } else {
-            console.log("Debugging enabled successfully.");
+            FSToaster.success("Debugging enabled successfully.");
           }
         });
       },

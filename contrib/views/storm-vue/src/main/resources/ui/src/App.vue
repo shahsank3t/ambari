@@ -2,6 +2,7 @@
   <div id="app" class="container-fluid">
     <router-view></router-view>
     <app-footer></app-footer>
+    <notifications />
   </div>
 </template>
 

@@ -56,6 +56,7 @@
   import TopologyREST from '@/rest/TopologyREST';
   import RadialChart from '@/components/RadialChart';
   import NimbusSummary from './NimbusSummary';
+  import FSToaster from '@/utils/FSToaster';
 
   export default{
     name: 'ClusterSummary',
@@ -79,7 +80,7 @@
       fetchData(){
         TopologyREST.getSummary('cluster').then((result) => {
           if(result.responseMessage !== undefined){
-            console.error("Error in ClusterSummary");
+            FSToaster.error("Error in ClusterSummary");
           } else {
             this.entity = result;
             this.supervisorsData = [this.entity.supervisors,this.entity.supervisors];

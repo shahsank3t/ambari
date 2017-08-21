@@ -40,6 +40,7 @@
 <script>
   import TopologyREST from '@/rest/TopologyREST';
   import _ from 'lodash';
+  import FSToaster from '@/utils/FSToaster';
 
   export default{
     name : "REBALANCING",
@@ -61,7 +62,7 @@
         let self = this;
         TopologyREST.getSummary('cluster').then((result) => {
           if(result.responseMessage !== undefined){
-            console.error(result.responseMessage);
+            FSToaster.error(result.responseMessage);
           } else {
             self.freeSlot = result.slotsFree;
             self.rebalanceData={};

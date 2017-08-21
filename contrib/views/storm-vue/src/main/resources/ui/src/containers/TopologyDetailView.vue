@@ -302,6 +302,7 @@
   import BarChart from '@/components/BarChart';
   import TopologyGraph from '@/components/TopologyGraph';
   import {EventBus} from '@/utils/EventBus';
+  import FSToaster from '@/utils/FSToaster';
 
   export default{
     name : "TopologyDetailView",
@@ -392,7 +393,7 @@
         Promise.all(promiseArr).then((results) => {
           _.map(results, (result) => {
             if(result.responseMessage !== undefined){
-              console.error("Error in TopologyDetailView");
+              FSToaster.error(result.responseMessage);
             }
           });
 
@@ -506,6 +507,7 @@
       handleConfirmResolve(modal){
         if(modal === "debugConfirmBox"){
           this.debugFlag = false;
+          FSToaster.success("Debugging disabled successfully");
         } else if(modal === "killModelRef"){
           this.handleTopologyKilled();
         } else if (modal === "activateConfirmBox"){
@@ -529,9 +531,9 @@
         TopologyREST.postDebugTopology(details.id,toEnableFlag,debugSimplePCT).then((result) => {
           if(result.responseMessage !== undefined){
             this.debugSimplePCT = details.samplingPct;
-            console.error(result.responseMessage);
+            FSToaster.error(result.responseMessage);
           } else {
-            console.log("Debugging enabled successfully");
+            FSToaster.success("Debugging enabled successfully");
           }
         });
       },
@@ -554,10 +556,10 @@
         const {details} = this;
         TopologyREST.postActionOnTopology(details.id,action).then((result) => {
           if(result.responseMessage !== undefined){
-            console.error(result.responseMessage);
+            FSToaster.error(result.responseMessage);
           } else {
             this.topologyStatus = result.status;
-            console.log("Topology "+action+"d successfully.");
+            FSToaster.success("Topology "+action+"d successfully.");
           }
         });
       },
@@ -567,11 +569,11 @@
         const {killWaitTime,details} = this;
         TopologyREST.postActionOnTopology(details.id,'kill',killWaitTime).then((result) => {
           if(result.responseMessage !== undefined){
-            console.error(result.responseMessage);
+            FSToaster.error(result.responseMessage);
           } else {
             clearTimeout(this.clearTimeOutKill);
             this.clearTimeOutKill =  setTimeout(function () {
-              console.log("Topology killed successfully.");
+              FSToaster.success("Topology killed successfully.");
             },300);
           }
         });
@@ -582,12 +584,12 @@
           this.$refs[modalType].hide();
           this.$refs.rebalanceModal.handleSave().then((result) => {
             if(result.responseMessage !== undefined){
-              console.error(result.responseMessage);
+              FSToaster.error(result.responseMessage);
             } else {
               this.fetchDetails();
               clearTimeout(this.clearTimeOut);
               this.clearTimeOut =  setTimeout(function () {
-                console.log("Topology rebalanced successfully.");
+                FSToaster.success("Topology rebalanced successfully.");
               },300);
             }
           });

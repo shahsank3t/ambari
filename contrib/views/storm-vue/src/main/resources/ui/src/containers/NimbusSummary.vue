@@ -37,6 +37,7 @@
   import FilterUtils from '@/utils/FilterUtils';
   import CommonTable from '@/components/CommonTable';
   import Breadcrumbs from '@/components/Breadcrumbs';
+  import FSToaster from '@/utils/FSToaster';
 
   export default {
     name: 'NimbusSummary',
@@ -81,7 +82,7 @@
       fetchData() {
         TopologyREST.getSummary('nimbus').then((result) => {
           if (result.responseMessage !== undefined) {
-            console.error("Error in NimbusSummary");
+            FSToaster.error("Error in NimbusSummary");
           } else {
             this.entities = result.nimbuses;
             this.items = result.nimbuses;

@@ -62,6 +62,7 @@
   import RadialChart from '@/components/RadialChart';
   import CommonTable from '@/components/CommonTable';
   import Breadcrumbs from '@/components/Breadcrumbs';
+  import FSToaster from '@/utils/FSToaster';
 
   export default {
     name: 'SupervisorSummary',
@@ -112,7 +113,7 @@
       fetchData(){
         TopologyREST.getSummary('supervisor').then((result) => {
           if(result.responseMessage !== undefined){
-            console.error("Error in SupervisorSummary");
+            FSToaster.error("Error in SupervisorSummary");
           } else {
             this.entities = result.supervisors;
             this.items = result.supervisors;

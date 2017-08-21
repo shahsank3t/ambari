@@ -25,6 +25,7 @@
   import TopologyREST from '@/rest/TopologyREST';
   import CommonTable from '@/components/CommonTable';
   import FilterUtils from '@/utils/FilterUtils';
+  import FSToaster from '@/utils/FSToaster';
 
   export default{
     name: 'NimbusConfigSummary',
@@ -74,7 +75,7 @@
       fetchData(){
         TopologyREST.getClusterConfig().then((result) => {
           if(result.responseMessage !== undefined){
-            console.error("Error in NimbusConfigSummary");
+            FSToaster.error("Error in NimbusConfigSummary");
           } else {
             this.entity = result;
           }

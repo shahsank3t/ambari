@@ -3,6 +3,7 @@
 import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue';
 import router from '@/router/routes';
+import Notifications from 'vue-notification';
 
 import './assets/css/font-awesome.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
@@ -11,10 +12,12 @@ import './assets/css/bootstrap.css';
 import 'animate.css/animate.css';
 import './assets/css/style.css';
 
-import App from './App';
 
+
+import App from './App';
 Vue.use(BootstrapVue);
 Vue.config.productionTip = false;
+Vue.use(Notifications);
 
 /* eslint-disable no-new */
 new Vue({

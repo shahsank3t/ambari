@@ -67,12 +67,7 @@
             searchArchivedLogsEl.checked = false;
             deepSearchEl.checked = false;
           });
-      },
-
-      demo(){
-        console.log("demo");
       }
-
     }
   };
 </script>
