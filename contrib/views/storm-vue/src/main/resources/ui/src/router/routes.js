@@ -48,11 +48,11 @@ const router = new Router({
   ]
 });
 
-const shareUrl = () => {
+const shareUrl = (to, from) => {
   if(window != window.parent){
     var parentWindow = window.parent;
     var parentHash = parentWindow.location.hash.split("?")[0];
-    var newurl = parentWindow.location.protocol + "//" + parentWindow.location.host + parentHash + '?viewpath='+encodeURIComponent(location.hash);
+    var newurl = parentWindow.location.protocol + "//" + parentWindow.location.host + parentHash + '?viewpath='+encodeURIComponent('#'+to.path);
     parentWindow.history.replaceState({path:newurl},'',newurl);
   }
 };
@@ -73,7 +73,7 @@ function getInitialRoute(){
 getInitialRoute();
 
 router.afterEach((to, from) => {
-  shareUrl();
+  shareUrl(to, from);
 });
 
 export default router;
