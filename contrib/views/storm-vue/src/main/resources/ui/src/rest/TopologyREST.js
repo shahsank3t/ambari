@@ -103,10 +103,10 @@ const TopologyREST = {
     return this.requestCall(baseUrl+'topology/'+id+'/profiling/'+type+'/'+hostPort, options);
   },
   requestCall(url, options){
-    // let urlPart = url.split('url=')[0];
-    // let stormUrlPart = url.split('url=')[1];
-    // urlPart += 'url=' + encodeURIComponent(stormUrlPart);
-    // url = urlPart;
+    let urlPart = url.split('url=')[0];
+    let stormUrlPart = url.split('url=')[1];
+    urlPart += 'url=' + encodeURIComponent(stormUrlPart);
+    url = urlPart;
     options.credentials = 'same-origin';
     return fetch(url, options)
       .then((response) => {
