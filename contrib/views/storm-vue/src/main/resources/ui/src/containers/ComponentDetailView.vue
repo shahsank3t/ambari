@@ -1,7 +1,11 @@
 <template>
   <div>
-    <app-Breadcrumbs :items="items"></app-Breadcrumbs>
-    <app-SearchLogs :id="topologyId"></app-SearchLogs>
+    <div class="row">
+      <div class="col-sm-12">
+        <app-Breadcrumbs :items="items"></app-Breadcrumbs>
+        <app-SearchLogs :id="topologyId"></app-SearchLogs>
+      </div>
+    </div>
     <div class="row">
       <div class="col-sm-12">
         <div class="box filter">
@@ -51,7 +55,7 @@
     </div>
 
     <app-ToggleComponent v-if="componentDetail.inputStats" :caption="'Input Stats ('+componentDetail.windowHint+')'" :default="true">
-      <div class="box-body">
+      <div class="padding-sm">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('inputItems','constInputItems','component', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
           <span class="input-group-btn">
@@ -70,7 +74,7 @@
     </app-ToggleComponent>
 
     <app-ToggleComponent v-if="componentDetail.outputStats" :caption="'Output Stats ('+componentDetail.windowHint+')'" :default="true">
-      <div class="box-body">
+      <div class="padding-sm">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('outputItems','constOutputItems','stream', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
           <span class="input-group-btn">
@@ -89,7 +93,7 @@
     </app-ToggleComponent>
 
     <app-ToggleComponent v-if="componentDetail.executorStats" :caption="'Executor Stats ('+componentDetail.windowHint+')'" :default="true">
-      <div class="box-body">
+      <div class="padding-sm">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('executorItems','constExecutorItems','id', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
           <span class="input-group-btn">
@@ -117,7 +121,7 @@
     </app-ToggleComponent>
 
     <app-ToggleComponent v-if="componentDetail.componentErrors" :caption="'Error Stats ('+componentDetail.windowHint+')'" :default="true">
-      <div class="box-body">
+      <div class="padding-sm">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('errorItems','constErrorItems','errorTime', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
           <span class="input-group-btn">
@@ -514,7 +518,6 @@
             executeLatency : { label : "Execute Latency (ms)"},
             executed : { label : "Executed"},
             processLatency : { label : "Process Latency (ms)"},
-            completeLatency : { label : "Complete Latency (ms)"},
             acked : { label : "Acked"},
             failed : { label : "Failed"},
             workerLogLink : { label : "Dumps"}

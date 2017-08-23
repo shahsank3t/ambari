@@ -106,7 +106,7 @@
     </div>
 
     <app-ToggleComponent :caption="details.name" type="topologyGraph" :default="true">
-      <div class="box-body">
+      <div class="padding-sm">
         <app-TopologyGraph :graphData="graphData"></app-TopologyGraph>
       </div>
     </app-ToggleComponent>
@@ -141,7 +141,7 @@
     </app-ToggleComponent>
 
     <app-ToggleComponent caption="Spouts" :default="true">
-      <div class="box-body">
+      <div class="padding-sm">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('spoutItems','constSpoutItems','spoutId', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
           <span class="input-group-btn">
@@ -166,7 +166,7 @@
     </app-ToggleComponent>
 
     <app-ToggleComponent caption="Bolts" :default="true">
-      <div class="box-body">
+      <div class="padding-sm">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('blotsItems','constBoltsItems','boltId', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
           <span class="input-group-btn">
@@ -193,7 +193,7 @@
 
 
     <app-ToggleComponent caption="Topology Configuration">
-      <div class="box-body">
+      <div class="padding-sm">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('configItems','constConfigItems','Key', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
           <span class="input-group-btn">

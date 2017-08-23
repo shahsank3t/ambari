@@ -38,6 +38,10 @@ body {
   margin-bottom: 20px;
 }
 
+.padding-sm {
+  padding: 10px;
+}
+
 .table-borderless>tbody>tr>td,
 .table-borderless>tbody>tr>th,
 .table-borderless>tfoot>tr>td,
@@ -688,6 +692,9 @@ ul.legends li.legend{
   font-size: 12px;
   line-height: 29px;
 }
+.lagSwitchSetting .sliderText{
+  line-height: 1.5;
+}
 .switchItemOn.graphSwitchOn{
     background-color: #5cb85c;
 }
@@ -703,7 +710,9 @@ ul.legends li.legend{
   display: none;
 }
 .switchWrapper.lagSwitchSetting{
-  margin-top: -7px;
+  margin-top: 0px;
+  width: 90px;
+  height: 20px;
 }
 .box .box-header .box-control span,.box-control span {
     display: inline-block;

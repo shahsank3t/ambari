@@ -1,6 +1,6 @@
 <template>
     <dashboard-ToggleComponent :caption="title">
-      <div class="box-body">
+      <div class="padding-sm">
         <div class="input-group col-sm-4">
           <b-form-input v-model="filter" type="text" placeholder="Search By Topology Name"></b-form-input>
           <span class="input-group-btn">

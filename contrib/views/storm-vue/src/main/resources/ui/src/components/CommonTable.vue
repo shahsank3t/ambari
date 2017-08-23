@@ -53,8 +53,9 @@
   };
 </script>
 <style scope>
-  .table.table.table th,
-  .table.table.table td {
-    padding: 11px;
-  }
+.pagination > li > span{
+  font-size: 12px;
+  padding: 5px 10px;
+  line-height: 1.5;
+}
 </style>

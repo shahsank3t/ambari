@@ -5,7 +5,7 @@
       <div class="input-group-btn">
         <div class="btn-group" role="group">
           <div class="dropdown dropdown-lg">
-            <b-dropdown id="bg-nested-dropdown" variant="default" right class="m-md-2">
+            <b-dropdown id="bg-nested-dropdown" variant="default" right class="nomargin">
               <div>
                 <input type="checkbox" id="searchArchivedLogs"  value="accepted" unchecked-value="not_accepted"/>
                 <label for="searchArchivedLogs">Search archived logs</label>
@@ -72,9 +72,6 @@
   };
 </script>
 <style scope>
-.m-md-2{
-  margin: 0 !important;
-}
 .custom-control{
     display: block;
 }

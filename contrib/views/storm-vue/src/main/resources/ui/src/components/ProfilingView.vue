@@ -83,7 +83,7 @@
         _.map(keys, (k) => {
           executorArr.push({
             hostPort: k,
-            executorId: data[k].idArr,
+            executorId: data[k].idArr.toString(),
             checked : false
           });
         });
