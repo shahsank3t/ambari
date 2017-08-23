@@ -3,7 +3,7 @@ import Router from 'vue-router';
 
 import { routePaths } from '@/utils/Constants';
 
-import Dashboard from '@/containers/Dashboard';
+import Dashboard from '@/containers/Dashboard.js';
 import TopologyListing from '@/containers/TopologyListing';
 import NimbusConfigSummary from '@/containers/NimbusConfigSummary';
 import SupervisorSummary from '@/containers/SupervisorSummary';
