@@ -9,9 +9,11 @@
     <div class="row">
       <div class="col-sm-12">
         <div class="box filter">
-          <div class="box-body form-horizontal">
+          <div class="padding-sm form-horizontal">
             <app-CommonWindowPanel
               KYC="detailView"
+              debugAction="debugSwitch"
+              systemAction="systemSwitch"
               :systemFlag="systemFlag"
               :debugFlag="debugFlag"
               :selectedWindowKey="selectedWindowKey"
@@ -29,70 +31,82 @@
       <div class="col-sm-5">
         <div class="summary-tile">
           <div class="summary-title">Topology Summary</div>
-          <div class="summary-body form-horizontal">
-            <div class="form-group">
-              <label class="col-sm-4 control-label">ID:</label>
-              <div class="col-sm-8">
-                <p class="form-control-static">{{details.id}}</p>
+          <div class="summary-body form-horizontal" :style="{height : fetchLoader ? '200px' : 'auto'}">
+            <template v-if="fetchLoader">
+              <div class="loading-img text-center">
+                <img src="static/img/start-loader.gif" alt="loading" :style="{width : '50px'}"/>
               </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Owner:</label>
-              <div class="col-sm-8">
-                <p class="form-control-static">{{details.owner}}</p>
+            </template>
+            <template v-else>
+              <div class="form-group">
+                <label class="col-sm-4 control-label">ID:</label>
+                <div class="col-sm-8">
+                  <p class="form-control-static">{{details.id}}</p>
+                </div>
               </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Status:</label>
-              <div class="col-sm-8">
-                <p class="form-control-static">{{details.status}}</p>
+              <div class="form-group">
+                <label class="col-sm-4 control-label">Owner:</label>
+                <div class="col-sm-8">
+                  <p class="form-control-static">{{details.owner}}</p>
+                </div>
               </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Uptime:</label>
-              <div class="col-sm-8">
-                <p class="form-control-static">{{details.uptime}}</p>
+              <div class="form-group">
+                <label class="col-sm-4 control-label">Status:</label>
+                <div class="col-sm-8">
+                  <p class="form-control-static">{{details.status}}</p>
+                </div>
               </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Workers:</label>
-              <div class="col-sm-8">
-                <p class="form-control-static">{{details.workersTotal}}</p>
+              <div class="form-group">
+                <label class="col-sm-4 control-label">Uptime:</label>
+                <div class="col-sm-8">
+                  <p class="form-control-static">{{details.uptime}}</p>
+                </div>
               </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Executors:</label>
-              <div class="col-sm-8">
-                <p class="form-control-static">{{details.executorsTotal}}</p>
+              <div class="form-group">
+                <label class="col-sm-4 control-label">Workers:</label>
+                <div class="col-sm-8">
+                  <p class="form-control-static">{{details.workersTotal}}</p>
+                </div>
               </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Tasks:</label>
-              <div class="col-sm-8">
-                <p class="form-control-static">{{details.tasksTotal}}</p>
+              <div class="form-group">
+                <label class="col-sm-4 control-label">Executors:</label>
+                <div class="col-sm-8">
+                  <p class="form-control-static">{{details.executorsTotal}}</p>
+                </div>
               </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Memory:</label>
-              <div class="col-sm-8">
-                <p class="form-control-static">{{details.assignedTotalMem}}</p>
+              <div class="form-group">
+                <label class="col-sm-4 control-label">Tasks:</label>
+                <div class="col-sm-8">
+                  <p class="form-control-static">{{details.tasksTotal}}</p>
+                </div>
               </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-4 control-label">Worker-Host:Port:</label>
-              <div class="col-sm-8">
-                <p class="form-control-static preformatted">{{getWorkerData()}}</p>
+              <div class="form-group">
+                <label class="col-sm-4 control-label">Memory:</label>
+                <div class="col-sm-8">
+                  <p class="form-control-static">{{details.assignedTotalMem}}</p>
+                </div>
               </div>
-            </div>
-
+              <div class="form-group">
+                <label class="col-sm-4 control-label">Worker-Host:Port:</label>
+                <div class="col-sm-8">
+                  <p class="form-control-static preformatted">{{getWorkerData()}}</p>
+                </div>
+              </div>
+            </template>
           </div>
         </div>
       </div>
       <div class="col-sm-7">
         <div class="stats-tile">
           <div class="stats-title">Topology Stats</div>
-          <div class="stats-body">
+          <div class="stats-body" :style="{height : fetchLoader ? '100px' : 'auto'}">
+            <template v-if="fetchLoader">
+              <div class="loading-img text-center">
+                <img src="static/img/start-loader.gif" alt="loading" :style="{width : '50px'}"/>
+              </div>
+            </template>
             <app-CommonTable
+              v-else
               :items="topStateItem"
               :fields="topStateFields"
               :showPagination="false"
@@ -107,7 +121,7 @@
 
     <app-ToggleComponent :caption="details.name" type="topologyGraph" :default="true">
       <div class="padding-sm">
-        <app-TopologyGraph :graphData="graphData"></app-TopologyGraph>
+        <app-TopologyGraph :fetchLoader="fetchLoader" :graphData="graphData"></app-TopologyGraph>
       </div>
     </app-ToggleComponent>
 
@@ -115,8 +129,9 @@
       :lag="true"
       type="kafkaLag"
       :toggle="toggleGraphAndTable"
-      :default="true">
-      <div class="box-body">
+      :default="true"
+      :fetchLoader="fetchLoader">
+      <div class="padding-sm">
         <app-CommonTable
           v-if="toggleGraphAndTable"
           classname="table-striped table-bordered"
@@ -126,8 +141,9 @@
           :tableHeaderData="topLagHeaderData"
         >
       </app-CommonTable>
-        <div v-else id="lag-graph">
+        <div v-show="!toggleGraphAndTable" id="lag-graph">
           <app-BarChart
+            v-if="barChartData.length"
             ref="barChart"
             :width="screenWidth"
             :height="400"
@@ -140,7 +156,7 @@
       </div>
     </app-ToggleComponent>
 
-    <app-ToggleComponent caption="Spouts" :default="true">
+    <app-ToggleComponent caption="Spouts" :default="true" :fetchLoader="fetchLoader">
       <div class="padding-sm">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('spoutItems','constSpoutItems','spoutId', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
@@ -165,7 +181,7 @@
       </div>
     </app-ToggleComponent>
 
-    <app-ToggleComponent caption="Bolts" :default="true">
+    <app-ToggleComponent caption="Bolts" :default="true" :fetchLoader="fetchLoader">
       <div class="padding-sm">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('blotsItems','constBoltsItems','boltId', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
@@ -192,7 +208,7 @@
     </app-ToggleComponent>
 
 
-    <app-ToggleComponent caption="Topology Configuration">
+    <app-ToggleComponent caption="Topology Configuration" :fetchLoader="fetchLoader">
       <div class="padding-sm">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('configItems','constConfigItems','Key', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
@@ -355,7 +371,8 @@
         configFields : this.getConfigFields(),
         configHeaderData : this.getConfigHeaderData(),
         screenWidth : window != window.parent ? 1100 : 1300,
-        barChartData :[]
+        barChartData :[],
+        fetchLoader : true
       };
     },
     created(){
@@ -404,6 +421,7 @@
             this.selectedWindowKey = {};
           }
           self.debugSimplePCT = self.details.samplingPct;
+          this.debugFlag = self.details.debug;
           self.selectedWindowKey = {text : self.details.windowHint || 'All time', value : self.details.window || ':all-time'};
           self.graphData = results[1];
           self.topologyStatus = self.details !== undefined ? self.details.status : '';
@@ -416,6 +434,7 @@
           self.configItems = this.dataTransformation(self.details.configuration);
           self.constConfigItems = this.dataTransformation(self.details.configuration);
           self.barChartData = this.populateLagGraphData(self.topologyLag);
+          self.fetchLoader = false;
         });
       },
 
@@ -519,6 +538,9 @@
       // confirmBox modal reject
       handleConfirmReject(modal){
         if(modal === "debugConfirmBox"){
+          if(this.debugFlag){
+            FSToaster.success("Debugging enabled successfully");
+          }
           this.debugFlag = !this.debugFlag;
         }
         this.$refs[modal].hide();
@@ -766,6 +788,20 @@
         });
         return graphArr;
       }
+    },
+
+    watch : {
+      toggleGraphAndTable : function(){
+        if(!this.toggleGraphAndTable){
+          document.getElementById('lag-graph').appendChild(this.$refs.barChart.legendsEl);
+        }
+      }
     }
   };
 </script>
+
+<style scoped>
+#lag-graph{
+  overflow: hidden;
+}
+</style>

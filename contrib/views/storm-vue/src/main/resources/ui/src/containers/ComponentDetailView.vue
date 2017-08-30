@@ -12,6 +12,8 @@
           <div class="box-body form-horizontal">
             <app-CommonWindowPanel
               KYC="componentView"
+              debugAction="debugCallBack"
+              systemAction="systemCallBack"
               :selectedWindowKey="selectedWindowKey"
               :windowOptions="windowOptions"
               :systemFlag="systemFlag"
@@ -27,20 +29,33 @@
       <div class="col-sm-4">
         <div class="summary-tile">
           <div class="summary-title">Component Summary</div>
-          <div class="summary-body">
-            <p><strong>ID: </strong>{{componentDetail.id}}</p>
-            <p><strong>Topology: </strong>{{componentDetail.name}}</p>
-            <p><strong>Executors: </strong>{{componentDetail.executors}}</p>
-            <p><strong>Tasks: </strong>{{componentDetail.tasks}}</p>
-            <p><strong>Debug: </strong><a :href="componentDetail.eventLogLink" target="_blank">events</a></p>
+          <div class="summary-body" :style="{height : fetchLoader ? '100px' : 'auto'}">
+            <template v-if="fetchLoader">
+              <div class="loading-img text-center">
+                <img src="static/img/start-loader.gif" alt="loading" :style="{width : '50px'}"/>
+              </div>
+            </template>
+            <template v-else>
+              <p><strong>ID: </strong>{{componentDetail.id}}</p>
+              <p><strong>Topology: </strong>{{componentDetail.name}}</p>
+              <p><strong>Executors: </strong>{{componentDetail.executors}}</p>
+              <p><strong>Tasks: </strong>{{componentDetail.tasks}}</p>
+              <p><strong>Debug: </strong><a :href="componentDetail.eventLogLink" target="_blank">events</a></p>
+            </template>
           </div>
         </div>
       </div>
       <div class="col-sm-8">
         <div class="stats-tile">
           <div class="stats-title">{{computedState}}</div>
-          <div class="stats-body">
+          <div class="stats-body" :style="{height : fetchLoader ? '100px' : 'auto'}">
+            <template v-if="fetchLoader">
+              <div class="loading-img text-center">
+                <img src="static/img/start-loader.gif" alt="loading" :style="{width : '50px'}"/>
+              </div>
+            </template>
             <app-CommonTable
+              v-else
               classname='no-margin'
               :items="topStateItem"
               :fields="topStateFields"
@@ -54,7 +69,7 @@
       </div>
     </div>
 
-    <app-ToggleComponent v-if="componentDetail.inputStats" :caption="'Input Stats ('+componentDetail.windowHint+')'" :default="true">
+    <app-ToggleComponent v-if="componentDetail.inputStats" :caption="'Input Stats ('+componentDetail.windowHint+')'" :default="true" :fetchLoader="fetchLoader">
       <div class="padding-sm">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('inputItems','constInputItems','component', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
@@ -73,7 +88,7 @@
       </div>
     </app-ToggleComponent>
 
-    <app-ToggleComponent v-if="componentDetail.outputStats" :caption="'Output Stats ('+componentDetail.windowHint+')'" :default="true">
+    <app-ToggleComponent v-if="componentDetail.outputStats" :caption="'Output Stats ('+componentDetail.windowHint+')'" :default="true" :fetchLoader="fetchLoader">
       <div class="padding-sm">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('outputItems','constOutputItems','stream', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
@@ -92,7 +107,7 @@
       </div>
     </app-ToggleComponent>
 
-    <app-ToggleComponent v-if="componentDetail.executorStats" :caption="'Executor Stats ('+componentDetail.windowHint+')'" :default="true">
+    <app-ToggleComponent v-if="componentDetail.executorStats" :caption="'Executor Stats ('+componentDetail.windowHint+')'" :default="true" :fetchLoader="fetchLoader">
       <div class="padding-sm">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('executorItems','constExecutorItems','id', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
@@ -120,7 +135,7 @@
       </div>
     </app-ToggleComponent>
 
-    <app-ToggleComponent v-if="componentDetail.componentErrors" :caption="'Error Stats ('+componentDetail.windowHint+')'" :default="true">
+    <app-ToggleComponent v-if="componentDetail.componentErrors" :caption="'Error Stats ('+componentDetail.windowHint+')'" :default="true" :fetchLoader="fetchLoader">
       <div class="padding-sm">
         <div class="input-group col-sm-4">
           <input @input="filterChanged('errorItems','constErrorItems','errorTime', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
@@ -172,15 +187,13 @@
 
       <!-- debug confirmation box -->
       <app-FSModal
+        modalTitle="Do you really want to stop debugging this topology ?"
         ref="debugConfirmBox"
         @resovle="handleConfirmResolve('debugConfirmBox')"
         @reject="handleConfirmReject('debugConfirmBox')"
         :confirmBox="true"
         closeLabel="cancel"
         >
-        <div slot="mbody">
-         Do you really want to stop debugging this topology ?
-       </div>
       </app-FSModal>
 
   </div>
@@ -242,7 +255,8 @@
         errorItems : [],
         errorFields : {},
         errorHeaderData : [],
-        constErrorItems :[]
+        constErrorItems :[],
+        fetchLoader : true
       };
     },
 
@@ -251,7 +265,8 @@
     },
 
     mounted(){
-      EventBus.$on("switchCallBack", this.toggleSystem);
+      EventBus.$on("debugCallBack", this.toggleSystem);
+      EventBus.$on("systemCallBack", this.toggleSystem);
       EventBus.$on("componentWindowChange", this.componentWindowChange);
     },
 
@@ -272,6 +287,7 @@
       populateComponentData(){
         this.spoutFlag = this.componentDetail.componentType === 'spout' ? true: false;
         this.samplingPct = this.componentDetail.samplingPct;
+        this.debugFlag = this.componentDetail.debug;
         this.windowOptions = FilterUtils.populateWindowsOptions(this.spoutFlag ? this.componentDetail.spoutSummary : this.componentDetail.boltStats);
         if(this.windowOptions.length === 0){
           this.selectedWindowKey = {};
@@ -302,6 +318,7 @@
         this.constErrorItems = this.componentDetail.componentErrors;
         this.errorFields = this.getErrorFields();
         this.errorHeaderData = this.getErrorHeaderData();
+        this.fetchLoader = false;
       },
 
       getLinks(){
@@ -378,6 +395,7 @@
       handleConfirmResolve(modal){
         if(modal === "debugConfirmBox"){
           this.debugFlag = false;
+          FSToaster.success("Debugging disabled successfully");
         }
         this.$refs[modal].hide();
       },

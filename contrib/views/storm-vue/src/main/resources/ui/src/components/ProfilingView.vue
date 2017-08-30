@@ -18,7 +18,7 @@
     </div>
     <hr />
     <app-CommonTable
-      classname='no-margin'
+      classname='no-margin table-bordered'
       :items="executorArr"
       :fields="profileFields"
       :showPagination="false"

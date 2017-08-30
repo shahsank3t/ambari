@@ -1,8 +1,8 @@
 <template>
-  <div class="panel">
-    <b-btn block v-b-toggle="'computedCaption'" class="toggleBtn" variant="default" @click="expanded = !expanded">
+  <div class="panel ui-panel">
+    <b-btn block v-b-toggle="'computedCaption'" class="toggleBtn" variant="default" @click="handleExpand">
       <h4 class="text-left">{{computedCaption}}
-        <toggleComponent-CommonExpanded :expandedProps="expanded"></toggleComponent-CommonExpanded>
+        <toggleComponent-CommonExpanded v-if="!lag" :expandedProps="expanded"></toggleComponent-CommonExpanded>
         <CommonSwitchComponent
           v-if="lag"
           KYC="kafka"
@@ -14,10 +14,17 @@
         </CommonSwitchComponent>
       </h4>
     </b-btn>
-    <b-collapse :id="computedCaption"  :visible="expanded"  :accordion="computedCaption">
-      <b-card>
-        <slot></slot>
-      </b-card>
+    <b-collapse :id="computedCaption"  :visible="expanded"  :accordion="computedCaption" :style="{height : fetchLoader ? '100px' : 'auto', border : fetchLoader ? '1px solid #ccc' : 0}">
+      <template v-if="fetchLoader">
+        <div class="loading-img text-center">
+          <img src="static/img/start-loader.gif" alt="loading" :style="{width : '50px'}"/>
+        </div>
+      </template>
+      <template v-else>
+        <b-card>
+          <slot></slot>
+        </b-card>
+      </template>
     </b-collapse>
   </div>
 </template>
@@ -28,7 +35,7 @@
 
   export default{
     name: 'ToggleComponent',
-    props:["caption","lag","toggle","kafkaLag","default"],
+    props:["caption","lag","toggle","kafkaLag","default","fetchLoader"],
     data(){
       return{
         expanded : this.default || false
@@ -39,7 +46,11 @@
         return this.caption || '';
       }
     },
-    methods : {},
+    methods : {
+      handleExpand(){
+        this.expanded = this.lag ? true : !this.expanded;
+      }
+    },
     components : {
       "toggleComponent-CommonExpanded" : CommonExpanded,
       "CommonSwitchComponent" : CommonSwitchComponent
@@ -47,7 +58,7 @@
   };
 </script>
 
-<style scope>
+<style scoped>
 
 .toggleBtn{
   background-color: #f3f6f9;
@@ -71,14 +82,14 @@
   font-size: 16px;
   font-weight: 700;
   letter-spacing: 1px;
-  color: inherit;
+  color: #4b4b4b;
 }
 .panel{
   margin-bottom: 20px;
-  border-bottom: 1px #ccc solid;
-  border-bottom-width: 3px;
+  border-bottom: 1px #bcbcbc solid;
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
   box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+  border-bottom-width: 3px;
   border-radius: 5px;
 }
 .toggleBtn:hover,
@@ -91,5 +102,4 @@
   border-top-right-radius: 0;
   border-top-left-radius: 0;
 }
-
 </style>

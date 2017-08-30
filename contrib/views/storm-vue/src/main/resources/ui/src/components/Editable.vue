@@ -3,10 +3,10 @@
     <a v-if="!edit && inline" ref="target" @click="handleClick" :style="anchorStyle">{{defaultValue}}</a>
     <div v-else="edit && inline">
       <input v-if="childType === 'input'"  class="form-control input-sm editInput" ref="focusInput" :value="defaultValue" @input="handleTimeChange"/>
-      <button class="btn-primary btn-sm" @click="handleResolve" key="resolve"  :style="{margin : '0 0 3px 5px'}">
+      <button class="btn-primary btn-sm transparent-border" @click="handleResolve" key="resolve"  :style="{margin : '0 0 3px 5px'}">
           <i class="fa fa-check"></i>
       </button>
-      <button class="btn-default btn-sm"  @click="handleReject" key="reject" :style="{margin : '0 3px'}">
+      <button class="btn-default btn-sm grey-border"  @click="handleReject" key="reject" :style="{margin : '0 3px'}">
         <i class="fa fa-times"></i>
       </button>
       <div class="editable-error">{{errorMsg}}</div>
@@ -72,3 +72,12 @@
     }
   };
 </script>
+<style scoped>
+.transparent-border{
+  border: 1px solid transparent;
+}
+
+.grey-border{
+  border:1px solid #ccc;
+}
+</style>

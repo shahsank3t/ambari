@@ -47,11 +47,13 @@
 
         <template scope="{item}" slot="__action__">
           <span>
-					  <a href="javascript:void(0)" class="btn btn-success btn-xs"
+					  <a href="javascript:void(0)" class="btn btn-xs"
+              :class="[item.item.footer ? 'btn-primary' : 'btn-success']"
               @click="!item.item.footer ? saveAndClearLogConfig(item.item.logger,'save') : addLogRow('save') " >
-              <i class="fa fa-check"></i>
+              <i v-if="item.item.footer" class="fa fa-plus"></i>
+              <i v-else class="fa fa-check"></i>
             </a>&nbsp;
-					  <a v-if="!item.item.footer"  href="javascript:void(0)" class="btn btn-danger btn-xs" @click="saveAndClearLogConfig(item.item.logger,'clear')"><i class="fa fa-times"></i></a>
+					  <a v-if="!item.item.footer"  href="javascript:void(0)" class="btn btn-danger-old btn-xs" @click="saveAndClearLogConfig(item.item.logger,'clear')"><i class="fa fa-times"></i></a>
 					</span>
         </template>
 
@@ -249,3 +251,17 @@
     }
   };
 </script>
+<style scoped>
+.btn-danger-old{
+  color: #ffffff;
+  background-color: #ff5816;
+  border-color: #fb4700;
+}
+
+.btn-danger-old:hover {
+  color: #ffffff;
+  background-color: #e24000;
+}
+
+
+</style>

@@ -40,7 +40,7 @@
 <script>
   export default {
     name: 'TableComponent',
-    props: ["items", "fields", "classname", "showPagination", "tableHeaderData","popoverPosition"],
+    props: ["items", "fields", "classname", "showPagination", "tableHeaderData","popoverPosition","fetchLoader"],
     data(){
       return {
         currentPage: 1,
@@ -52,10 +52,13 @@
     methods: {}
   };
 </script>
-<style scope>
+<style>
 .pagination > li > span{
   font-size: 12px;
   padding: 5px 10px;
   line-height: 1.5;
+}
+.pagination > li > a, .pagination > li > span{
+    padding: 4px 10px !important;
 }
 </style>

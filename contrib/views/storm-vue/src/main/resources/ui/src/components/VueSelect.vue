@@ -41,7 +41,7 @@
     }
   };
 </script>
-<style scope>
+<style scoped>
 select.form-control:not([size]):not([multiple]){
   height: 34px;
 }

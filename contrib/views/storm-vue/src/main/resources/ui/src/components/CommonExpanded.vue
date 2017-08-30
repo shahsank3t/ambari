@@ -19,7 +19,7 @@
     }
   };
 </script>
-<style scope>
+<style scoped>
 .box-custom{
   margin-left: 17px;
   margin-top: -2px;

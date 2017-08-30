@@ -8,31 +8,38 @@
           <router-link to="/topology" class="primary"><i class="fa fa-external-link"></i></router-link>
         </div>
       </div>
-      <div :class="[{paddless: fromDashboard}, 'box-body']">
-        <div v-if="!fromDashboard" class="input-group col-sm-4">
-          <b-form-input v-model="filter" type="text" placeholder="Search By Topology Name"></b-form-input>
-          <span class="input-group-btn">
-            <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
-          </span>
-        </div>
-        <CommonTable
-          classname='no-margin'
-          :items="items"
-          :fields="fields"
-          :showPagination="showPagination"
-          :tableHeaderData="tableHeaderData"
-        >
-          <!-- Custom formatted value cells -->
-          <template scope="{item}" slot="__name__">
-            <router-link :to="{name: 'TopologyDetail', params: {topologyId: item.item.id}}">{{item.value}}</router-link>
-          </template>
-          <template scope="{item}" slot="__status__">
-            <span :class="item.value | statusClass">{{item.value}}</span>
-          </template>
-          <template scope="{item}" slot="__uptime__">
-            <small>{{item.value}}</small>
-          </template>
-        </CommonTable>
+      <div :class="[{paddless: fromDashboard}, 'box-body']" :style="{height : fetchLoader ? '100px' : 'auto'}">
+        <template v-if="fetchLoader">
+          <div class="loading-img text-center">
+            <img src="static/img/start-loader.gif" alt="loading" :style="{width : '50px'}"/>
+          </div>
+        </template>
+        <template v-else>
+          <div v-if="!fromDashboard" class="input-group col-sm-4">
+            <b-form-input v-model="filter" type="text" placeholder="Search By Topology Name"></b-form-input>
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+          <CommonTable
+            classname='no-margin'
+            :items="items"
+            :fields="fields"
+            :showPagination="showPagination"
+            :tableHeaderData="tableHeaderData"
+          >
+            <!-- Custom formatted value cells -->
+            <template scope="{item}" slot="__name__">
+              <router-link :to="{name: 'TopologyDetail', params: {topologyId: item.item.id}}">{{item.value}}</router-link>
+            </template>
+            <template scope="{item}" slot="__status__">
+              <span :class="item.value | statusClass">{{item.value}}</span>
+            </template>
+            <template scope="{item}" slot="__uptime__">
+              <small>{{item.value}}</small>
+            </template>
+          </CommonTable>
+        </template>
       </div>
     </div>
   </div>
@@ -73,7 +80,8 @@
         items: [],
         filter: null,
         showPagination: !this.fromDashboard ? true : false,
-        linkList : this.getLinks()
+        linkList : this.getLinks(),
+        fetchLoader : true
       };
     },
     methods: {
@@ -106,6 +114,7 @@
           } else {
             this.topologiesEntities = result.topologies;
             this.items = result.topologies;
+            this.fetchLoader = false;
           }
         });
       },

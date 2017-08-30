@@ -5,7 +5,7 @@
       <div class="input-group-btn">
         <div class="btn-group" role="group">
           <div class="dropdown dropdown-lg">
-            <b-dropdown id="bg-nested-dropdown" variant="default" right class="nomargin">
+            <b-dropdown id="bg-nested-dropdown" variant="default" right>
               <div>
                 <input type="checkbox" id="searchArchivedLogs"  value="accepted" unchecked-value="not_accepted"/>
                 <label for="searchArchivedLogs">Search archived logs</label>
@@ -31,9 +31,7 @@
     name : "SearchLogs",
     props : ["topologyId"],
     data(){
-      return{
-        dropDownShow : false
-      };
+      return{};
     },
     methods : {
       handleSearch(){
@@ -71,7 +69,7 @@
     }
   };
 </script>
-<style scope>
+<style scoped>
 .custom-control{
     display: block;
 }
@@ -92,10 +90,13 @@
 }
 
 .searchbar .dropdown-menu input[type="checkbox"]{
-      margin-right: 3px;
+  margin-right: 3px;
 }
 .searchbar .dropdown-toggle::after{
   margin-left: 0;
+}
+.dropdown-toggle::after{
+  margin-left: 0 !important;
 }
 
 </style>

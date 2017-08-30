@@ -6,11 +6,11 @@
     </div>
     <label class="col-sm-2 control-label">System Summary</label>
     <div class="col-sm-2">
-      <app-CommonSwitchComponent :checked="systemFlag" type="systemFlag" callBack="systemSwitch" ></app-CommonSwitchComponent>
+      <app-CommonSwitchComponent :checked="systemFlag" type="systemFlag" :callBack="systemAction" ></app-CommonSwitchComponent>
     </div>
     <label class="col-sm-1 control-label">Debug</label>
     <div class="col-sm-1">
-      <app-CommonSwitchComponent :checked="debugFlag" type="debugFlag" callBack="debugSwitch" ></app-CommonSwitchComponent>
+      <app-CommonSwitchComponent :checked="debugFlag" type="debugFlag" :callBack="debugAction" ></app-CommonSwitchComponent>
     </div>
      <div class="col-sm-3 text-right">
       <div class="btn-group" role="group">
@@ -43,7 +43,7 @@
 
   export default{
     name : "CommonWindowPanel",
-    props : ["KYC","systemFlag","debugFlag","selectedWindowKey","windowOptions","toggleSystem","topologyStatus"],
+    props : ["KYC","systemFlag","debugFlag","selectedWindowKey","windowOptions","topologyStatus","debugAction","systemAction"],
     components : {
       "app-CommonSwitchComponent" : CommonSwitchComponent,
       "app-select" : VueSelect

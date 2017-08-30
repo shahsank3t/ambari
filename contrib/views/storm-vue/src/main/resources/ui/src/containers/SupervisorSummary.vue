@@ -8,49 +8,56 @@
           <router-link to="/supervisor" class="primary"><i class="fa fa-external-link"></i></router-link>
         </div>
       </div>
-      <div :class="[{paddless: fromDashboard}, 'box-body']">
-        <div v-if="!fromDashboard" class="input-group col-sm-4">
-          <b-form-input v-model="filter" type="text" placeholder="Search By Host"></b-form-input>
-          <span class="input-group-btn">
-            <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
-          </span>
-        </div>
-        <CommonTable
-          classname='no-margin supervisor-table'
-          :items="items"
-          :fields="fields"
-          :showPagination="showPagination"
-          :tableHeaderData="tableHeaderData"
-        >
-          <!-- Custom formatted value cells -->
-          <template slot="__hostName__" scope="{item}">
-            <a :href="item.item.logLink" target="_blank">{{item.item.host}}</a>
-          </template>
-          <template slot="__slots__" scope="{item}">
-            <app-supervisorsummary-radial
-              :graphData="[item.item.slotsUsed,item.item.slotsTotal]"
-              :labels="labels" :width="width" :height="height"
-              :innerRadius="innerRadius"
-              :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
-          </template>
-          <template slot="__cpu__" scope="{item}">
-            <app-supervisorsummary-radial
-              :graphData="[item.item.usedCpu,item.item.totalCpu]"
-              :labels="labels" :width="width" :height="height"
-              :innerRadius="innerRadius"
-              :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
-          </template>
-          <template slot="__memory__" scope="{item}">
-            <app-supervisorsummary-radial
-              :graphData="[item.item.usedMem,item.item.totalMem]"
-              :labels="labels" :width="width" :height="height"
-              :innerRadius="innerRadius"
-              :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
-          </template>
-          <template scope="{item}" slot="__uptime__">
-            <small>{{item.value}}</small>
-          </template>
-        </CommonTable>
+      <div :class="[{paddless: fromDashboard}, 'box-body']" :style="{height : fetchLoader ? '100px' : 'auto'}">
+        <template v-if="fetchLoader">
+          <div class="loading-img text-center">
+            <img src="static/img/start-loader.gif" alt="loading" :style="{width : '50px'}"/>
+          </div>
+        </template>
+        <template v-else>
+          <div v-if="!fromDashboard" class="input-group col-sm-4">
+            <b-form-input v-model="filter" type="text" placeholder="Search By Host"></b-form-input>
+            <span class="input-group-btn">
+              <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
+            </span>
+          </div>
+          <CommonTable
+            classname='no-margin supervisor-table'
+            :items="items"
+            :fields="fields"
+            :showPagination="showPagination"
+            :tableHeaderData="tableHeaderData"
+          >
+            <!-- Custom formatted value cells -->
+            <template slot="__hostName__" scope="{item}">
+              <a :href="item.item.logLink" target="_blank">{{item.item.host}}</a>
+            </template>
+            <template slot="__slots__" scope="{item}">
+              <app-supervisorsummary-radial
+                :graphData="[item.item.slotsUsed,item.item.slotsTotal]"
+                :labels="labels" :width="width" :height="height"
+                :innerRadius="innerRadius"
+                :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
+            </template>
+            <template slot="__cpu__" scope="{item}">
+              <app-supervisorsummary-radial
+                :graphData="[item.item.usedCpu,item.item.totalCpu]"
+                :labels="labels" :width="width" :height="height"
+                :innerRadius="innerRadius"
+                :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
+            </template>
+            <template slot="__memory__" scope="{item}">
+              <app-supervisorsummary-radial
+                :graphData="[item.item.usedMem,item.item.totalMem]"
+                :labels="labels" :width="width" :height="height"
+                :innerRadius="innerRadius"
+                :outerRadius="outerRadius" :color="color"></app-supervisorsummary-radial>
+            </template>
+            <template scope="{item}" slot="__uptime__">
+              <small>{{item.value}}</small>
+            </template>
+          </CommonTable>
+        </template>
       </div>
     </div>
   </div>
@@ -92,7 +99,8 @@
         outerRadius : 21,
         color: ["#bcbcbc", "#235693"],
         showPagination: !this.fromDashboard ? true : false,
-        linkList : this.getLinks()
+        linkList : this.getLinks(),
+        fetchLoader : true
       };
     },
 
@@ -117,6 +125,7 @@
           } else {
             this.entities = result.supervisors;
             this.items = result.supervisors;
+            this.fetchLoader = false;
           }
         });
       },

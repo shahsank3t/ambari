@@ -1,6 +1,11 @@
 <template>
-  <div class="graph-bg">
-    <svg class="topology-graph" width="100%" height="300"></svg>
+  <div :class="{'graph-bg' : !fetchLoader}" :style="{height : fetchLoader ? '300px' : 'auto'}">
+    <template v-if="fetchLoader">
+      <div class="loading-img text-center">
+        <img src="static/img/start-loader.gif" alt="loading" :style="{width : '50px'}"/>
+      </div>
+    </template>
+    <svg class="topology-graph" width="100%" :style="{height : !fetchLoader ? '300' : '0'}"></svg>
   </div>
 </template>
 
@@ -10,7 +15,7 @@
   import dagreD3 from 'dagre-d3/dist/dagre-d3';
 
   export default {
-    props: ['graphData'],
+    props: ['graphData','fetchLoader'],
     data(){
       return {};
     },

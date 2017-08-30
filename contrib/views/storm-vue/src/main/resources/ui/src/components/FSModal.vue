@@ -18,7 +18,7 @@
 
           <!-- Modal footer -->
           <div class="modal-footer" v-if="hideFoot !== true">
-            <button v-show="hideClose !== true" class="btn " :class="[confirmBox ? 'btn-danger': 'btn-default']" @click="reject">
+            <button v-show="hideClose !== true" class="btn " :class="[confirmBox ? 'btn-default': 'btn-default']" @click="reject">
               {{getCloseTxt}}
             </button>
             <button v-show="hideOk !== true" class="btn btn-success" @click="resovle">
@@ -87,7 +87,7 @@
     }
   };
 </script>
-<style scope>
+<style scoped>
 /*.modal-wrapper {
   display: table-cell;
   vertical-align: top;
