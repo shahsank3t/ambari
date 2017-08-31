@@ -15,7 +15,7 @@
           this.defaultNofity('error' ,text,opt);
         },
         defaultNofity(type,text,opt){
-          let textHtml = !!text ? "<h5><i class='fa fa-check'></i>"+text+"</h5>" : '';
+          let textHtml = !!text ? "<h5><i class='fa fa-check'></i> "+text+"</h5>" : '';
           const obj = Object.assign({type,text:textHtml},opt);
           this.$notify(obj);
         }

@@ -84,6 +84,12 @@
         fetchLoader : true
       };
     },
+    mounted(){
+      FilterUtils.handleLoader();
+    },
+    updated(){
+      FilterUtils.handleLoader();
+    },
     methods: {
       //Get all the table fields
       getTableFields(){

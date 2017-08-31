@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-sm-12">
         <app-Breadcrumbs :items="items"></app-Breadcrumbs>
-        <app-SearchLogs :id="topologyId"></app-SearchLogs>
+        <app-SearchLogs :topologyId="topologyId"></app-SearchLogs>
       </div>
     </div>
     <div class="row">
@@ -70,7 +70,7 @@
     </div>
 
     <app-ToggleComponent v-if="componentDetail.inputStats" :caption="'Input Stats ('+componentDetail.windowHint+')'" :default="true" :fetchLoader="fetchLoader">
-      <div class="padding-sm">
+      <div>
         <div class="input-group col-sm-4">
           <input @input="filterChanged('inputItems','constInputItems','component', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
           <span class="input-group-btn">
@@ -89,7 +89,7 @@
     </app-ToggleComponent>
 
     <app-ToggleComponent v-if="componentDetail.outputStats" :caption="'Output Stats ('+componentDetail.windowHint+')'" :default="true" :fetchLoader="fetchLoader">
-      <div class="padding-sm">
+      <div>
         <div class="input-group col-sm-4">
           <input @input="filterChanged('outputItems','constOutputItems','stream', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
           <span class="input-group-btn">
@@ -108,7 +108,7 @@
     </app-ToggleComponent>
 
     <app-ToggleComponent v-if="componentDetail.executorStats" :caption="'Executor Stats ('+componentDetail.windowHint+')'" :default="true" :fetchLoader="fetchLoader">
-      <div class="padding-sm">
+      <div>
         <div class="input-group col-sm-4">
           <input @input="filterChanged('executorItems','constExecutorItems','id', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
           <span class="input-group-btn">
@@ -136,7 +136,7 @@
     </app-ToggleComponent>
 
     <app-ToggleComponent v-if="componentDetail.componentErrors" :caption="'Error Stats ('+componentDetail.windowHint+')'" :default="true" :fetchLoader="fetchLoader">
-      <div class="padding-sm">
+      <div>
         <div class="input-group col-sm-4">
           <input @input="filterChanged('errorItems','constErrorItems','errorTime', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
           <span class="input-group-btn">
@@ -265,9 +265,14 @@
     },
 
     mounted(){
+      FilterUtils.handleLoader();
       EventBus.$on("debugCallBack", this.toggleSystem);
       EventBus.$on("systemCallBack", this.toggleSystem);
       EventBus.$on("componentWindowChange", this.componentWindowChange);
+    },
+    
+    updated(){
+      FilterUtils.handleLoader();
     },
 
     computed : {
@@ -384,9 +389,11 @@
         TopologyREST.postDebugTopology(componentID,toEnableFlag,samplingPct).then((result) => {
           if(result.responseMessage !== undefined){
             this.samplingPct = componentDetail.samplingPct;
+            this.debugFlag = !this.debugFlag;
             FSToaster.error(result.responseMessage);
           } else {
-            FSToaster.success("Debugging enabled successfully.");
+            const type = result.topologyOperation.split('/')[1];
+            FSToaster.success(`Debugging ${type} successfully`);
           }
         });
       },
@@ -395,7 +402,7 @@
       handleConfirmResolve(modal){
         if(modal === "debugConfirmBox"){
           this.debugFlag = false;
-          FSToaster.success("Debugging disabled successfully");
+          this.handleDebugSave("debugConfirmBox","disabled");
         }
         this.$refs[modal].hide();
       },

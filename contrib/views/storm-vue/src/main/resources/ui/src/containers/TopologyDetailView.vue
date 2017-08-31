@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-sm-12">
         <app-Breadcrumbs :items="items"></app-Breadcrumbs>
-        <app-SearchLogs :id="topologyId"></app-SearchLogs>
+        <app-SearchLogs :topologyId="topologyId"></app-SearchLogs>
       </div>
     </div>
     <div class="row">
@@ -131,7 +131,7 @@
       :toggle="toggleGraphAndTable"
       :default="true"
       :fetchLoader="fetchLoader">
-      <div class="padding-sm">
+      <div>
         <app-CommonTable
           v-if="toggleGraphAndTable"
           classname="table-striped table-bordered"
@@ -157,7 +157,7 @@
     </app-ToggleComponent>
 
     <app-ToggleComponent caption="Spouts" :default="true" :fetchLoader="fetchLoader">
-      <div class="padding-sm">
+      <div>
         <div class="input-group col-sm-4">
           <input @input="filterChanged('spoutItems','constSpoutItems','spoutId', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
           <span class="input-group-btn">
@@ -182,7 +182,7 @@
     </app-ToggleComponent>
 
     <app-ToggleComponent caption="Bolts" :default="true" :fetchLoader="fetchLoader">
-      <div class="padding-sm">
+      <div>
         <div class="input-group col-sm-4">
           <input @input="filterChanged('blotsItems','constBoltsItems','boltId', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
           <span class="input-group-btn">
@@ -209,7 +209,7 @@
 
 
     <app-ToggleComponent caption="Topology Configuration" :fetchLoader="fetchLoader">
-      <div class="padding-sm">
+      <div>
         <div class="input-group col-sm-4">
           <input @input="filterChanged('configItems','constConfigItems','Key', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
           <span class="input-group-btn">
@@ -380,10 +380,15 @@
     },
 
     mounted () {
+      FilterUtils.handleLoader();
       EventBus.$on("systemSwitch", this.toggleSystem);
       EventBus.$on("debugSwitch", this.toggleSystem);
       EventBus.$on("kafkaLagSwitch", this.toggleSystem);
       EventBus.$on("handleWindowChange", this.handleWindowChange);
+    },
+
+    updated(){
+      FilterUtils.handleLoader();
     },
 
     methods:{
@@ -526,7 +531,7 @@
       handleConfirmResolve(modal){
         if(modal === "debugConfirmBox"){
           this.debugFlag = false;
-          FSToaster.success("Debugging disabled successfully");
+          this.handleDebugSave("debugConfirmBox","disabled");
         } else if(modal === "killModelRef"){
           this.handleTopologyKilled();
         } else if (modal === "activateConfirmBox"){
@@ -538,9 +543,6 @@
       // confirmBox modal reject
       handleConfirmReject(modal){
         if(modal === "debugConfirmBox"){
-          if(this.debugFlag){
-            FSToaster.success("Debugging enabled successfully");
-          }
           this.debugFlag = !this.debugFlag;
         }
         this.$refs[modal].hide();
@@ -553,9 +555,11 @@
         TopologyREST.postDebugTopology(details.id,toEnableFlag,debugSimplePCT).then((result) => {
           if(result.responseMessage !== undefined){
             this.debugSimplePCT = details.samplingPct;
+            this.debugFlag = !this.debugFlag;
             FSToaster.error(result.responseMessage);
           } else {
-            FSToaster.success("Debugging enabled successfully");
+            const type = result.topologyOperation.split('/')[1];
+            FSToaster.success(`Debugging ${type} successfully`);
           }
         });
       },

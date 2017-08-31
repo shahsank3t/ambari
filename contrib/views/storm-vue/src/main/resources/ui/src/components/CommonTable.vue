@@ -59,6 +59,6 @@
   line-height: 1.5;
 }
 .pagination > li > a, .pagination > li > span{
-    padding: 4px 10px !important;
+    padding: 5px 10px !important;
 }
 </style>

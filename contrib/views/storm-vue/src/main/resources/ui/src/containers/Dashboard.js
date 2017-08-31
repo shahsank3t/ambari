@@ -2,12 +2,19 @@ import ClusterSummary from './ClusterSummary';
 import TopologyListing from './TopologyListing';
 import SupervisorSummary from './SupervisorSummary';
 import NimbusConfigSummary from './NimbusConfigSummary';
+import FilterUtils from '@/utils/FilterUtils';
 
 export default {
   name: 'Dashboard',
+  mounted(){
+    FilterUtils.handleLoader();
+  },
+  updated(){
+    FilterUtils.handleLoader();
+  },
   render(){
     return (
-    <div>
+    <section>
       <div class="row topMargin">
         <div class="col-sm-5">
           <ClusterSummary></ClusterSummary>
@@ -22,6 +29,6 @@ export default {
             <NimbusConfigSummary></NimbusConfigSummary>
           </div>
       </div>
-    </div>);
+    </section>);
   }
 };
