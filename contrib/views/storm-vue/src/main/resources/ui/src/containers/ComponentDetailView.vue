@@ -72,7 +72,7 @@
     <app-ToggleComponent v-if="componentDetail.inputStats" :caption="'Input Stats ('+componentDetail.windowHint+')'" :default="true" :fetchLoader="fetchLoader">
       <div>
         <div class="input-group col-sm-4">
-          <input @input="filterChanged('inputItems','constInputItems','component', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
+          <input @input="filterChanged('inputItems','constInputItems','component', $event)" class="form-control" type="text" placeholder="Search By Component" />
           <span class="input-group-btn">
             <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
           </span>
@@ -91,7 +91,7 @@
     <app-ToggleComponent v-if="componentDetail.outputStats" :caption="'Output Stats ('+componentDetail.windowHint+')'" :default="true" :fetchLoader="fetchLoader">
       <div>
         <div class="input-group col-sm-4">
-          <input @input="filterChanged('outputItems','constOutputItems','stream', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
+          <input @input="filterChanged('outputItems','constOutputItems','stream', $event)" class="form-control" type="text" placeholder="Search By Stream" />
           <span class="input-group-btn">
             <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
           </span>
@@ -110,7 +110,7 @@
     <app-ToggleComponent v-if="componentDetail.executorStats" :caption="'Executor Stats ('+componentDetail.windowHint+')'" :default="true" :fetchLoader="fetchLoader">
       <div>
         <div class="input-group col-sm-4">
-          <input @input="filterChanged('executorItems','constExecutorItems','id', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
+          <input @input="filterChanged('executorItems','constExecutorItems','id', $event)" class="form-control" type="text" placeholder="Search By Id" />
           <span class="input-group-btn">
             <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
           </span>
@@ -138,7 +138,7 @@
     <app-ToggleComponent v-if="componentDetail.componentErrors" :caption="'Error Stats ('+componentDetail.windowHint+')'" :default="true" :fetchLoader="fetchLoader">
       <div>
         <div class="input-group col-sm-4">
-          <input @input="filterChanged('errorItems','constErrorItems','errorTime', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
+          <input @input="filterChanged('errorItems','constErrorItems','errorTime', $event)" class="form-control" type="text" placeholder="Search By Time" />
           <span class="input-group-btn">
             <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
           </span>
@@ -324,6 +324,7 @@
         this.errorFields = this.getErrorFields();
         this.errorHeaderData = this.getErrorHeaderData();
         this.fetchLoader = false;
+        this.topologyId = this.componentDetail.topologyId;
       },
 
       getLinks(){

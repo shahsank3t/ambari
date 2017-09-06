@@ -175,13 +175,16 @@
       },
 
       modifyCommonObjValue(refType,type,key,action,addRow){
+        const timeValue =  (this.timeChange === '' || this.timeChange === undefined) ? parseInt(this.$refs[refType].defaultValue,10) : parseInt(this.timeChange,10);
         if(action === 'save' && addRow === null){
-          this.logLevelObj[type][key] = parseInt(this.timeChange,10);
+          this.logLevelObj[type][key] = timeValue;
         } else if(action === 'save' && !!addRow){
-          this.selectedTimeOut = parseInt(this.timeChange, 10);
+          this.selectedTimeOut = timeValue;
+          this.timeChange = '';
+        } else if(action === 'reject'){
+          this.timeChange = parseInt(this.$refs[refType].defaultValue,10);
         }
         this.$refs[refType].hideEditor();
-        this.timeChange = '';
       },
 
       getDateFormat(str){
@@ -221,11 +224,17 @@
       addLoggerName(refType,action){
         if(action === 'save'){
           this.selectedKeyName = !!this.keyName ? this.keyName :  this.selectedKeyName;
+          this.keyName = '';
+        } else if(action === 'reject'){
+          this.keyName = this.$refs[refType].defaultValue;
         }
         this.$refs[refType].hideEditor();
       },
 
       addLogRow(){
+        if(this.$refs.addRowRef.edit || this.$refs.timeoutRef.edit) {
+          return;
+        }
         let obj={};
         obj.namedLoggerLevels = {};
         obj.namedLoggerLevels[this.selectedKeyName] = {};

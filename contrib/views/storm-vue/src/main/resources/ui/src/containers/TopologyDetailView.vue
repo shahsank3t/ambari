@@ -159,7 +159,7 @@
     <app-ToggleComponent caption="Spouts" :default="true" :fetchLoader="fetchLoader">
       <div>
         <div class="input-group col-sm-4">
-          <input @input="filterChanged('spoutItems','constSpoutItems','spoutId', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
+          <input @input="filterChanged('spoutItems','constSpoutItems','spoutId', $event)" class="form-control" type="text" placeholder="Search By Id" />
           <span class="input-group-btn">
             <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
           </span>
@@ -184,7 +184,7 @@
     <app-ToggleComponent caption="Bolts" :default="true" :fetchLoader="fetchLoader">
       <div>
         <div class="input-group col-sm-4">
-          <input @input="filterChanged('blotsItems','constBoltsItems','boltId', $event)" class="form-control" type="text" placeholder="Search By Topology Name" />
+          <input @input="filterChanged('blotsItems','constBoltsItems','boltId', $event)" class="form-control" type="text" placeholder="Search By Id" />
           <span class="input-group-btn">
             <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
           </span>

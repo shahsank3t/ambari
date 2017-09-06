@@ -39,12 +39,7 @@
       },
 
       handleReject(){
-        const {reject} = this;
-        if (reject) {
-          this.$emit("reject");
-        } else {
-          this.hideEditor();
-        }
+        this.$emit("reject");
       },
 
       hideEditor(){
